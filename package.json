@@ -1,0 +1,31 @@
+{
+  "name": "memora.digit",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:luxury": "vite --mode luxury",
+    "dev:standard": "vite --mode standard",
+    "build": "vite build",
+    "build:luxury": "vite build --mode luxury",
+    "build:standard": "vite build --mode standard",
+    "preview": "vite preview",
+    "preview:luxury": "vite preview --mode luxury",
+    "preview:standard": "vite preview --mode standard"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "globals": "^17.9.0",
+    "vite": "^8.2.0"
+  },
+  "dependencies": {
+    "gsap": "^3.15.0",
+    "lil-gui": "^0.21.0",
+    "postprocessing": "^6.39.4",
+    "simplex-noise": "^4.0.3",
+    "stats.js": "^0.17.0",
+    "three": "^0.185.1"
+  }
+}

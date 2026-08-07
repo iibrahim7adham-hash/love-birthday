@@ -1,0 +1,41 @@
+#standard-blow-candles-ui {
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  z-index: 1000;
+
+  font-family: var(--standard-font, "Segoe UI", Arial, Helvetica, sans-serif);
+}
+
+.standard-blow-btn {
+  padding: 16px 32px;
+
+  border: none;
+  border-radius: 999px;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  color: #1a1a1f;
+  background: var(--standard-accent, #ffd166);
+
+  cursor: pointer;
+
+  box-shadow: 0 10px 26px rgba(255, 209, 102, 0.35);
+
+  transition: 0.3s;
+}
+
+.standard-blow-btn:hover {
+  transform: translateY(-2px);
+}
+
+.standard-blow-btn:disabled {
+  opacity: 0.5;
+
+  cursor: default;
+
+  transform: none;
+}
