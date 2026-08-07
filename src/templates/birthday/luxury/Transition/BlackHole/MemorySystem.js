@@ -2,8 +2,12 @@ import gsap from "gsap";
 import * as THREE from "three";
 
 import { memoryPhotos } from "../../content/memories";
-import { getGlowScale, getPhotoScale } from "./ResponsiveScene";
+import { getPhotoScale } from "./ResponsiveScene";
 import { createGlowTexture, loadPhotoTexture } from "./Utils";
+
+// The glow sprite's scale relative to its photo — not aspect-dependent,
+// so it's a plain local constant rather than a ResponsiveScene value.
+const GLOW_SCALE = 1.9;
 
 // ===========================
 // MEMORIES — reconnected to the accretion disk, sharing its actual orbit
@@ -111,7 +115,7 @@ export default {
     });
 
     const glow = new THREE.Sprite(glowMaterial);
-    glow.scale.setScalar(getGlowScale());
+    glow.scale.setScalar(GLOW_SCALE);
     glow.position.z = -0.01;
 
     // Parented to `disk.points` itself, NOT `this.group` — this is what

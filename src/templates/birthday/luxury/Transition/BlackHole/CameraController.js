@@ -1,7 +1,7 @@
 import gsap from "gsap";
 import * as THREE from "three";
 
-import { getMemoryCameraFraming } from "./ResponsiveScene";
+import { getCameraPosition } from "./ResponsiveScene";
 
 // ===========================
 // Camera choreography for BlackHole, mixed onto BlackHole.prototype (see
@@ -69,25 +69,22 @@ export default {
   // wherever the camera already is, so the turn still feels continuous
   // rather than a hard cut. Runs independently of the particle burst
   // (see Animations.stabilizeAfterAbsorption) rather than gating it — the
-  // camera can still be arriving when particles erupt. Distance/elevation
-  // come from ResponsiveScene.getMemoryCameraFraming(), which frames the
-  // disk by its actual world size against the camera's current fov, so
-  // this shot scales correctly to any viewport shape with no
-  // device-specific branching here.
+  // camera can still be arriving when particles erupt. This method only
+  // does the "turn" (continuing from wherever the camera already is) —
+  // the shot's actual distance/height come pre-resolved from
+  // ResponsiveScene.getCameraPosition(), so no framing decision is made
+  // here, only the rotation needed to place it.
   transitionToMemoryCameraAngle(duration) {
     const offset = this.cameraBase.clone().sub(this.lookTarget);
     const currentAngle = Math.atan2(offset.z, offset.x);
     const targetAngle = currentAngle + THREE.MathUtils.degToRad(35);
 
-    const { viewDistance, elevation } = getMemoryCameraFraming(this.camera);
-
-    const horizontalDistance = viewDistance * Math.cos(elevation);
-    const heightOffset = viewDistance * Math.sin(elevation);
+    const { distance, height } = getCameraPosition(this.camera);
 
     gsap.to(this.cameraBase, {
-      x: this.lookTarget.x + Math.cos(targetAngle) * horizontalDistance,
-      y: this.lookTarget.y + heightOffset,
-      z: this.lookTarget.z + Math.sin(targetAngle) * horizontalDistance,
+      x: this.lookTarget.x + Math.cos(targetAngle) * distance,
+      y: this.lookTarget.y + height,
+      z: this.lookTarget.z + Math.sin(targetAngle) * distance,
       duration,
       ease: "power2.inOut",
     });
