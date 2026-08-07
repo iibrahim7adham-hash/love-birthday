@@ -73,6 +73,36 @@ export function getCameraLookTarget() {
   return new THREE.Vector3(0, 0, -5);
 }
 
+// How far the camera's current (aspect-responsive) vertical fov has
+// been pushed from BASE_VERTICAL_FOV — the same baseline Camera.js's
+// own responsive-fov system is built around (see engine/camera/Camera.js).
+// A bigger-than-baseline fov (e.g. portrait phones, where Camera.js lets
+// vertical fov balloon to hold horizontal fov constant) means MORE of
+// the scene is visible, so anything at a fixed world distance or fixed
+// pixel size reads as smaller/farther; a smaller one (e.g. wide
+// desktops) means LESS is visible, so the same fixed value reads as
+// bigger/closer. This is the one ratio every value below needs to hold
+// something's apparent size constant across devices — a camera
+// distance, in getFovDistanceScale(), or a shader point size, in
+// getParticleScale().
+function getFovCompensation(camera) {
+  const baseHalfFovRad = THREE.MathUtils.degToRad(BASE_VERTICAL_FOV / 2);
+  const currentHalfFovRad = THREE.MathUtils.degToRad(camera.fov / 2);
+
+  return Math.tan(baseHalfFovRad) / Math.tan(currentHalfFovRad);
+}
+
+// The multiplier a camera-to-subject offset should be scaled by to hold
+// that subject's apparent size constant as vertical fov varies by
+// aspect ratio — pull the camera closer on a bigger-than-baseline fov,
+// push it farther on a smaller one. Used by the heart-formation dolly
+// (Animations.js's play()), which is otherwise a fixed fraction of a
+// fixed world-space distance and has no other way to know the current
+// fov compensates for aspect ratio the way Camera.js's own visuals do.
+export function getFovDistanceScale(camera) {
+  return getFovCompensation(camera);
+}
+
 // A memory photo's resting scale once it has finished emerging. Flat
 // today (not yet aspect-dependent) — centralized here so the cinematic
 // composition has one place to tune from, per every other value in this
@@ -81,26 +111,15 @@ export function getPhotoScale() {
   return 0.42;
 }
 
-// Recomputed every frame (cheap — a handful of scalars) rather than once
-// at setup, so it stays correct through a live window resize or phone
-// rotation mid-scene without needing any resize event wired in.
-// Combines two independent corrections:
-//  - device pixel ratio, since gl_PointSize is specified in actual
-//    device pixels;
-//  - how far the camera's current (responsive) fov has been pushed from
-//    BASE_VERTICAL_FOV — the same baseline Camera.js's own responsive-fov
-//    system is built around (see engine/camera/Camera.js) — so particles
-//    shrink/grow in step with everything else in frame as the fov
-//    compensates for aspect ratio, instead of holding a fixed pixel size
-//    regardless of how zoomed the shot currently is.
+// gl_PointSize is specified in actual device pixels, bypassing the
+// normal projection-matrix scaling every other object goes through —
+// left alone, particles would render at a fixed pixel size regardless
+// of screen density or the camera's current fov. Recomputed every frame
+// (cheap — a handful of scalars) rather than once at setup, so it stays
+// correct through a live window resize or phone rotation mid-scene
+// without needing any resize event wired in.
 export function getParticleScale(camera) {
   const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
 
-  const baseHalfFovRad = THREE.MathUtils.degToRad(BASE_VERTICAL_FOV / 2);
-  const currentHalfFovRad = THREE.MathUtils.degToRad(camera.fov / 2);
-
-  const fovCompensation =
-    Math.tan(baseHalfFovRad) / Math.tan(currentHalfFovRad);
-
-  return pixelRatio * fovCompensation;
+  return pixelRatio * getFovCompensation(camera);
 }

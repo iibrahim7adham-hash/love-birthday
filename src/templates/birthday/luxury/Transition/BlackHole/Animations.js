@@ -1,6 +1,7 @@
 import gsap from "gsap";
 import * as THREE from "three";
 
+import { getFovDistanceScale } from "./ResponsiveScene";
 import { sampleHeartXY, sampleTextPositions, randomRed } from "./Utils";
 
 // ===========================
@@ -24,7 +25,29 @@ export default {
     this.cameraBase = cam.position.clone();
     this.lookTarget = this.group.position.clone();
 
-    const camStart = this.cameraBase.clone();
+    // The dolly below is otherwise a fixed fraction of a fixed
+    // world-space distance (both `cam.position` and `this.lookTarget`
+    // are the same absolute points on every device) — with no awareness
+    // that Camera.js's responsive fov makes that same fixed distance
+    // read as very different apparent sizes across aspect ratios (a
+    // bigger fov shows more of the scene, so the heart reads as
+    // smaller/farther). Pulling `camStart` toward `lookTarget` by that
+    // compensation scales every waypoint below uniformly, so the heart
+    // ends up occupying roughly the same fraction of the frame
+    // regardless of device — without touching `this.cameraBase` itself,
+    // which stays the camera's true current position so the dolly still
+    // starts exactly where the camera already is, with no pop.
+    const fovDistanceScale = getFovDistanceScale(cam);
+
+    const camStart = this.lookTarget
+      .clone()
+      .add(
+        this.cameraBase
+          .clone()
+          .sub(this.lookTarget)
+          .multiplyScalar(fovDistanceScale),
+      );
+
     const totalDist = camStart.distanceTo(this.lookTarget);
     const dir = this.lookTarget.clone().sub(camStart).normalize();
 
