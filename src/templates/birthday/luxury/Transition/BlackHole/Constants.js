@@ -25,7 +25,7 @@ export const DISK_OUTER_RADIUS = 6.8;
 
 // Must match Config.camera.fov in src/engine/core/Config.js — that's the
 // vertical fov engine/camera/Camera.js's responsive system treats as the
-// baseline for a widescreen shot, and ResponsiveScene.getPointScale()
+// baseline for a widescreen shot, and ResponsiveScene.getParticleScale()
 // needs the same reference point to know how far the CURRENT fov has
 // been pushed from it. Not imported directly to keep this template
 // self-contained from the engine layer (the same reason no other

@@ -1,7 +1,7 @@
 import gsap from "gsap";
 import * as THREE from "three";
 
-import { getAspect, getMemoryCameraFraming } from "./ResponsiveScene";
+import { getMemoryCameraFraming } from "./ResponsiveScene";
 
 // ===========================
 // Camera choreography for BlackHole, mixed onto BlackHole.prototype (see
@@ -70,14 +70,16 @@ export default {
   // rather than a hard cut. Runs independently of the particle burst
   // (see Animations.stabilizeAfterAbsorption) rather than gating it — the
   // camera can still be arriving when particles erupt. Distance/elevation
-  // come from ResponsiveScene.getMemoryCameraFraming(), so this framing
-  // adapts to aspect ratio without any device-specific branching here.
+  // come from ResponsiveScene.getMemoryCameraFraming(), which frames the
+  // disk by its actual world size against the camera's current fov, so
+  // this shot scales correctly to any viewport shape with no
+  // device-specific branching here.
   transitionToMemoryCameraAngle(duration) {
     const offset = this.cameraBase.clone().sub(this.lookTarget);
     const currentAngle = Math.atan2(offset.z, offset.x);
     const targetAngle = currentAngle + THREE.MathUtils.degToRad(35);
 
-    const { viewDistance, elevation } = getMemoryCameraFraming(getAspect());
+    const { viewDistance, elevation } = getMemoryCameraFraming(this.camera);
 
     const horizontalDistance = viewDistance * Math.cos(elevation);
     const heightOffset = viewDistance * Math.sin(elevation);

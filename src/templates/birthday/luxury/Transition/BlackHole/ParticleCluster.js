@@ -45,7 +45,7 @@ const VERTEX_SHADER = `
     // regardless of screen density or the camera's current fov, making
     // them look disproportionately bigger/smaller across devices even
     // when everything else in frame is correctly scaled. uPointScale
-    // (set from BlackHole.update(), see ResponsiveScene.getPointScale())
+    // (set from BlackHole.update(), see ResponsiveScene.getParticleScale())
     // folds in both device pixel ratio and how the current responsive
     // fov compares to the baseline it was designed at, so a particle
     // reads as the same relative size on every screen.

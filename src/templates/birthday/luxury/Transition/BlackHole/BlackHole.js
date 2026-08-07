@@ -7,7 +7,7 @@ import CameraController from "./CameraController";
 import { MAIN_PARTICLE_COUNT } from "./Constants";
 import MemorySystem from "./MemorySystem";
 import ParticleCluster from "./ParticleCluster";
-import { getPointScale } from "./ResponsiveScene";
+import { getParticleScale } from "./ResponsiveScene";
 
 // ===========================
 // Composition root — owns construction, the per-frame update loop, and
@@ -57,7 +57,7 @@ export default class BlackHole {
       this.main.step(delta, this.time);
     }
 
-    const pointScale = getPointScale(this.camera);
+    const pointScale = getParticleScale(this.camera);
 
     this.main.setPointScale(pointScale);
 
