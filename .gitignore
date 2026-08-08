@@ -15,6 +15,9 @@ dist-ssr
 .vite
 .claude
 
+# Scratch/testing artifacts (e.g. screenshots from local verification)
+.tmp_*
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
