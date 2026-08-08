@@ -7,12 +7,15 @@
     "dev": "vite",
     "dev:luxury": "vite --mode luxury",
     "dev:standard": "vite --mode standard",
+    "dev:love": "vite --mode love",
     "build": "vite build",
     "build:luxury": "vite build --mode luxury",
     "build:standard": "vite build --mode standard",
+    "build:love": "vite build --mode love",
     "preview": "vite preview",
     "preview:luxury": "vite preview --mode luxury",
-    "preview:standard": "vite preview --mode standard"
+    "preview:standard": "vite preview --mode standard",
+    "preview:love": "vite preview --mode love"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

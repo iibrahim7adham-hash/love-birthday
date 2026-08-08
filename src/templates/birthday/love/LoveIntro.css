@@ -1,0 +1,125 @@
+#love-intro {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
+
+  background: transparent;
+}
+
+.love-intro-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: clamp(10px, 2vh, 20px);
+
+  text-align: center;
+
+  padding: 24px;
+}
+
+.love-intro-title {
+  margin: 0;
+
+  color: #fff6f9;
+
+  font-family: "Segoe Script", "Brush Script MT", "Lucida Handwriting", cursive;
+  font-style: italic;
+  font-size: clamp(28px, 5vw, 54px);
+  line-height: 1.2;
+
+  text-shadow:
+    0 0 12px rgba(255, 143, 190, 0.9),
+    0 0 32px rgba(255, 111, 145, 0.6);
+}
+
+.love-intro-subtitle {
+  margin: 0;
+
+  max-width: 420px;
+
+  color: rgba(255, 235, 242, 0.75);
+
+  font-family: system-ui, "Segoe UI", sans-serif;
+  font-weight: 300;
+  font-size: clamp(13px, 2vw, 16px);
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+
+.love-intro-buttons {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  margin-top: clamp(8px, 2vh, 16px);
+}
+
+.love-intro-yes,
+.love-intro-no {
+  border-radius: 999px;
+  border: none;
+
+  font-family: system-ui, "Segoe UI", sans-serif;
+  cursor: pointer;
+
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.love-intro-yes {
+  padding: 14px 34px;
+
+  color: #2a0f1a;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  background: linear-gradient(135deg, #ffd6e4, #ff8fa8);
+
+  box-shadow:
+    0 0 18px rgba(255, 143, 190, 0.65),
+    0 8px 25px rgba(255, 111, 145, 0.35);
+}
+
+.love-intro-yes:hover {
+  transform: translateY(-2px) scale(1.04);
+
+  box-shadow:
+    0 0 26px rgba(255, 173, 209, 0.85),
+    0 12px 32px rgba(255, 111, 145, 0.45);
+}
+
+.love-intro-no {
+  padding: 12px 26px;
+
+  color: rgba(255, 235, 242, 0.75);
+
+  font-size: 15px;
+  font-weight: 400;
+
+  background: rgba(255, 182, 201, 0.08);
+  border: 1px solid rgba(255, 199, 220, 0.3);
+
+  touch-action: none;
+
+  /* Once dodging starts, LoveIntro re-parents this button straight
+     onto <body> (see bindEvents' dodge()) so `position: fixed` isn't
+     trapped by a transformed ancestor's containing block. That move
+     also drops it out of #love-intro's z-index: 1000 stacking context,
+     so it needs its own — otherwise the canvas underneath would
+     intercept clicks the moment it's no longer a descendant of the
+     overlay. */
+  z-index: 1000;
+}
+
+.love-intro-no:hover {
+  color: #fff6f9;
+
+  border-color: rgba(255, 199, 220, 0.55);
+  background: rgba(255, 182, 201, 0.14);
+}

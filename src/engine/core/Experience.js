@@ -11,17 +11,20 @@ import Renderer from "../renderer";
 import World from "../world";
 import Lights from "../lights";
 
+import LoveScene from "../../templates/birthday/love";
 import LuxuryScene from "../../templates/birthday/luxury/Scene";
 import StandardScene from "../../templates/birthday/standard/Scene";
 
 // Which template runs is chosen at build/dev time via `--mode` (see
-// package.json's dev:luxury / dev:standard scripts and the matching
-// .env.luxury / .env.standard files) instead of editing this file by
-// hand every time you switch templates. No VITE_TEMPLATE set (e.g. the
-// plain `npm run dev`) falls back to luxury, the current default.
+// package.json's dev:luxury / dev:standard / dev:love scripts and the
+// matching .env.luxury / .env.standard / .env.love files) instead of
+// editing this file by hand every time you switch templates. No
+// VITE_TEMPLATE set (e.g. the plain `npm run dev`) falls back to
+// luxury, the current default.
 const TEMPLATES = {
   luxury: LuxuryScene,
   standard: StandardScene,
+  love: LoveScene,
 };
 
 let instance = null;
