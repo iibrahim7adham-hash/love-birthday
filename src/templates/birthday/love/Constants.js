@@ -226,8 +226,8 @@ export const MESSAGE_STREAK_OPACITY_FACTOR = 0.7;
 // language, zero duplicated code — so only the small floating hearts
 // and the 2D question/button UI below are genuinely new.
 // ===========================
-export const INTRO_TITLE = "Something Beautiful Awaits";
-export const INTRO_SUBTITLE = "A little surprise, made just for you.";
+export const INTRO_TITLE = "Are You Ready?";
+export const INTRO_SUBTITLE = "مفاجأة صغيرة تليق بيج";
 
 // Small ambient hearts drifting gently upward — the inverse of the
 // petals' downward fall, for a layered, two-directional background.

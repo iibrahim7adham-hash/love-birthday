@@ -1,0 +1,184 @@
+.love-envelope {
+  position: fixed;
+  left: 50%;
+  bottom: 9vh;
+  z-index: 500;
+
+  /* Compact and secondary to the heart by design — a clear step down
+     from the letter's own footprint below, while the 40px floor keeps
+     the seal (24% of this, see .love-envelope-seal) at a comfortably
+     tappable size on the smallest phones. */
+  width: clamp(112px, 13.5vw, 160px);
+
+  /* Positioning only — never touched by the entrance/idle/open GSAP
+     tweens below, which all animate .love-envelope-body's own
+     transform/opacity instead. Keeping these two concerns on separate
+     elements means GSAP is always the sole owner of whichever element
+     it's currently animating, with nothing else able to fight it for
+     the same CSS property. */
+  translate: -50% 0;
+
+  pointer-events: none;
+}
+
+.love-envelope-body {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 8 / 5;
+
+  /* So the flap's rotateX (see .love-envelope-flap) renders as an
+     actual hinge opening away from the viewer, not a flat squash. */
+  perspective: 900px;
+
+  opacity: 0; /* entrance-driven */
+
+  filter:
+    drop-shadow(0 0 26px rgba(255, 111, 145, 0.32))
+    drop-shadow(0 18px 40px rgba(0, 0, 0, 0.55));
+}
+
+.love-envelope-pocket {
+  position: absolute;
+  inset: 0;
+
+  border-radius: 10px;
+  overflow: hidden;
+
+  background: linear-gradient(165deg, #3d1622, #1c0910);
+  border: 1px solid rgba(255, 182, 201, 0.28);
+
+  /* Cinematic depth, not a new light source: a hairline top sheen plus
+     a soft interior falloff toward the bottom edge. Same palette as
+     the gradient above — no new colors introduced. */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 214, 225, 0.08),
+    inset 0 -18px 26px rgba(0, 0, 0, 0.4);
+}
+
+.love-envelope-warm-light {
+  position: absolute;
+  inset: 0;
+
+  background: radial-gradient(
+    ellipse at 50% 20%,
+    rgba(255, 214, 179, 0.85),
+    rgba(255, 143, 190, 0.25) 55%,
+    transparent 78%
+  );
+
+  opacity: 0;
+  pointer-events: none;
+}
+
+.love-envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 62%;
+
+  clip-path: polygon(0 0, 100% 0, 50% 92%);
+
+  background: linear-gradient(200deg, #4a1c29, #240d14);
+  border-top: 1px solid rgba(255, 182, 201, 0.28);
+
+  transform-origin: 50% 0%;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.love-envelope-seal {
+  /* A custom property (not a plain width) so the same clamped value can
+     also drive the centering margin and the heart glyph's size below —
+     the envelope's own width shrinks responsively (see .love-envelope),
+     so the seal needs to track it instead of staying pinned at a fixed
+     54px, which would read as oversized on the smallest phones and
+     undersized on desktop. Kept as box-model width/margin centering
+     (not translate(-50%,-50%)) for the same reason the wrapper uses a
+     separate translate property elsewhere in this file: GSAP owns this
+     element's own `transform` outright (breathing/hover/press below),
+     so centering here deliberately avoids that property entirely. */
+  --seal-size: clamp(40px, 24%, 50px);
+
+  position: absolute;
+  top: 42%;
+  left: 50%;
+
+  width: var(--seal-size);
+  height: var(--seal-size);
+  margin: calc(var(--seal-size) / -2) 0 0 calc(var(--seal-size) / -2);
+
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  background: none;
+
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+
+  /* transform is owned entirely by Envelope.js's GSAP tweens (idle
+     breathing, hover, press) — no CSS :hover/:active transform here,
+     so there's only ever one thing writing to this property. */
+  filter: drop-shadow(0 0 16px rgba(255, 111, 145, 0.55));
+}
+
+/* Belt-and-suspenders alongside the button's own `disabled` property
+   (see Envelope.js — that's the actual interaction/hit-testing gate,
+   toggled by scene state, not this rule): guarantees no pointer ever
+   hit-tests this element while disabled, on top of the browser's own
+   built-in disabled-control behavior. Purely defensive; nothing here
+   changes appearance, so it has no effect on the seal's own animations. */
+.love-envelope-seal:disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+.love-envelope-seal-half {
+  position: absolute;
+  inset: 0;
+
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #a8324a, #6e1a2c 65%, #4a0f1a);
+  box-shadow:
+    inset 0 2px 3px rgba(255, 255, 255, 0.2),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.35);
+}
+
+.love-envelope-seal-half--top {
+  clip-path: inset(0 0 50% 0);
+}
+
+.love-envelope-seal-half--bottom {
+  clip-path: inset(50% 0 0 0);
+}
+
+.love-envelope-seal-heart {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #ffd9e4;
+  font-size: calc(var(--seal-size) * 0.4); /* same ratio as the old fixed 22px/54px */
+  line-height: 1;
+  text-shadow: 0 0 8px rgba(255, 214, 231, 0.6);
+}
+
+/* A handful of tiny accent sparkles around the envelope right as it
+   settles — plain CSS, not a particle system, and gone for good once
+   their one animation finishes (see Envelope.js). */
+.love-envelope-sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+
+  background: #ffd9e4;
+  box-shadow: 0 0 6px 2px rgba(255, 182, 201, 0.8);
+
+  opacity: 0;
+  pointer-events: none;
+}

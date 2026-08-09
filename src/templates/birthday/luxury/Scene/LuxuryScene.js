@@ -3,6 +3,7 @@ import * as THREE from "three";
 import BlackHole from "../Transition/BlackHole";
 import IntroCamera from "../Animation/IntroCamera";
 import Environment from "../Environment";
+import LuxuryAudio from "../audio/LuxuryAudio";
 
 export default class LuxuryScene {
   constructor(experience) {
@@ -27,6 +28,8 @@ export default class LuxuryScene {
 
     this.blackHole = new BlackHole(this.scene, this.camera);
 
+    this.luxuryAudio = new LuxuryAudio(this.experience.audio);
+
     window.addEventListener("intro:yes", this.onIntroYes);
   }
 
@@ -38,6 +41,7 @@ export default class LuxuryScene {
   }
 
   triggerBlackHole() {
+    this.experience.audio.trigger("transition:start");
     this.blackHole.play();
   }
 
@@ -52,6 +56,7 @@ export default class LuxuryScene {
   destroy() {
     window.removeEventListener("intro:yes", this.onIntroYes);
 
+    this.luxuryAudio.destroy();
     this.environment.destroy();
   }
 }

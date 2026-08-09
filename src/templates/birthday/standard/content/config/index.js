@@ -9,7 +9,6 @@ import cake from "./cake";
 import candles from "./candles";
 import celebration from "./celebration";
 import particles from "./particles";
-import audio from "./audio";
 import media from "./media";
 
 // The single object every scene, UI overlay and object in this template
@@ -34,7 +33,6 @@ const StandardConfig = {
   candles,
   celebration,
   particles,
-  audio,
   media,
 };
 

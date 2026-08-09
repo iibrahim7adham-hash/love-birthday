@@ -9,7 +9,7 @@ canvas.classList.add("webgl");
 
 document.body.appendChild(canvas);
 
-new Experience(canvas);
+const experience = new Experience(canvas);
 
 // The luxury template's intro overlay is bootstrapped here, outside the
 // template class itself. The standard template doesn't need this — its
@@ -17,5 +17,5 @@ new Experience(canvas);
 // template is active is decided by VITE_TEMPLATE (see Experience.js and
 // package.json's dev:luxury / dev:standard scripts).
 if ((import.meta.env.VITE_TEMPLATE || "luxury") === "luxury") {
-  new LuxuryIntroUI();
+  new LuxuryIntroUI(experience.audio);
 }

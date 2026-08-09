@@ -102,8 +102,9 @@ function sampleScatterPoint(radius) {
 // setStyle, setTargets, setAttraction, setDamping) — the engine itself
 // never sees a heart coordinate.
 export default class HeartFormation {
-  constructor(scene) {
+  constructor(scene, audio) {
     this.scene = scene;
+    this.audio = audio;
 
     this.particles = new LoveParticles(HEART_PARTICLE_COUNT);
     this.scene.add(this.particles.points);
@@ -169,6 +170,8 @@ export default class HeartFormation {
   // scene decides when formation actually begins, rather than it being
   // a side effect of construction.
   begin() {
+    this.audio.trigger("heart:formation-start");
+
     this.particles.setAttraction(HEART_ATTRACTION);
     this.particles.setDamping(HEART_DAMPING);
   }

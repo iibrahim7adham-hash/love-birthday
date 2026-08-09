@@ -1,8 +1,9 @@
 import * as THREE from "three";
 
 import { StandardConfig } from "../content";
-import { SceneFlowManager, AudioManager } from "../managers";
+import { SceneFlowManager } from "../managers";
 import { applyTheme } from "../ui";
+import StandardAudio from "../audio/StandardAudio";
 import {
   IntroScene,
   CountdownScene,
@@ -23,9 +24,10 @@ import {
 // instead of one monolithic scene class.
 //
 // This is also the one place StandardConfig gets assembled into runtime
-// behavior — applying the theme, registering audio, seeding the flow
-// order — so every customization in content/ actually reaches the
-// scenes without any of them importing config files directly.
+// behavior — applying the theme, wiring this template's audio cue map,
+// seeding the flow order — so every customization in content/ actually
+// reaches the scenes without any of them importing config files
+// directly.
 export default class StandardScene {
   constructor(experience) {
     this.experience = experience;
@@ -35,12 +37,20 @@ export default class StandardScene {
 
     this.flow = new SceneFlowManager(StandardConfig.flow.order);
 
+    // The shared engine-level AudioManager (see src/engine/audio/ and
+    // src/engine/core/Experience.js) — Standard uses the same instance
+    // Love/Luxury do, not a bespoke one of its own. StandardAudio is
+    // just this template's event->sound map wired into it (see
+    // audio/StandardAudioCues.js); scenes below only ever call
+    // `context.audio.trigger(event)`, never play a file directly.
+    this.standardAudio = new StandardAudio(experience.audio);
+
     this.context = {
       experience,
       scene: this.scene,
       camera: this.camera,
       config: StandardConfig,
-      audio: new AudioManager(),
+      audio: experience.audio,
       goTo: (name) => this.flow.goTo(name),
       goToNext: () => this.flow.goToNext(),
 
@@ -50,8 +60,6 @@ export default class StandardScene {
       cake: null,
       atmosphere: null,
     };
-
-    this.context.audio.registerAll(StandardConfig.audio.sounds);
 
     applyTheme(StandardConfig.theme);
 
@@ -87,6 +95,6 @@ export default class StandardScene {
 
   destroy() {
     this.flow.destroy();
-    this.context.audio.destroy();
+    this.standardAudio.destroy();
   }
 }

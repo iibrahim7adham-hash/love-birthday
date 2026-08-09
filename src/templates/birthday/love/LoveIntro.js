@@ -105,15 +105,18 @@ function pickSafePosition(buttonRect, exclusionRect) {
 // `onComplete` once — after its own fade-out finishes, never before —
 // and the caller decides what happens next.
 export default class LoveIntro {
-  constructor(scene, camera, onComplete) {
+  constructor(scene, camera, onComplete, audio, transition) {
     this.scene = scene;
     this.camera = camera;
     this.onComplete = onComplete;
+    this.audio = audio;
+    this.transition = transition;
 
     this.noPinned = false;
 
     this.createBackground();
     this.createUI();
+    this.audio.trigger("intro:start");
     this.animateEntrance();
     this.bindEvents();
   }
@@ -150,7 +153,7 @@ export default class LoveIntro {
     this.element.innerHTML = `
       <div class="love-intro-content">
         <h1 class="love-intro-title">${INTRO_TITLE}</h1>
-        <p class="love-intro-subtitle">${INTRO_SUBTITLE}</p>
+        <p class="love-intro-subtitle" dir="rtl" lang="ar">${INTRO_SUBTITLE}</p>
         <div class="love-intro-buttons">
           <button class="love-intro-yes" type="button">♥ Yes</button>
           <button class="love-intro-no" type="button">No</button>
@@ -170,17 +173,23 @@ export default class LoveIntro {
 
   // Title, then subtitle, then buttons — a gentle cascade (each
   // starting slightly before the last finishes) rather than everything
-  // fading in as one block.
+  // fading in as one block. Each element descends in from above (a
+  // negative `y` in GSAP's `.from()` starts there and animates DOWN to
+  // the element's natural resting position) rather than rising up from
+  // below — vh-based so the descent distance stays proportional on any
+  // viewport, mobile included, with no separate responsive handling
+  // needed.
   animateEntrance() {
     gsap.timeline()
-      .from(this.title, { opacity: 0, y: 24, duration: 1, ease: "power3.out" })
-      .from(this.subtitle, { opacity: 0, y: 16, duration: 0.9, ease: "power3.out" }, "-=0.55")
-      .from(this.buttonsRow, { opacity: 0, y: 16, duration: 0.9, ease: "power3.out" }, "-=0.5");
+      .from(this.title, { opacity: 0, y: "-9vh", duration: 1.2, ease: "power3.out" })
+      .from(this.subtitle, { opacity: 0, y: "-6vh", duration: 1.05, ease: "power3.out" }, "-=0.55")
+      .from(this.buttonsRow, { opacity: 0, y: "-6vh", duration: 1.05, ease: "power3.out" }, "-=0.5");
   }
 
   bindEvents() {
     const dodge = (event) => {
       event.preventDefault();
+      this.audio.trigger("ui:dodge");
 
       if (!this.noPinned) {
         const rect = this.no.getBoundingClientRect();
@@ -228,36 +237,27 @@ export default class LoveIntro {
     this.yes.addEventListener("click", () => this.handleYes());
   }
 
+  // The button's own press feedback, the camera push, the black fade,
+  // the UI dissolve and the handoff to the main experience are all owned
+  // by LoveTransition from here on — this only tells it *when* (now) and
+  // *what* (which elements) to animate.
   handleYes() {
+    this.audio.trigger("ui:click");
+    this.audio.trigger("intro:accept");
+
     this.yes.style.pointerEvents = "none";
     this.no.style.pointerEvents = "none";
 
-    gsap
-      .timeline()
-      .to(this.yes, {
-        scale: 1.12,
-        boxShadow: "0 0 40px rgba(255, 173, 209, 1), 0 12px 32px rgba(255, 111, 145, 0.5)",
-        duration: 0.2,
-        ease: "power2.out",
-      })
-      .to(this.yes, {
-        scale: 1,
-        duration: 0.25,
-        ease: "power2.inOut",
-      })
-      .to(
-        this.element,
-        {
-          opacity: 0,
-          duration: 0.8,
-          ease: "power2.inOut",
-        },
-        "-=0.05",
-      )
-      .call(() => {
+    this.transition.play({
+      yesButton: this.yes,
+      uiElement: this.element,
+      noButton: this.noPinned ? this.no : null,
+      onComplete: () => {
+        this.audio.trigger("intro:complete");
         this.destroy();
         this.onComplete();
-      });
+      },
+    });
   }
 
   update(delta) {

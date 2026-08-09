@@ -1,0 +1,191 @@
+.love-letter {
+  position: fixed;
+  left: 50%;
+  bottom: 9vh;
+  z-index: 510;
+
+  /* Deliberately still the biggest of the two DOM elements (it's the
+     payoff), but pulled well back from its old footprint so the heart
+     stays visible around it and this reads as one element inside the
+     3D composition rather than a full-screen modal. */
+  width: clamp(190px, 24vw, 280px);
+
+  translate: -50% 0;
+  pointer-events: none;
+
+  opacity: 0;
+}
+
+.love-letter-paper {
+  position: relative;
+  width: 100%;
+  min-height: clamp(190px, 25vw, 260px);
+
+  padding: clamp(18px, 3.2vw, 26px) clamp(16px, 3vw, 24px);
+  border-radius: 12px;
+
+  /* Same dark burgundy/wine family as the envelope's own pocket
+     (Envelope.css's .love-envelope-pocket) — the letter continues the
+     envelope's interior color language rather than introducing a new
+     one, so it reads as "what was inside" rather than a separate UI
+     surface. */
+  background: linear-gradient(165deg, #3d1622, #1c0910);
+  border: 1px solid rgba(255, 182, 201, 0.28);
+
+  /* Inner glow (very soft, warm) + a restrained outer glow + a real
+     drop shadow for depth. Intentionally not "the whole letter glows" —
+     only these edge-level touches, per the brief. */
+  box-shadow:
+    inset 0 0 46px rgba(255, 111, 145, 0.12),
+    inset 0 1px 0 rgba(255, 214, 225, 0.08),
+    0 0 30px rgba(255, 111, 145, 0.2),
+    0 24px 60px rgba(0, 0, 0, 0.55);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75em;
+
+  overflow: hidden;
+}
+
+/* A near-invisible sheen across the upper-left, like light catching
+   the surface of fine stationery — texture without an image asset. */
+.love-letter-paper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  background: radial-gradient(
+    ellipse 140% 70% at 15% -10%,
+    rgba(255, 235, 240, 0.07),
+    transparent 55%
+  );
+}
+
+/* Small L-shaped corner marks, the same restrained framing device fine
+   stationery/invitations use — pure CSS borders, no image assets. */
+.love-letter-corner {
+  position: absolute;
+  width: clamp(10px, 3.2%, 16px);
+  height: clamp(10px, 3.2%, 16px);
+  border-color: rgba(232, 180, 133, 0.55);
+  pointer-events: none;
+}
+
+.love-letter-corner--tl {
+  top: 10px;
+  left: 10px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+
+.love-letter-corner--tr {
+  top: 10px;
+  right: 10px;
+  border-top: 1px solid;
+  border-right: 1px solid;
+}
+
+.love-letter-corner--bl {
+  bottom: 10px;
+  left: 10px;
+  border-bottom: 1px solid;
+  border-left: 1px solid;
+}
+
+.love-letter-corner--br {
+  bottom: 10px;
+  right: 10px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+/* A thin ornamental rule either side of a tiny heart glyph — the
+   letter's header flourish, standing in for a wax-seal-adjacent motif
+   without another image asset. */
+.love-letter-flourish {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+
+  margin-bottom: 0.15em;
+}
+
+.love-letter-flourish-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255, 182, 201, 0.4));
+}
+
+.love-letter-flourish .love-letter-flourish-line:last-child {
+  background: linear-gradient(to left, transparent, rgba(255, 182, 201, 0.4));
+}
+
+.love-letter-flourish-heart {
+  color: #e8b4c8;
+  font-size: clamp(10px, 1.4vw, 13px);
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.love-letter-line {
+  margin: 0;
+
+  color: #f6dfe6;
+  /* Arabic-capable stack (the letter's text is Arabic — see
+     LetterConstants.js's LETTER_LINES/LETTER_TEXT_DIRECTION); Georgia
+     et al. have no Arabic glyphs and would just fall through to
+     whatever the browser picks anyway, so this names elegant,
+     widely-available naskh-style options explicitly instead of leaving
+     it to chance. */
+  font-family: "Geeza Pro", "Damascus", "Traditional Arabic", "Arabic Typesetting", "Noto Naskh Arabic", Tahoma, serif;
+  font-size: clamp(13px, 1.6vw, 16px);
+  line-height: 1.9; /* extra room for Arabic diacritics/connectors vs. Latin text */
+  text-align: center; /* short, poem-like lines read well centered in either direction */
+
+  /* No opacity here — the line itself is always "on"; visibility is
+     revealed word by word via .love-letter-word below, so the layout
+     (line-wrapping, spacing) is present from the start and nothing
+     shifts as words fade in. */
+}
+
+/* Individually revealed by Letter.js's word-by-word timeline.
+   inline-block (rather than plain inline) keeps the per-word
+   translateY consistent across browsers; the surrounding plain-text
+   spaces between spans are what let lines wrap normally. */
+.love-letter-word {
+  display: inline-block;
+  opacity: 0;
+}
+
+/* A thin rule before the signature — echoes the header flourish
+   without repeating the heart glyph twice. */
+.love-letter-divider {
+  display: block;
+  width: 36%;
+  height: 1px;
+  margin: 0.5em auto 0;
+
+  background: linear-gradient(to right, transparent, rgba(232, 180, 133, 0.5), transparent);
+}
+
+.love-letter-signature {
+  margin: 0.35em 0 0;
+
+  color: #e8b4c8;
+  /* Arabic script has no real italic/cursive-handwriting tradition the
+     way Latin script does — a synthetic slant on an Arabic font can
+     distort or break letter connections rather than reading as
+     "handwritten", so distinctiveness here comes from weight/size/color
+     instead of font-style. Same Arabic-capable stack as the body text. */
+  font-family: "Geeza Pro", "Damascus", "Traditional Arabic", "Arabic Typesetting", "Noto Naskh Arabic", Tahoma, serif;
+  font-weight: 700;
+  font-size: clamp(18px, 2.2vw, 24px);
+  text-align: center;
+
+  text-shadow: 0 0 10px rgba(232, 180, 200, 0.35);
+
+  opacity: 0;
+}

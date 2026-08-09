@@ -2,7 +2,9 @@ import "./IntroUI.css";
 import gsap from "gsap";
 
 export default class IntroUI {
-  constructor() {
+  constructor(audio) {
+    this.audio = audio;
+
     this.create();
     this.animate();
     this.events();
@@ -88,6 +90,8 @@ export default class IntroUI {
     let current = 0;
 
     const moveNoButton = () => {
+      this.audio.trigger("ui:hover");
+
       let next;
 
       do {
@@ -106,6 +110,8 @@ export default class IntroUI {
     this.no.addEventListener("pointerdown", moveNoButton);
 
     this.yes.addEventListener("click", () => {
+      this.audio.trigger("ui:click");
+
       this.yes.style.pointerEvents = "none";
       this.no.style.pointerEvents = "none";
 

@@ -10,6 +10,7 @@ import Camera from "../camera";
 import Renderer from "../renderer";
 import World from "../world";
 import Lights from "../lights";
+import AudioManager from "../audio";
 
 import LoveScene from "../../templates/birthday/love";
 import LuxuryScene from "../../templates/birthday/luxury/Scene";
@@ -63,6 +64,8 @@ export default class Experience {
 
     this.world = new World(this.scene);
 
+    this.audio = new AudioManager();
+
     const TemplateScene =
       TEMPLATES[import.meta.env.VITE_TEMPLATE] || LuxuryScene;
 
@@ -91,5 +94,6 @@ export default class Experience {
 
   destroy() {
     this.world.destroy();
+    this.audio.destroy();
   }
 }

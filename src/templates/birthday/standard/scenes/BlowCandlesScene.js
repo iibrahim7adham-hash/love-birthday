@@ -2,10 +2,10 @@ import BaseScene from "./BaseScene";
 import BlowCandlesUI from "../ui/BlowCandlesUI";
 
 // Scene 5 — Blow Candles Interaction. Surfaces the "Blow the Candles"
-// button (label from content/config/text.js); on click, plays the
-// "blowCandles" sound (see content/config/audio.js — silently a no-op
-// until a real file is configured there) and extinguishes every candle
-// on `context.cake` in a staggered wave sourced from
+// button (label from content/config/text.js); on click, triggers the
+// "candles:blow" audio event (see audio/StandardAudioCues.js — silently
+// a no-op until a real file is configured there) and extinguishes every
+// candle on `context.cake` in a staggered wave sourced from
 // content/config/candles.js, moving on once they've all gone out. The
 // celebration atmosphere from Scene 4 keeps animating underneath via
 // `context.atmosphere`.
@@ -25,7 +25,7 @@ export default class BlowCandlesScene extends BaseScene {
   blowOutCandles() {
     const { cake, config, audio } = this.context;
 
-    audio.play("blowCandles");
+    audio.trigger("candles:blow");
 
     if (!cake) {
       this.context.goToNext();

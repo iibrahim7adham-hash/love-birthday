@@ -1,0 +1,72 @@
+.sticker-focus {
+  position: fixed;
+  inset: 0;
+  z-index: 600; /* above the envelope (500) / letter (510) — this only ever opens after both are long gone, but stays unambiguously topmost regardless */
+
+  /* Inert by default — no invisible click-blocking layer sitting over
+     the scene the rest of the time. Only .sticker-focus--interactive
+     (added for the open()->close() lifecycle, see StickerFocusView.js)
+     re-enables hit-testing; backdrop/frame below inherit this rather
+     than each declaring their own pointer-events. */
+  pointer-events: none;
+}
+
+.sticker-focus--interactive {
+  pointer-events: auto;
+}
+
+.sticker-focus-backdrop {
+  position: fixed;
+  inset: 0;
+
+  /* Deep near-black with a hint of the same wine tone the envelope/
+     letter already use — GSAP animates this element's own opacity
+     (0 -> STICKER_FOCUS_BACKDROP_OPACITY), so the background itself
+     stays a flat, fully-opaque color. */
+  background: #05000a;
+  opacity: 0;
+
+  cursor: pointer;
+}
+
+.sticker-focus-frame {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+
+  /* Positioning only, CSS-owned — GSAP owns this element's own
+     transform (x/y/scale) exclusively for the open/close motion, the
+     same split .love-envelope/.love-letter already use elsewhere in
+     this template so the two never fight over the same property. */
+  translate: -50% -50%;
+
+  opacity: 0;
+}
+
+.sticker-focus-image {
+  display: block;
+
+  /* No explicit width/height — the browser sizes the image to its own
+     natural aspect ratio, constrained by these maxes. That's the whole
+     "never stretched, always the real aspect ratio" guarantee: there's
+     no fixed box to force it into one way or the other. Desktop stays
+     comfortably short of full-screen; on narrow/short mobile viewports
+     the vw/vh terms take over and it scales down with margin to spare. */
+  width: auto;
+  height: auto;
+  max-width: min(88vw, 560px);
+  max-height: min(78vh, 560px);
+  object-fit: contain;
+
+  border-radius: 10px;
+  border: 1px solid rgba(255, 182, 201, 0.35);
+
+  /* A soft romantic glow plus a real drop shadow for depth — the same
+     rose glow color already used throughout the envelope/letter, so
+     this reads as part of the same scene rather than a generic modal. */
+  box-shadow:
+    0 0 50px rgba(255, 111, 145, 0.35),
+    0 30px 70px rgba(0, 0, 0, 0.6);
+
+  background: #1c0910;
+}

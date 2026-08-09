@@ -49,14 +49,22 @@ function getFovCompensation(camera) {
 // >= 1 (landscape, matching the desktop reference) it's a no-op; for
 // aspect < 1 (portrait) it blends the correction back so the camera
 // never pulls in more than the frame's own width can absorb. The heart
-// ends up slightly shorter (relative to a tall portrait frame) than on
-// desktop, but comfortably framed on every axis — never edge-to-edge,
-// always with visible empty space around it.
+// ends up smaller (relative to a tall portrait frame) than on desktop,
+// scaling down by exactly this same aspectConstraint() factor — see
+// getStickerScale below, which exists specifically to undo that for
+// objects that shouldn't shrink the way the heart deliberately does.
 export function getCameraDistanceScale(camera) {
   const verticalScale = getFovCompensation(camera);
-  const constrainingFraction = Math.min(1, camera.aspect);
 
-  return verticalScale / constrainingFraction;
+  return verticalScale / aspectConstraint(camera);
+}
+
+// Shared by getCameraDistanceScale and getStickerScale — how far the
+// camera's own distance correction gets reined back in from pure fov
+// compensation, so the heart's WIDTH never overflows the frame (see
+// getCameraDistanceScale's own comment).
+function aspectConstraint(camera) {
+  return Math.min(1, camera.aspect);
 }
 
 // gl_PointSize is specified in actual device pixels, bypassing the
@@ -70,4 +78,31 @@ export function getParticleScale(camera) {
   const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
 
   return pixelRatio * getFovCompensation(camera);
+}
+
+// Ordinary world-space sprites (photo stickers, unlike the particle
+// points above) already project correctly through the camera with no
+// fov-based compensation needed — unlike gl_PointSize, their scale
+// isn't measured in device pixels, so getFovCompensation (used by
+// getParticleScale above) does not apply here; multiplying by it was
+// tried and made things *worse*, not better (verified numerically: it
+// drove an iPhone-portrait sticker down to ~12% of its desktop screen
+// fraction, versus ~46% if left with no compensation at all — actively
+// wrong, not just insufficient).
+//
+// What DOES change a sticker's on-screen size across aspect ratios is
+// the exact same aspectConstraint() factor getCameraDistanceScale
+// applies to the camera's own distance: that correction is what makes
+// the heart deliberately read smaller on a tall portrait frame (see
+// getCameraDistanceScale's comment) — and because a sticker is just
+// another fixed-size world-space object at roughly the heart's own
+// distance, it shrinks by that identical factor for free, with no
+// sticker-specific code at all. Dividing by aspectConstraint() again
+// here exactly cancels that shrinkage for stickers specifically, so a
+// sticker's own perceived screen-space size stays pinned to its desktop
+// value on any aspect ratio — independent of how much the heart itself
+// is allowed to shrink by design. At the desktop reference aspect this
+// is 1 (a no-op), so the approved desktop size is unchanged.
+export function getStickerScale(camera) {
+  return 1 / aspectConstraint(camera);
 }

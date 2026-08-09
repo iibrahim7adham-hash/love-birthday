@@ -27,12 +27,22 @@ const BREATH_FADE_IN_DURATION = 2.5;
 // never learns this motion exists — it just keeps easing toward
 // whatever target it's given, exactly as it did for the initial gather.
 export default class HeartAnimation {
-  constructor(particles, heartTargets) {
+  constructor(particles, heartTargets, audio) {
     this.particles = particles;
     this.heartTargets = heartTargets;
+    this.audio = audio;
 
     this.time = 0;
     this.amplitude = 0;
+
+    // Reused across every setTargets() callback invocation below —
+    // LoveParticles.setTargets() reads .x/.y/.z off whatever's returned
+    // immediately and synchronously before asking for the next index
+    // (see its own loop), so mutating and returning the same object
+    // 3000 times a frame is safe, and avoids allocating a fresh one for
+    // every particle, every frame, for as long as the heart is
+    // breathing (i.e. most of the scene's lifetime).
+    this._targetScratch = { x: 0, y: 0, z: 0 };
   }
 
   begin() {
@@ -41,6 +51,10 @@ export default class HeartAnimation {
       duration: BREATH_FADE_IN_DURATION,
       delay: BREATH_START_DELAY,
       ease: "sine.inOut",
+      // The gather has settled by the time breathing kicks in — the
+      // natural "the heart has formed" moment, not the amplitude ramp's
+      // own completion further down the line.
+      onStart: () => this.audio.trigger("heart:formation-complete"),
     });
   }
 
@@ -54,12 +68,13 @@ export default class HeartAnimation {
 
     this.particles.setTargets((i) => {
       const base = this.heartTargets[i];
+      const target = this._targetScratch;
 
-      return {
-        x: base.x * breatheScale,
-        y: HEART_CENTER_Y + (base.y - HEART_CENTER_Y) * breatheScale,
-        z: base.z * breatheScale,
-      };
+      target.x = base.x * breatheScale;
+      target.y = HEART_CENTER_Y + (base.y - HEART_CENTER_Y) * breatheScale;
+      target.z = base.z * breatheScale;
+
+      return target;
     });
   }
 }

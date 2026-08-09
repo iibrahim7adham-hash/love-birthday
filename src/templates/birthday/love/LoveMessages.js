@@ -130,8 +130,9 @@ function fadeOutFactor(y, fadeOutY) {
 }
 
 export default class LoveMessages {
-  constructor(scene) {
+  constructor(scene, audio) {
     this.scene = scene;
+    this.audio = audio;
     this.group = new THREE.Group();
     this.scene.add(this.group);
 
@@ -139,6 +140,7 @@ export default class LoveMessages {
     // system moves, fades, or even spends its staggered starting age
     // (see resetItem's randomizeAge) until the heart is done forming.
     this.sceneTime = 0;
+    this.hasTriggeredStart = false;
 
     // Every unique sentence's texture is created exactly once here and
     // referenced (never copied or regenerated) by however many pooled
@@ -262,6 +264,11 @@ export default class LoveMessages {
     // rather than having all drifted forward in lockstep while
     // waiting.
     if (this.sceneTime < MESSAGE_START_DELAY) return;
+
+    if (!this.hasTriggeredStart) {
+      this.hasTriggeredStart = true;
+      this.audio.trigger("messages:start");
+    }
 
     this.items.forEach((item) => {
       item.age += delta;
