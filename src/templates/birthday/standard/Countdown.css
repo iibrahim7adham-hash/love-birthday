@@ -1,0 +1,71 @@
+#standard-countdown {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding:
+    max(20px, env(safe-area-inset-top))
+    max(20px, env(safe-area-inset-right))
+    max(20px, env(safe-area-inset-bottom))
+    max(20px, env(safe-area-inset-left));
+
+  background: transparent;
+
+  /* Nothing in this screen is interactive — no button, no dismiss —
+     so there's no reason for it to intercept pointer events at all. */
+  pointer-events: none;
+}
+
+/* The same visual language as StartScreen.css's own atmosphere (a soft
+   Baby Pink pool of light with a faint warm undertone at the center —
+   see StandardPalette.js's own STANDARD_ACCENT_PINK, kept in sync here
+   by hand since CSS can't import it) — kept as its own declaration
+   rather than a shared class so this stage never has to reach into
+   Step 1's own CSS/DOM to render itself. */
+.standard-countdown-atmosphere {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+  opacity: 0; /* sequence-driven */
+
+  background:
+    radial-gradient(
+      ellipse min(46vw, 380px) min(30vh, 240px) at 50% 48%,
+      rgba(255, 178, 140, 0.05),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse min(64vw, 560px) min(46vh, 420px) at 50% 50%,
+      rgba(246, 182, 204, 0.17),
+      rgba(30, 15, 20, 0.08) 55%,
+      transparent 80%
+    );
+}
+
+.standard-countdown-number {
+  position: relative;
+
+  /* Dominant on mobile without ever filling the screen — 22vw on a
+     375px phone is ~82px; capped at 180px so it stays well short of
+     "fills the screen" on any desktop size. */
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: clamp(72px, 22vw, 180px);
+  line-height: 1;
+
+  color: #fff8f5;
+
+  /* Same restrained glow intensity already used for the START button's
+     own hover state — belongs to the same visual language rather than
+     introducing a new, stronger glow just for the numbers. */
+  text-shadow:
+    0 0 30px rgba(246, 182, 204, 0.5),
+    0 0 70px rgba(217, 130, 165, 0.22);
+
+  opacity: 0; /* sequence-driven */
+}

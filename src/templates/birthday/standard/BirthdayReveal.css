@@ -1,0 +1,136 @@
+/* Positioned near the TOP of the viewport (not centered like
+   BirthdayMessage/Countdown's own full-screen overlays) — this stage
+   coexists with the cake, so it deliberately leaves the lower ~2/3 of
+   the frame clear. The padding-top value below was tuned against actual
+   screenshots across desktop/tablet/mobile so the text's own bottom
+   edge sits comfortably above the candle flames' typical on-screen
+   position — see BirthdayReveal.js's own top-of-file comment. */
+#standard-birthday-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding-top: max(clamp(40px, 8vh, 96px), env(safe-area-inset-top));
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+
+  pointer-events: none;
+}
+
+.standard-reveal-particles {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+}
+
+/* Same centered-via-top/left/margin technique BirthdayMessage.css's own
+   .standard-birthday-particle already establishes — size is randomized
+   per-particle in JS, so it's set inline rather than here. */
+.standard-reveal-particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.standard-reveal-text {
+  position: relative;
+  text-align: center;
+
+  max-width: min(94vw, 640px);
+}
+
+/* "Happy Birthday" — the dominant line, in the project's one existing
+   script/cursive system-font stack (see love/LoveIntro.css's own
+   font-family — reused here rather than adding a new font, since the
+   project loads no custom fonts at all). Baby Pink with a warm ivory
+   inner highlight — see StandardPalette.js's own STANDARD_ACCENT_PINK/
+   STANDARD_IVORY, kept in sync here by hand since CSS can't import
+   them. */
+.standard-reveal-main {
+  margin: 0;
+
+  font-family: "Segoe Script", "Brush Script MT", "Lucida Handwriting", cursive;
+  font-weight: 400;
+  /* The floor was 32px — for every mobile width this project targets,
+     7.6vw undershoots it (e.g. 390px * 7.6% ≈ 30px), and for every
+     desktop/laptop/tablet width it overshoots the 66px ceiling (e.g.
+     1024px * 7.6% ≈ 78px) — so in practice this clamp was just a binary
+     "32px on phones, 66px everywhere else" switch, a ~2x jump that
+     doesn't track how the 3D scene's own responsive scale behaves (see
+     cake/CakeResponsive.js's own getResponsiveSizeScale() — the same
+     fix applied to the balloons/fireworks). Raised so mobile keeps
+     reading as the same dominant title relative to the cake instead of
+     visibly shrinking on its own — capped at 37px rather than pushed
+     further, since "Happy Birthday" in this cursive face wraps onto a
+     second line inside the container's own max-width (see
+     .standard-reveal-text) above that, at the narrowest viewport this
+     project targets (390px) — confirmed by screenshot, not guessed. */
+  font-size: clamp(37px, 7.6vw, 66px);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+
+  color: #f6b6cc;
+  text-shadow:
+    0 0 16px rgba(255, 248, 245, 0.55),
+    0 0 42px rgba(246, 182, 204, 0.35);
+}
+
+/* "to You" — roughly half the main line's own size, per the brief's own
+   45-60% hierarchy target. The project's established elegant-serif
+   identity (see BirthdayMessage.css/Countdown.css/StartScreen.css's own
+   font-family) rather than the script face, so the two lines read as a
+   deliberate dominant/secondary pair instead of two competing styles. */
+.standard-reveal-sub {
+  margin: clamp(2px, 1vh, 10px) 0 0;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 400;
+  /* Same reasoning as .standard-reveal-main's own comment — raised floor
+     so it doesn't shrink dramatically relative to the main line/cake on
+     mobile, kept at the same ~56% ratio to the main line's own new
+     37px floor. */
+  font-size: clamp(19px, 3.8vw, 33px);
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+
+  color: #ffe4ec;
+  text-shadow:
+    0 0 12px rgba(255, 248, 245, 0.45),
+    0 0 28px rgba(246, 182, 204, 0.25);
+}
+
+/* Each letter is its own inline-block span so GSAP's own `stagger`
+   option can reveal them left-to-right as one tween call (see
+   BirthdayReveal.js's own playSequence()) — the closest practical
+   approximation of true stroke-by-stroke writing with a system-font DOM
+   text node. Plain space characters between words are left as ordinary
+   text nodes (not wrapped), so normal inline flow still wraps at word
+   boundaries if a line ever needs to (never mid-word) — the brief's own
+   "gracefully scale down rather than clip" fallback. */
+.standard-reveal-letter {
+  display: inline-block;
+  opacity: 0; /* sequence-driven */
+}
+
+/* The small glowing point that sweeps across each line in sync with its
+   own letter reveal, plus one dimmer trailing echo (see
+   BirthdayRevealConstants.js's own comment) — both positioned via GSAP
+   x/y transform from a shared (0,0) anchor at the text wrapper's own
+   top-left, measured fresh per line right before its own sweep. */
+.standard-reveal-tracer {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff8f5 0%, rgba(246, 182, 204, 0.6) 55%, rgba(246, 182, 204, 0) 100%);
+
+  opacity: 0; /* sequence-driven */
+  pointer-events: none;
+}

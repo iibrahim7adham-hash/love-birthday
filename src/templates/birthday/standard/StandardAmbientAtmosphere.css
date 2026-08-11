@@ -1,0 +1,141 @@
+/* Persistent background atmosphere — constructed once by
+   StandardScene.js and never destroyed until the whole experience tears
+   down, so it survives every stage (Start Screen, countdown, cake
+   reveal, celebration, fireworks...) rather than being recreated or
+   destroyed per stage. A DOM overlay, not 3D geometry (see
+   StandardAmbientAtmosphere.js's own comment on why), so it needs a
+   z-index low enough to stay behind every other overlay (the title,
+   buttons, floating text all sit at z-index 850+) but still above the
+   canvas.webgl element itself (which has no z-index, i.e. z-index:auto —
+   see src/style.css) so it's actually visible over the 3D scene rather
+   than hidden behind its opaque background. */
+#standard-ambient-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+
+  pointer-events: none;
+  opacity: 0; /* fades in once, driven by StartScreen.js's own entrance timeline — then simply stays */
+
+  background:
+    radial-gradient(ellipse 46vw 32vh at 16% 20%, rgba(147, 112, 178, 0.07), transparent 72%),
+    radial-gradient(ellipse 50vw 36vh at 86% 78%, rgba(216, 150, 180, 0.06), transparent 74%),
+    radial-gradient(ellipse 40vw 30vh at 80% 12%, rgba(120, 90, 150, 0.055), transparent 68%),
+    radial-gradient(ellipse 42vw 32vh at 12% 82%, rgba(180, 130, 160, 0.05), transparent 70%),
+    radial-gradient(
+      ellipse min(46vw, 380px) min(30vh, 240px) at 50% 48%,
+      rgba(255, 178, 140, 0.05),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse min(64vw, 560px) min(46vh, 420px) at 50% 50%,
+      rgba(246, 182, 204, 0.13),
+      rgba(30, 15, 20, 0.06) 55%,
+      transparent 80%
+    );
+}
+
+.standard-ambient-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.standard-ambient-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff8f5;
+  opacity: 0;
+  animation-name: standard-ambient-star-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes standard-ambient-star-twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.75);
+  }
+  50% {
+    opacity: var(--peak-opacity, 0.5);
+    transform: scale(1);
+  }
+}
+
+/* The "medium glowing star" tier — the same dot as .standard-ambient-star,
+   plus a soft box-shadow halo so a handful of stars read as noticeably
+   brighter than the (much more numerous) plain tiny/small dots. */
+.standard-ambient-star--glow {
+  box-shadow: 0 0 6px 1px var(--glow-color, rgba(255, 248, 245, 0.6));
+}
+
+/* The "elegant 4-point sparkle" tier — reuses the same glyph
+   StartScreen.js's own decorative .standard-start-mark already uses
+   (START_MARK, "✦"). */
+.standard-ambient-star-cross {
+  position: absolute;
+  line-height: 1;
+  opacity: 0;
+  text-shadow: 0 0 8px currentColor;
+  animation-name: standard-ambient-star-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.standard-ambient-heart {
+  position: absolute;
+  color: rgba(246, 182, 204, 0.6);
+  line-height: 1;
+  opacity: 0;
+  animation-name: standard-ambient-heart-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes standard-ambient-heart-drift {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  15% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.55;
+  }
+  85% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.standard-ambient-dust {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  animation-name: standard-ambient-dust-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes standard-ambient-dust-drift {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  20% {
+    opacity: 0.5;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(6px, -22px);
+  }
+}

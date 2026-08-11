@@ -1,0 +1,105 @@
+#standard-birthday-message {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding:
+    max(20px, env(safe-area-inset-top))
+    max(20px, env(safe-area-inset-right))
+    max(20px, env(safe-area-inset-bottom))
+    max(20px, env(safe-area-inset-left));
+
+  background: transparent;
+
+  /* Nothing here is interactive — same reasoning as Countdown.css. */
+  pointer-events: none;
+}
+
+/* A single warm pool of light behind the phrase — a deliberate bridge
+   from Countdown's own pink-accented atmosphere toward the cake's own
+   warm palette (see BirthdayMessageConstants.js's own comment on why),
+   so the whole stage reads as the transition between the two. */
+.standard-birthday-atmosphere {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+  opacity: 0; /* sequence-driven */
+
+  background: radial-gradient(
+    ellipse min(60vw, 480px) min(40vh, 320px) at 50% 50%,
+    rgba(255, 200, 150, 0.14),
+    rgba(255, 170, 120, 0.05) 55%,
+    transparent 80%
+  );
+}
+
+.standard-birthday-particles {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+}
+
+/* Each dot is centered on the container via top/left/margin (set
+   inline, since size is randomized per-particle in JS), with GSAP's own
+   x/y transform driving the actual drift from/to that center point —
+   see BirthdayMessage.js's own _buildParticles(). */
+.standard-birthday-particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.standard-birthday-phrase {
+  position: relative;
+  margin: 0;
+
+  display: flex;
+  flex-wrap: wrap; /* graceful fallback on narrow viewports rather than clipping/overflow */
+  justify-content: center;
+  align-items: baseline;
+  gap: clamp(8px, 2vw, 16px);
+
+  max-width: min(92vw, 620px);
+  text-align: center;
+}
+
+.standard-birthday-word {
+  color: #fff8f5;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(28px, 7.5vw, 58px);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+
+  /* Warm gold inner glow (unchanged) plus a very subtle Baby Pink outer
+     layer — see StandardPalette.js's own STANDARD_ACCENT_PINK, kept in
+     sync here by hand since CSS can't import it — so the phrase already
+     carries a hint of the template's own accent identity. */
+  text-shadow:
+    0 0 26px rgba(255, 214, 170, 0.5),
+    0 0 60px rgba(246, 182, 204, 0.2);
+
+  opacity: 0; /* sequence-driven */
+}
+
+/* Slightly less dominant than the words themselves, per the brief —
+   present and glowing, but never competing with "Happy Birthday" for
+   attention. Soft Baby Pink rather than gold, so the sparkles carry the
+   template's own accent identity while the words themselves stay
+   neutral warm ivory. */
+.standard-birthday-sparkle {
+  color: #f6b6cc;
+  font-size: clamp(18px, 4.6vw, 34px);
+  line-height: 1;
+
+  text-shadow: 0 0 20px rgba(246, 182, 204, 0.5);
+
+  opacity: 0; /* sequence-driven */
+}

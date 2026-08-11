@@ -1,0 +1,63 @@
+/* Positioned directly underneath the cake — see
+   StandardCandleBlowout.js's own top-of-file comment for how this
+   top offset was tuned against actual screenshots, the same empirical
+   approach BirthdayReveal.css's own padding-top already used. Only the
+   button itself is interactive (pointer-events re-enabled on it below)
+   — this wrapper stays inert so it never blocks clicks elsewhere. */
+#standard-candle-blowout {
+  position: fixed;
+  inset: 0;
+  z-index: 890; /* below BirthdayReveal's own 900 — this sits under the cake, well clear of the title */
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding-top: max(clamp(360px, 68vh, 620px), env(safe-area-inset-top));
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+
+  pointer-events: none;
+}
+
+/* Same pill/dark-translucent visual language StartScreen.css's own
+   .standard-start-button already establishes (border-radius: 999px,
+   rgba(8,16,30,x) interior, dual-layer glow box-shadow) — see
+   StandardPalette.js's own STANDARD_ACCENT_PINK/STANDARD_IVORY, kept in
+   sync here by hand since CSS can't import them. Deliberately smaller
+   than the start button ("should not be huge, should not compete with
+   the cake"). transform/box-shadow are entirely GSAP-owned (see
+   StandardCandleBlowout.js's own hover/press handling) — never a CSS
+   :hover transform here, the same reasoning StartScreen.css's own
+   comment documents (mixing GSAP and CSS on the same property means
+   whichever runs last silently wins). */
+.standard-blowout-button {
+  position: relative;
+  pointer-events: auto;
+
+  padding: clamp(10px, 1.6vh, 15px) clamp(22px, 5vw, 38px);
+
+  border-radius: 999px;
+  border: 1px solid rgba(246, 182, 204, 0.5);
+  background: rgba(8, 16, 30, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+
+  color: #fff8f5;
+  font-family: "Geeza Pro", "Damascus", "Traditional Arabic", "Arabic Typesetting", "Noto Naskh Arabic", Tahoma, serif;
+  font-size: clamp(15px, 3vw, 19px);
+  font-weight: 500;
+
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+
+  box-shadow:
+    0 0 16px rgba(246, 182, 204, 0.3),
+    0 0 40px rgba(248, 201, 217, 0.12);
+
+  opacity: 0; /* entrance-driven */
+}
+
+.standard-blowout-button:disabled {
+  cursor: default;
+}

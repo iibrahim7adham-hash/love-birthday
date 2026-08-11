@@ -1,0 +1,26 @@
+/* Floating romantic/birthday phrases — a light DOM overlay above the
+   canvas, the same "position: fixed, pointer-events: none" pattern
+   BirthdayReveal.css's own #standard-birthday-reveal already uses.
+   Never intercepts clicks (the blow-out button, etc). */
+#standard-floating-text {
+  position: fixed;
+  inset: 0;
+  z-index: 850; /* below the title/button overlays, above the canvas */
+  pointer-events: none;
+}
+
+.standard-floating-phrase {
+  position: absolute;
+  transform: translate(-50%, -50%);
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(13px, 2.1vw, 21px);
+  white-space: nowrap;
+
+  opacity: 0; /* sequence-driven */
+  text-shadow:
+    0 0 10px rgba(255, 248, 245, 0.5),
+    0 0 22px currentColor;
+}
