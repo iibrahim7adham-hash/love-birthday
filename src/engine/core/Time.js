@@ -5,6 +5,11 @@ export default class Time {
     this.elapsed = 0;
     this.delta = 0;
 
+    // Bound once, reused for every requestAnimationFrame call below —
+    // `requestAnimationFrame(() => this.update())` would otherwise
+    // allocate a brand-new arrow function every single frame, forever.
+    this._boundUpdate = () => this.update();
+
     this.update();
   }
 
@@ -19,6 +24,6 @@ export default class Time {
       this.onTick();
     }
 
-    requestAnimationFrame(() => this.update());
+    requestAnimationFrame(this._boundUpdate);
   }
 }

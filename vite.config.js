@@ -1,15 +1,16 @@
 import { defineConfig } from "vite";
 
 // `mode` comes from the --mode flag each npm script passes (see
-// package.json's dev:luxury / dev:standard / build:luxury /
-// build:standard). It's how VITE_TEMPLATE gets into import.meta.env via
-// .env.luxury / .env.standard, and it's also used here so building both
-// templates doesn't have one overwrite the other's dist/ folder.
-export default defineConfig(({ mode }) => ({
+// package.json's dev:luxury / build:luxury / dev:love / build:love /
+// dev:standard / build:standard). It's how VITE_TEMPLATE gets into
+// import.meta.env via .env.luxury / .env.love / .env.standard. Every
+// template currently shares the same default `dist/` outDir — a
+// previous version of this file special-cased one template's own
+// outDir so it wouldn't collide with the others' `dist/`; the reason
+// to reintroduce that would be a template that genuinely needs to
+// coexist with an already-built one rather than replace it.
+export default defineConfig(() => ({
   assetsInclude: ["**/*.glb"],
-  build: {
-    outDir: mode === "standard" ? "dist-standard" : "dist",
-  },
   css: {
     // This project has no PostCSS plugins (no Tailwind, no
     // autoprefixer, nothing) — but without an explicit config, Vite's
