@@ -37,6 +37,8 @@ import {
   FLOATING_TEXT_SCALE_MAX,
   FLOATING_TEXT_PEAK_OPACITY_MIN,
   FLOATING_TEXT_PEAK_OPACITY_MAX,
+  FLOATING_TEXT_COLLISION_PADDING,
+  FLOATING_TEXT_PLACEMENT_MAX_ATTEMPTS,
 } from "./StandardFloatingTextConstants";
 
 // A pooled, gradually-introduced layer of short romantic/birthday
@@ -73,7 +75,7 @@ export default class StandardFloatingText {
       const el = document.createElement("div");
       el.className = "standard-floating-phrase";
       this.element.appendChild(el);
-      this.pool.push({ el, lastPhrase: null });
+      this.pool.push({ el, lastPhrase: null, active: false });
     }
   }
 
@@ -104,6 +106,73 @@ export default class StandardFloatingText {
     return { left, top };
   }
 
+  // This slot's own current rendered box, expanded by the glow padding
+  // on every side — the actual measured box (not a fixed guess), so a
+  // long sentence naturally claims more space than a short one.
+  _paddedRect(el) {
+    const r = el.getBoundingClientRect();
+    return {
+      left: r.left - FLOATING_TEXT_COLLISION_PADDING,
+      right: r.right + FLOATING_TEXT_COLLISION_PADDING,
+      top: r.top - FLOATING_TEXT_COLLISION_PADDING,
+      bottom: r.bottom + FLOATING_TEXT_COLLISION_PADDING,
+    };
+  }
+
+  _rectsOverlap(a, b) {
+    return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+  }
+
+  // Places `slot`'s already-set phrase (el.textContent must already be
+  // current) at a position from the same loose elliptical ring
+  // _pickPosition() draws from, retrying until it finds one whose
+  // MEASURED bounding box (via getBoundingClientRect, so real text
+  // length/font-size is respected) doesn't overlap any other currently
+  // visible slot's own padded box. Falls back to the least-overlapping
+  // candidate tried if the ring is too crowded to ever find a clean
+  // spot — bounded, so this can never hang.
+  _pickNonOverlappingPosition(slot) {
+    const otherRects = this.pool.filter((s) => s !== slot && s.active).map((s) => this._paddedRect(s.el));
+
+    if (otherRects.length === 0) {
+      const { left, top } = this._pickPosition();
+      slot.el.style.left = `${left}vw`;
+      slot.el.style.top = `${top}vh`;
+      return;
+    }
+
+    let fallback = null;
+    let fallbackOverlapArea = Infinity;
+
+    for (let attempt = 0; attempt < FLOATING_TEXT_PLACEMENT_MAX_ATTEMPTS; attempt++) {
+      const { left, top } = this._pickPosition();
+      slot.el.style.left = `${left}vw`;
+      slot.el.style.top = `${top}vh`;
+      const candidate = this._paddedRect(slot.el);
+
+      let totalOverlapArea = 0;
+      for (const rect of otherRects) {
+        if (this._rectsOverlap(candidate, rect)) {
+          const overlapW = Math.min(candidate.right, rect.right) - Math.max(candidate.left, rect.left);
+          const overlapH = Math.min(candidate.bottom, rect.bottom) - Math.max(candidate.top, rect.top);
+          totalOverlapArea += overlapW * overlapH;
+        }
+      }
+
+      if (totalOverlapArea === 0) return; // left/top are already applied — done.
+
+      if (totalOverlapArea < fallbackOverlapArea) {
+        fallbackOverlapArea = totalOverlapArea;
+        fallback = { left, top };
+      }
+    }
+
+    // Every attempt overlapped something (only possible if the pool is
+    // packed tighter than the ring can cleanly fit) — use the least-bad one.
+    slot.el.style.left = `${fallback.left}vw`;
+    slot.el.style.top = `${fallback.top}vh`;
+  }
+
   _pickPhrase(slot) {
     let phrase = FLOATING_TEXT_PHRASES[Math.floor(Math.random() * FLOATING_TEXT_PHRASES.length)];
     // A single reroll if it repeats the same slot's own last phrase —
@@ -123,7 +192,6 @@ export default class StandardFloatingText {
   // the same way.
   _runCycle(slot) {
     const { el } = slot;
-    const { left, top } = this._pickPosition();
     const color = FLOATING_TEXT_COLORS[Math.floor(Math.random() * FLOATING_TEXT_COLORS.length)];
     const scale = gsap.utils.random(FLOATING_TEXT_SCALE_MIN, FLOATING_TEXT_SCALE_MAX);
     const rotation = gsap.utils.random(FLOATING_TEXT_ROTATION_MIN, FLOATING_TEXT_ROTATION_MAX);
@@ -134,13 +202,20 @@ export default class StandardFloatingText {
     const fadeOutDuration = gsap.utils.random(FLOATING_TEXT_FADE_OUT_DURATION_MIN, FLOATING_TEXT_FADE_OUT_DURATION_MAX);
 
     el.textContent = this._pickPhrase(slot);
-    el.style.left = `${left}vw`;
-    el.style.top = `${top}vh`;
     el.style.color = color;
+    // Neutral transform while we measure/choose a spot — matches the
+    // settled (peak-scale) footprint closely (scale only ranges
+    // 0.85–1.15) without last cycle's leftover y/rotation skewing the
+    // measured box.
+    gsap.set(el, { rotation: 0, y: 0, scale: 1 });
+    slot.active = true;
+    this._pickNonOverlappingPosition(slot);
+
     gsap.set(el, { opacity: 0, scale: scale * 0.92, y: floatDistance * 0.4, rotation });
 
     const tl = gsap.timeline({
       onComplete: () => {
+        slot.active = false;
         const delay = gsap.utils.random(FLOATING_TEXT_RECYCLE_DELAY_MIN, FLOATING_TEXT_RECYCLE_DELAY_MAX);
         this._timers.push(gsap.delayedCall(delay, () => this._runCycle(slot)));
       },

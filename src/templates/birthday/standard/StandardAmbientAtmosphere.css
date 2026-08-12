@@ -84,33 +84,69 @@
   animation-iteration-count: infinite;
 }
 
+/* A custom two-lobe heart (rounded-top rectangle, mirrored) built from
+   pseudo-elements sized in % of the span's own --heart-size box — not a
+   glyph, so it has no dependency on any platform's emoji font and takes
+   fill color/glow like any other shape in this file. */
 .standard-ambient-heart {
   position: absolute;
-  color: rgba(246, 182, 204, 0.6);
-  line-height: 1;
+  width: var(--heart-size, 12px);
+  height: var(--heart-size, 12px);
   opacity: 0;
+  transform: rotate(var(--heart-rotate, 0deg));
   animation-name: standard-ambient-heart-drift;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
 
+.standard-ambient-heart::before,
+.standard-ambient-heart::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 55%;
+  height: 85%;
+  background: var(--heart-color, rgba(246, 182, 204, 0.7));
+  border-radius: 100% 100% 0 0;
+}
+
+.standard-ambient-heart::before {
+  left: 50%;
+  transform: rotate(-45deg);
+  transform-origin: 0% 100%;
+}
+
+.standard-ambient-heart::after {
+  left: 0;
+  transform: rotate(45deg);
+  transform-origin: 100% 100%;
+}
+
+/* Only some hearts get this modifier (see StandardAmbientAtmosphere.js)
+   — a soft, low-radius halo matching .standard-ambient-star--glow's own
+   glow language, not a neon effect. */
+.standard-ambient-heart--glow::before,
+.standard-ambient-heart--glow::after {
+  box-shadow: 0 0 var(--heart-glow-blur, 5px) 0 var(--heart-glow-color, rgba(246, 182, 204, 0.45));
+}
+
 @keyframes standard-ambient-heart-drift {
   0% {
     opacity: 0;
-    transform: translateY(0);
+    transform: rotate(var(--heart-rotate, 0deg)) translateY(0);
   }
   15% {
-    opacity: 0.4;
+    opacity: calc(var(--peak-opacity, 0.55) * 0.73);
   }
   50% {
-    opacity: 0.55;
+    opacity: var(--peak-opacity, 0.55);
   }
   85% {
     opacity: 0;
   }
   100% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: rotate(var(--heart-rotate, 0deg)) translateY(-20px);
   }
 }
 

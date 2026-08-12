@@ -57,6 +57,18 @@ export const FLOATING_TEXT_RADIUS_Y_MAX = 22;
 export const FLOATING_TEXT_LEFT_BOUNDS = [3, 97];
 export const FLOATING_TEXT_TOP_BOUNDS = [7, 95];
 
+// Collision avoidance — see StandardFloatingText.js's own
+// _pickNonOverlappingPosition(). PADDING is extra breathing room added
+// around each phrase's own MEASURED (rendered) bounding box on every
+// side, so its soft text-shadow glow doesn't visually run into a
+// neighboring phrase's glow even when their actual text boxes don't
+// quite touch. MAX_ATTEMPTS bounds the random retry search — generous
+// relative to the max 4 simultaneous phrases (desktop pool size) so a
+// non-overlapping spot is found almost every time, with a
+// least-overlap fallback if it somehow never is (see the function).
+export const FLOATING_TEXT_COLLISION_PADDING = 20; // px
+export const FLOATING_TEXT_PLACEMENT_MAX_ATTEMPTS = 30;
+
 export const FLOATING_TEXT_BREAKPOINT_MOBILE = 560;
 export const FLOATING_TEXT_BREAKPOINT_TABLET = 900;
 

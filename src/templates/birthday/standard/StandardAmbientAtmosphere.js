@@ -123,15 +123,35 @@ export default class StandardAmbientAtmosphere {
       container.appendChild(cross);
     }
 
+    // Custom two-lobe CSS shape (no glyph/emoji font involved) — a bare
+    // Unicode "❤" used to sit here, but color emoji glyphs ignore the
+    // CSS `color` property entirely and their intrinsic proportions
+    // differ per platform's emoji font (Apple/Android/Windows), which is
+    // exactly why the old hearts read as flat system-red and inconsistent
+    // in size across devices. Sized purely in px via --heart-size (see
+    // .standard-ambient-heart in the CSS), so it renders pixel-identical
+    // everywhere.
+    const heartColors = [
+      "rgba(246, 182, 204, 0.75)", // dusty rose
+      "rgba(232, 168, 178, 0.7)", // muted rose
+      "rgba(255, 214, 214, 0.72)", // pale pink
+      "rgba(214, 122, 132, 0.68)", // subtle warm red
+    ];
     const heartCount = isMobile ? 3 : 5;
     for (let i = 0; i < heartCount; i++) {
       const { left, top } = this._randomPosition({ avoidCenter: true });
       const heart = document.createElement("span");
       heart.className = "standard-ambient-heart";
-      heart.textContent = "❤";
+      if (i % 2 === 0) heart.classList.add("standard-ambient-heart--glow");
+      const color = heartColors[i % heartColors.length];
       heart.style.left = `${left}%`;
       heart.style.top = `${top}%`;
-      heart.style.fontSize = `${gsap.utils.random(8, 15).toFixed(1)}px`;
+      heart.style.setProperty("--heart-size", `${gsap.utils.random(8, 15).toFixed(1)}px`);
+      heart.style.setProperty("--heart-color", color);
+      heart.style.setProperty("--heart-glow-color", color);
+      heart.style.setProperty("--heart-glow-blur", `${gsap.utils.random(4, 7).toFixed(1)}px`);
+      heart.style.setProperty("--heart-rotate", `${gsap.utils.random(-9, 9).toFixed(1)}deg`);
+      heart.style.setProperty("--peak-opacity", gsap.utils.random(0.4, 0.62).toFixed(2));
       heart.style.animationDuration = `${gsap.utils.random(9, 15).toFixed(1)}s`;
       heart.style.animationDelay = `${gsap.utils.random(0, 10).toFixed(1)}s`;
       container.appendChild(heart);
