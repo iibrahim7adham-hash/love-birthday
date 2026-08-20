@@ -1,0 +1,200 @@
+/* A thin gold double-line frame around the whole viewport, fixed in
+   place so it stays flush with the screen edges regardless of scroll —
+   the "printed invitation card" border. Purely decorative: no pointer
+   events, sits above every section (Hero, Event Details, ...) since it
+   reads as the edge of the page itself, not part of any one section. */
+.ali-muneer-page-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.ali-muneer-page-frame::before,
+.ali-muneer-page-frame::after {
+  content: "";
+  position: absolute;
+  border: 3px solid rgba(200, 169, 107, 0.6);
+}
+
+/* Outer line, close to the true edge. Top/bottom add the device's own
+   safe-area inset (notch/Dynamic Island/status bar at the top, home
+   indicator at the bottom — both 0 on a device without one, so this is
+   a no-op there) on top of the usual 10px margin, via `max()`, so the
+   border never sits underneath that chrome — the "clips into the top
+   status bar" bug on iPhones happens precisely because a plain 10px
+   inset is well inside that zone on notched devices. Requires
+   `viewport-fit=cover` on the page's own <meta name="viewport"> (see
+   index.html) — without it `env(safe-area-inset-*)` always resolves to
+   0 and this degrades to the same plain 10px every side had before. */
+.ali-muneer-page-frame::before {
+  top: max(10px, env(safe-area-inset-top, 0px));
+  right: 10px;
+  bottom: max(10px, env(safe-area-inset-bottom, 0px));
+  left: 10px;
+}
+
+/* Inner hairline, a few px in — fainter, so the pair reads as an
+   engraved double-rule rather than a thick single stripe. */
+.ali-muneer-page-frame::after {
+  top: max(16px, calc(env(safe-area-inset-top, 0px) + 6px));
+  right: 16px;
+  bottom: max(16px, calc(env(safe-area-inset-bottom, 0px) + 6px));
+  left: 16px;
+  border-width: 1px;
+  border-color: rgba(200, 169, 107, 0.3);
+}
+
+@media (max-width: 600px) {
+  .ali-muneer-page-frame::before {
+    top: max(6px, env(safe-area-inset-top, 0px));
+    right: 6px;
+    bottom: max(6px, env(safe-area-inset-bottom, 0px));
+    left: 6px;
+    border-width: 2px;
+  }
+
+  .ali-muneer-page-frame::after {
+    top: max(11px, calc(env(safe-area-inset-top, 0px) + 5px));
+    right: 11px;
+    bottom: max(11px, calc(env(safe-area-inset-bottom, 0px) + 5px));
+    left: 11px;
+  }
+}
+
+/* ---- Corner filigrees — one motif (see CORNER_MOTIF_SVG in
+   PageFrame.js) stamped once and mirrored via CSS transforms for the
+   other three corners, same technique the persistent Background layer
+   already uses for its own four marble corners (see
+   .ali-muneer-bg-marble--tr/--bl/--br in Background.css). Anchored a
+   couple px outside the double-line border's own top-left corner so it
+   reads as growing out of the frame rather than floating separately. */
+.ali-muneer-page-frame-corner {
+  position: absolute;
+  width: clamp(58px, 11vw, 96px);
+  height: clamp(58px, 11vw, 96px);
+}
+
+.ali-muneer-page-frame-corner-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* top/bottom add the device's own safe-area inset on top of the usual
+   4px, same reasoning as .ali-muneer-page-frame::before/::after above
+   — keeps the corner ornament itself clear of the notch/status bar or
+   home indicator instead of sitting partly underneath it. */
+.ali-muneer-page-frame-corner--tl {
+  top: max(4px, env(safe-area-inset-top, 0px));
+  left: 4px;
+}
+
+.ali-muneer-page-frame-corner--tr {
+  top: max(4px, env(safe-area-inset-top, 0px));
+  right: 4px;
+  transform: scaleX(-1);
+}
+
+.ali-muneer-page-frame-corner--bl {
+  bottom: max(4px, env(safe-area-inset-bottom, 0px));
+  left: 4px;
+  transform: scaleY(-1);
+}
+
+.ali-muneer-page-frame-corner--br {
+  bottom: max(4px, env(safe-area-inset-bottom, 0px));
+  right: 4px;
+  transform: scale(-1, -1);
+}
+
+@media (max-width: 600px) {
+  .ali-muneer-page-frame-corner {
+    width: clamp(46px, 17vw, 64px);
+    height: clamp(46px, 17vw, 64px);
+  }
+
+  .ali-muneer-page-frame-corner--tl,
+  .ali-muneer-page-frame-corner--tr {
+    top: max(2px, env(safe-area-inset-top, 0px));
+  }
+
+  .ali-muneer-page-frame-corner--bl,
+  .ali-muneer-page-frame-corner--br {
+    bottom: max(2px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .ali-muneer-page-frame-corner--tl,
+  .ali-muneer-page-frame-corner--bl {
+    left: 2px;
+  }
+
+  .ali-muneer-page-frame-corner--tr,
+  .ali-muneer-page-frame-corner--br {
+    right: 2px;
+  }
+}
+
+/* ---- Top/bottom centerpiece — sits straddling the outer border line
+   (same 10px inset as .ali-muneer-page-frame::before), centered
+   horizontally, well clear of both the corner filigrees and the
+   vertically-centered Opening/Envelope content in the middle of the
+   screen. */
+.ali-muneer-page-frame-ornament {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 1.6vw, 14px);
+}
+
+.ali-muneer-page-frame-ornament--top {
+  top: max(10px, env(safe-area-inset-top, 0px));
+  translate: 0 -50%;
+}
+
+.ali-muneer-page-frame-ornament--bottom {
+  bottom: max(10px, env(safe-area-inset-bottom, 0px));
+  translate: 0 50%;
+}
+
+.ali-muneer-page-frame-ornament-line {
+  width: clamp(50px, 9vw, 100px);
+  height: 1px;
+  background: linear-gradient(to right, transparent, #c8a96b, transparent);
+  opacity: 0.7;
+}
+
+.ali-muneer-page-frame-medallion-svg {
+  display: block;
+  width: clamp(30px, 5.6vw, 44px);
+  height: auto;
+  flex: none;
+  filter: drop-shadow(0 1px 1.5px rgba(45, 25, 5, 0.2));
+}
+
+@media (max-width: 600px) {
+  .ali-muneer-page-frame-ornament {
+    gap: clamp(5px, 2vw, 8px);
+  }
+
+  .ali-muneer-page-frame-ornament--top {
+    top: max(6px, env(safe-area-inset-top, 0px));
+  }
+
+  .ali-muneer-page-frame-ornament--bottom {
+    bottom: max(6px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .ali-muneer-page-frame-ornament-line {
+    width: clamp(22px, 8vw, 40px);
+  }
+
+  .ali-muneer-page-frame-medallion-svg {
+    width: clamp(22px, 7vw, 30px);
+  }
+}

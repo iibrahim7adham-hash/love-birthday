@@ -1,0 +1,62 @@
+/* Part 17/18 — the DENSE, CONTINUOUS heart-rain + growing pile
+   celebration, a separate layer sitting above everything else
+   (including HeartField's own ongoing background hearts, which this
+   never touches).
+
+   The heart shape below is the exact same silhouette as the scene's
+   own existing background hearts (two circular lobes + a bottom wedge
+   — see heartburst/HeartTextures.js's own getHeartTexture(), same 128x128
+   coordinate space, just re-expressed as an SVG path/circles instead of
+   canvas draw calls since this layer is DOM, not Three.js). Defined
+   ONCE here and reused via mask-image on every heart element below —
+   never a per-heart texture — with each heart's own color coming from
+   a plain background-color showing through the shared mask, the same
+   "one shared shape, tint via color" approach the 3D system itself
+   already uses. */
+#boom-heartfall {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  pointer-events: none;
+  overflow: hidden;
+
+  --boom-heart-shape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Cpath d='M64 112.64 12.8 53.76 64 38.4 115.2 53.76Z'/%3E%3Ccircle cx='37.12' cy='44.8' r='28.16'/%3E%3Ccircle cx='90.88' cy='44.8' r='28.16'/%3E%3C/svg%3E");
+}
+
+/* Part 19 — the accumulation canvas: every SETTLED heart is baked into
+   this one shared bitmap (see FinalHeartFall.js's own _bakeSettledHeart())
+   instead of remaining a live DOM element, so a pile of hundreds/thousands
+   of hearts costs the compositor nothing beyond a single static layer.
+   Sits below the active (falling/settling) heart elements, which are
+   still plain DOM/CSS as before. */
+.boom-heartfall-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* A FIXED pool of these — see FinalHeartFall.js. Position/rotation/
+   opacity are all written directly as an inline transform by the JS
+   rAF loop (falling, then settling onto the pile), not by a CSS
+   animation — a heart's landing moment depends on the pile's current
+   height, which only JS tracks. `left` is set once per heart (its
+   falling column baseline); everything else moves via `transform`. */
+.boom-heartfall-heart {
+  position: absolute;
+  top: 0;
+  left: var(--left);
+  width: var(--size);
+  height: var(--size);
+  background-color: var(--color);
+
+  -webkit-mask-image: var(--boom-heart-shape);
+  mask-image: var(--boom-heart-shape);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  opacity: 0;
+  will-change: transform, opacity;
+}

@@ -1,0 +1,1177 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Playfair+Display:ital,wght@1,500&family=Amiri:wght@400&family=Aref+Ruqaa:wght@400;700&display=swap");
+
+/* Fixed, centered overlay — sits above the WebGL canvas (z-index: auto,
+   see src/style.css) the same way every other template's own DOM
+   overlay already does (e.g. boom/reveal/Reveal.css). Purely a
+   positioning wrapper; every animated property below lives on
+   .am-envelope-3d or its own children instead, so nothing here ever
+   fights GSAP for the same CSS property. */
+#am-envelope {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  pointer-events: none;
+
+  /* Gives .am-envelope-3d's own dismissal translateZ (see _dismiss() in
+     Envelope.js) real depth foreshortening instead of a flat, invisible
+     shift — .am-envelope-3d's own `perspective` only governs ITS
+     children, not its own transform. .am-envelope-close-btn is
+     `position: fixed` so it escapes this containing block untouched. */
+  perspective: 1400px;
+
+  /* Shared fractal-noise grain tile — an irregular fiber texture (not
+     a mechanical repeating dot grid) so every paper surface below
+     reads as tactile matte stock rather than printed leatherette.
+     Declared once on the shared ancestor and consumed via var() by
+     .am-envelope-back/-pocket/-flap/-card below, each at its own
+     tile size/opacity for that surface's own material weight. */
+  --am-paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Idle nudge telling the visitor where to tap — sits just beneath the
+   wax seal, on the envelope's own front face (a sibling of the card/
+   pocket layers, never a descendant of .am-envelope-card). Anchored off
+   the same --seal-size + top offset the seal itself uses (below), so it
+   tracks the seal's own responsive position instead of a fixed offset.
+   Fades in once the envelope settles into its floating idle state (see
+   _settle()/_becomeClosed() in Envelope.js), and — critically — carries
+   the exact same transition timing as .am-envelope-seal's own Phase-1
+   break (transform 0.3s / opacity 0.3s, same easing) so toggling
+   .is-open fades both out together as one motion, not two. */
+.am-envelope-hint {
+  position: absolute;
+  top: calc(35.96% + (var(--seal-size) / 2) + 10px);
+  left: 50%;
+  z-index: 4; /* above the pocket (3), below the flap (5) and seal (10) */
+
+  margin: 0;
+  white-space: nowrap;
+  color: #000;
+  /* Plain Amiri body text (same face the rest of the invitation's own
+     copy uses, e.g. RSVP_INTRO_TEXT) rather than a cursive calligraphy
+     face — a plain, ordinary nudge, not an ornamented one. */
+  font-family: "Amiri", Georgia, serif;
+  font-size: clamp(0.78rem, 2vw, 0.95rem);
+  letter-spacing: 0.3px;
+  /* A warm gold glow halo around the now-black text — several stacked
+     blur radii (tight/mid/wide) rather than one shadow, so it reads as
+     genuine soft light bleeding off the letters instead of a single
+     hard outline. The glow itself pulses via am-envelope-hint-glow
+     below, alongside the existing opacity pulse. */
+  text-shadow:
+    0 0 4px rgba(255, 215, 130, 0.9),
+    0 0 10px rgba(255, 195, 90, 0.65),
+    0 0 20px rgba(255, 195, 90, 0.35);
+
+  opacity: 0;
+  transform: translate(-50%, -4px);
+  pointer-events: none;
+  cursor: default;
+
+  transition:
+    transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+    opacity 0.3s ease;
+}
+
+/* Only clickable while actually shown — matches the seal's own
+   `disabled` gating (see _settle()/_handleOpen() in Envelope.js) so the
+   hint can never be tapped mid-transition or while the envelope is
+   open. */
+.am-envelope-hint.is-visible {
+  opacity: 0.85;
+  transform: translate(-50%, 0);
+  animation:
+    am-envelope-hint-pulse 2s ease-in-out infinite,
+    am-envelope-hint-glow 2s ease-in-out infinite;
+
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.am-envelope-hint.is-visible:hover,
+.am-envelope-hint.is-visible:focus-visible {
+  opacity: 1;
+}
+
+.am-envelope-3d.is-open .am-envelope-hint {
+  opacity: 0;
+  transform: translate(-50%, -4px) scale(1.15);
+}
+
+@keyframes am-envelope-hint-pulse {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* Same 2s cycle as the opacity pulse above (kept as two separate
+   animations rather than merged, since they animate different
+   properties) — the glow visibly breathes brighter/wider at the
+   midpoint, reading as the gold light around the letters actively
+   flaring rather than a static halo. */
+@keyframes am-envelope-hint-glow {
+  0%,
+  100% {
+    text-shadow:
+      0 0 4px rgba(255, 215, 130, 0.9),
+      0 0 10px rgba(255, 195, 90, 0.65),
+      0 0 20px rgba(255, 195, 90, 0.35);
+  }
+  50% {
+    text-shadow:
+      0 0 7px rgba(255, 227, 155, 1),
+      0 0 16px rgba(255, 205, 100, 0.85),
+      0 0 32px rgba(255, 205, 100, 0.55);
+  }
+}
+
+/* "غلق الصفحة" — only shown once the card has fully finished its
+   forward approach (see _becomeOpen()/_showCloseButton()/_handleClose()
+   in Envelope.js, which gate .is-visible on that approach transition's
+   own transitionend). A sibling of .am-envelope-3d (not nested inside
+   it, since that box's own `filter` would otherwise trap this
+   fixed-position element inside its bounds instead of the viewport) —
+   a true viewport overlay that never sits inside the card's own flex
+   layout/content. */
+.am-envelope-close-btn {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  z-index: 50;
+  transform: translateX(-50%) translateY(8px);
+
+  margin: 0;
+  padding: 0.6em 1.6em;
+  border: 1px solid rgba(180, 130, 30, 0.7);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #fff8dc 0%, #d4af37 50%, #aa771c 100%);
+
+  color: #4a3410;
+  font-family: "Amiri", Georgia, serif;
+  font-size: clamp(0.75rem, 1.7vw, 0.9rem);
+  letter-spacing: 0.5px;
+
+  cursor: pointer;
+  pointer-events: none;
+  opacity: 0;
+
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.am-envelope-close-btn.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.am-envelope-close-btn:hover,
+.am-envelope-close-btn:focus-visible {
+  filter: brightness(1.06);
+}
+
+.am-envelope-3d {
+  /* Shared with .am-envelope-seal and .am-envelope-hint below — defined
+     here (their common ancestor) so both can size/position off the same
+     value via var() instead of duplicating the clamp(). */
+  --seal-size: clamp(46px, 11%, 50px);
+
+  position: relative;
+  width: clamp(220px, 42vw, 420px);
+  aspect-ratio: 3 / 2;
+
+  /* So the flap's rotateX renders as a real hinge opening away from the
+     viewer instead of a flat vertical squash. */
+  perspective: 1000px;
+  /* Clips anything (corner ornaments, pocket triangles) from leaking
+     past the envelope's own rounded edges. */
+  overflow: hidden;
+
+  opacity: 0; /* entrance-driven */
+  pointer-events: none;
+
+  /* Dispersed ambient-occlusion shadow beneath the whole envelope — one
+     soft neutral pass plus a warmer, tighter pass tinted toward the
+     gold trim so the envelope reads as resting on the scene, not
+     pasted over it. */
+  filter: drop-shadow(0 25px 35px rgba(0, 0, 0, 0.15))
+    drop-shadow(0 10px 15px rgba(180, 140, 60, 0.1));
+
+  /* Matches .am-envelope-back's radius so the box-shadow below (and
+     this element's own box outline) reads as one unified rounded
+     rect, not a sharp-cornered shadow around a rounded card. */
+  border-radius: 4px;
+  /* Refined multi-layer ambient elevation shadow lifting the whole
+     envelope off the scene — a broad neutral pass plus a tighter,
+     warm-tinted pass toward the gold trim. Independent of the
+     drop-shadow filter above (that one hugs the envelope's actual
+     silhouette; this one is the container's own box-shadow). */
+  box-shadow:
+    0 24px 48px -12px rgba(0, 0, 0, 0.22),
+    0 8px 18px -4px rgba(180, 140, 60, 0.12);
+
+  /* Outer line of the double-line gold frame — the element's own real
+     border, so (per stacking rules) it always paints at the very edge
+     of the box, outside where the inset:0 paper layers below render,
+     and can never be covered by them. box-sizing is border-box (see
+     the global reset in src/style.css), so this doesn't change the
+     envelope's own footprint. */
+  border: 1px solid rgba(212, 175, 55, 0.55);
+}
+
+/* Inner line of the frame — a plain positioned child (not the
+   element's own border) needs an explicit z-index or the opaque paper
+   layers below (.am-envelope-back/-pocket/-flap/-card, all z-index 1-3
+   and inset:0) would paint over it despite the smaller inset. Set high
+   enough to clear every layer inside .am-envelope-3d, including the
+   seal (z-index: 10) — harmless since this is pointer-events:none and
+   only ever touches the box's own edges, never the centered seal/card
+   artwork. Spaced close to the outer border (2px apart) for the "two
+   thin lines" look rather than a wide double frame. */
+.am-envelope-3d::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  z-index: 20;
+  border: 1px solid rgba(212, 175, 55, 0.32);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* Idle breathing float — bobs ±6px and tilts ±1deg on X/Y over a 4s
+   ease-in-out loop. Applied only once the entrance tween has finished
+   writing to this element's transform (see _settle()/_becomeClosed()
+   in Envelope.js) and removed the instant the seal is clicked, so it
+   never fights the opening/closing GSAP timelines for the same
+   property. */
+@keyframes am-envelope-float {
+  0%,
+  100% {
+    transform: translateY(0) rotateX(0deg) rotateY(0deg);
+  }
+  25% {
+    transform: translateY(-6px) rotateX(1deg) rotateY(1deg);
+  }
+  75% {
+    transform: translateY(6px) rotateX(-1deg) rotateY(-1deg);
+  }
+}
+
+.am-envelope-3d.is-floating {
+  animation: am-envelope-float 4s ease-in-out infinite;
+}
+
+/* Once open, the card (Step D below) rises past the envelope's own top
+   edge — switch to visible so that rise isn't clipped by the overflow
+   guard above. Nothing else in the composition extends past the box's
+   own bounds, so lifting the clip here has no effect on anything but
+   the rising card. */
+.am-envelope-3d.is-open {
+  overflow: visible;
+}
+
+/* ---- Layer 1 — envelope interior base. ---- */
+.am-envelope-back {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+
+  border-radius: 4px;
+  /* Deep Imperial desert/dark-camel — the same material as the flap
+     (below), so the whole envelope reads as one cohesive surface
+     instead of a two-tone split between flap and body. The shared
+     fractal-noise grain (--am-paper-grain, see #am-envelope above)
+     gives it an irregular matte parchment fiber instead of the old
+     mechanical repeating-dot leatherette pattern; multiply blend lets
+     the camel base color show through the grain rather than sitting
+     as a flat gray wash on top of it. */
+  background-image:
+    var(--am-paper-grain), linear-gradient(160deg, #eadab4 0%, #eadab4 100%);
+  background-size:
+    170px 170px,
+    100% 100%;
+  background-blend-mode: multiply, normal;
+  /* Bold double gold inset frame: a thick 3.75px hot-stamped-foil outer
+     line on the envelope's own outer edge (border-image, since a plain
+     `border-color` can't carry a gradient), a clean 8px channel of
+     bare paper, then a 1.75px gold hairline traced further inward via
+     a negative outline-offset (an outline sits outside the border box
+     without affecting layout, so it reads as a second parallel line
+     rather than a second border). Both brightened slightly over the
+     previous lighter-paper values so the foil still pops with the same
+     contrast now that the paper itself reads darker. */
+  border: 3.75px solid transparent;
+  border-image: linear-gradient(
+      135deg,
+      #fff9d6 0%,
+      #eac564 35%,
+      #ab7d1e 70%,
+      #f9ec9e 100%
+    )
+    1;
+  outline: 1.75px solid rgba(180, 130, 30, 0.85);
+  outline-offset: -11.75px;
+  /* High-contrast foil definition — a crisp dark sepia edge shadow
+     beneath, a bright specular catch above — so the thick gold lines
+     pop vividly against the darker camel paper instead of blending
+     into it. */
+  filter: drop-shadow(0 1.5px 2px rgba(40, 20, 0, 0.55))
+    drop-shadow(0 -0.5px 1px rgba(255, 255, 255, 0.8));
+
+  /* Deeper ambient body for the darker paper — a single broad inset
+     wash (replacing the previous separate top-light/bottom-dark inset
+     pair) so the whole plate reads as uniformly denser material, plus
+     a heavier outer elevation pass. */
+  box-shadow:
+    inset 0 0 15px rgba(45, 30, 10, 0.2),
+    0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* ---- Layer 1.5 — the blank invitation card resting inside the
+   envelope. Slightly narrower than the envelope itself (9% inset each
+   side, vs. the envelope's own edges) so it visibly fits inside the
+   pocket rather than spanning edge-to-edge. z-index 2 keeps it behind
+   everything that constructs the closed envelope's front face — the
+   flap (z-index 5), and the corner/pocket triangles (3) — so at rest
+   nothing of the card shows past those layers.
+
+   Delay matches the flap's own rotation end (0.15s delay + 0.6s
+   duration = 0.75s, see .am-envelope-flap below) so the rise never
+   starts until the flap has fully finished opening. A smooth ease-out
+   over 0.9s (no scale, no fade, no rotation — `transform` is the only
+   thing that moves the card) carries it continuously to its temporary
+   visible position, never jumping or teleporting — none of that timing
+   changes below. `will-change: transform` hints the browser to
+   pre-promote this layer since it's the longest-running, most visually
+   prominent piece of the whole open sequence (and later gets
+   `translateZ` too, in the near-approach step below) — without it,
+   weaker mobile GPUs can visibly stutter at the start of the rise.
+
+   Layering: z-index stays at 2 (behind the pocket's 3) for the first
+   part of the rise, so the card is still visually swallowed by the
+   pocket while it's mostly still inside the envelope — then flips to
+   above everything once it has risen far enough to have physically
+   cleared the pocket's own silhouette (its highest reach, the
+   left/right triangles' apex, sits at the envelope's vertical
+   midpoint). That flip is an instant (0s) z-index change timed via
+   transition-delay to land late in the same 0.9s rise (not a new
+   animation, not a timing change to the rise itself), so the pocket
+   never stays drawn over the card after it has emerged. */
+.am-envelope-card {
+  position: absolute;
+  z-index: 2;
+  left: 9%;
+  right: 9%;
+  top: 14%;
+  bottom: 10%;
+  box-sizing: border-box;
+  /* Bottom-anchored so the final state's slight scale-up (below) grows
+     the card upward from where it meets the pocket, instead of from
+     its own center — it reads as settling taller out of the envelope
+     rather than inflating in place. */
+  transform-origin: 50% 100%;
+
+  border-radius: 3px;
+  background-color: #ffffff; /* plain white card stock */
+  /* Outer elevation (unchanged role) plus a subtle inset pair — a soft
+     dark line just inside the top/left edge and a soft light line
+     just inside the bottom/right edge — reading as a thick, pressed
+     paper edge catching light, not a flat rectangle. */
+  box-shadow:
+    0 8px 18px rgba(40, 25, 10, 0.28),
+    inset 1px 1px 2px rgba(74, 55, 40, 0.12),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.9);
+
+  transform: translateY(0) scale(1);
+  will-change: transform;
+  transition:
+    transform 0.9s cubic-bezier(0.25, 0.1, 0.25, 1) 0.75s,
+    z-index 0s linear 1.15s;
+}
+
+/* Final revealed position only — same transition above, no timing
+   change. Rises just enough to clear the pocket and rest with its
+   lower half still overlapping the envelope's own frame (instead of
+   floating high above it with a bare gap underneath), so it reads as
+   a card that has been drawn up out of the pocket and is now resting
+   against it, not hovering unrelated to the envelope. A restrained
+   1.06 scale (not the disallowed mid-rise scale — this is the resting
+   endpoint only) gives it a touch more presence as the focal object,
+   and the envelope's gold frame/corners stay uncovered below so the
+   envelope itself is still clearly recognizable. */
+.am-envelope-3d.is-open .am-envelope-card {
+  z-index: 6; /* above the flap (1) and pockets/corners (3) */
+  transform: translateY(-46%) scale(1.06);
+}
+
+/* ---- Step E — once the card has fully cleared the envelope (rise
+   above complete), bring it further toward the viewer along actual
+   camera-space depth (translateZ, using the perspective already set
+   on the parent .am-envelope-3d) rather than a flat scale bump, so it
+   reads as the card physically approaching rather than inflating.
+   Triggered by JS only once the rise's own transitionend has fired
+   (see _becomeOpen() in Envelope.js) — this rule's own `transition`
+   overrides the rise's, so it doesn't inherit that transition's 0.75s
+   delay and starts moving immediately. The perspective-driven
+   magnification is a ratio (1000 / (1000 - 480)), not an absolute
+   pixel size, so it stays proportionally consistent across the
+   responsive envelope's clamp()-driven sizes instead of overshooting
+   on small viewports.
+
+   translateY is -6% here, not the rise's own -46% — perspective
+   magnifies a point's distance from the vanishing point (this box's
+   perspective-origin, its own untouched 50%/50% center), and the
+   risen card sits well above that center, so translateZ alone would
+   drag it even further up instead of just growing it in place. -33%
+   was the exact math-corrected value to land back on the plain rise's
+   own on-screen center (see .am-envelope-3d.is-open .am-envelope-card
+   above); pulled down further still, to -6%, so the zoomed card rests
+   noticeably lower/more centered in the viewport rather than crowding
+   the top edge — and, at -6%, close enough to the vanishing point
+   itself that translateZ/scale can both be pushed further for a
+   bigger card with only mild extra drift. */
+.am-envelope-3d.is-open.is-card-near .am-envelope-card {
+  transform: translateY(4%) translateZ(480px) scale(1.14);
+  transition: transform 0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* ---- Minimalist gold corner accent — a small four-pointed sparkle
+   sitting right at the card's own outer edge, with two thin hairlines
+   trailing along the horizontal/vertical axes into a tiny terminal
+   dot. One artwork authored once for the top-left; the top-right
+   reuses it via `transform: scaleX(-1)`, the same mirroring
+   convention .am-invite-floral--right already uses elsewhere in this
+   file. */
+.am-invite-star-corner {
+  position: absolute;
+  top: 1.5%;
+  width: clamp(30px, 16%, 46px);
+  height: clamp(30px, 16%, 46px);
+  pointer-events: none;
+}
+
+.am-invite-star-corner--tl {
+  left: 2.5%;
+}
+
+.am-invite-star-corner--tr {
+  right: 2.5%;
+  transform: scaleX(-1);
+}
+
+.am-invite-star-corner--bl {
+  top: auto;
+  bottom: 1.5%;
+  left: 2.5%;
+  transform: scaleY(-1);
+}
+
+.am-invite-star-corner--br {
+  top: auto;
+  bottom: 1.5%;
+  right: 2.5%;
+  transform: scale(-1, -1);
+}
+
+.am-invite-star-corner-mark {
+  fill: #c19f62;
+}
+
+.am-invite-star-corner-line {
+  stroke: #c19f62;
+  stroke-width: 0.85;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+/* Inner parallel hairline — same double-line convention as
+   .am-flap-trim-primary/secondary elsewhere in this file: a thinner,
+   fainter second stroke set slightly inward of the primary line. */
+.am-invite-star-corner-line--secondary {
+  stroke-width: 0.4;
+  opacity: 0.55;
+}
+
+.am-invite-star-corner-dot {
+  fill: #c19f62;
+}
+
+/* ---- The top crest — an ornate 8-petal gold rosette with layered
+   cutout detailing and thin swirling flourishes trailing to either
+   side, centered exactly on the arch's own peak. Positioned
+   independently of the arch's own (non-uniformly stretched) viewBox so
+   its proportions stay true regardless of the panel's aspect ratio,
+   straddling the arch's outer hairline the same way the reference's
+   crest sits half on/half above the point. Wide (220x60) viewBox, so
+   width/height are no longer equal like the old square 4-petal mark. */
+.am-invite-crest {
+  position: absolute;
+  top: 7%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(70px, 24%, 112px);
+  height: auto;
+  pointer-events: none;
+}
+
+/* ---- Step 3 (revised) — the side floral accents: a single fine-line
+   botanical branch (a slender stem + a fan of narrow lanceolate
+   leaves, each with its own curved center vein, plus a couple of
+   small paired buds and a closed bud at the tip — an olive/eucalyptus
+   sprig rather than the earlier blocky almond leaves) defined once
+   via <defs>/<use> in each SVG, anchored to the card's own left/right
+   edges and vertically centered. The right side reuses the exact same
+   artwork rather than a hand-mirrored copy — flipped purely via
+   `transform: scaleX(-1)` below — so the two are guaranteed to be
+   true mirror images of one another. Sized and inset independently of
+   .am-invite-arch/.am-invite-text (a narrower box hugging just the
+   card's edges) so the branch reads as flanking the arch panel from
+   outside it, never crowding the copy inside. z-index 1 keeps it
+   above the plain ivory card background but below the invitation copy
+   (z-index 2, set on .am-invite-text below) per spec. The single
+   warm, tight drop-shadow (the same treatment .am-envelope-corner's
+   own gold filigree already uses elsewhere in this file) gives the
+   whole sprig a pressed/embossed-foil finish instead of flat vector
+   art. */
+.am-invite-floral {
+  position: absolute;
+  bottom: 3%;
+  width: 26%;
+  height: 38%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: visible;
+  filter: drop-shadow(0 1px 1.5px rgba(45, 25, 5, 0.3));
+}
+
+.am-invite-floral--left {
+  left: -1%;
+}
+
+.am-invite-floral--right {
+  right: -1%;
+  transform: scaleX(-1);
+}
+
+.am-invite-floral-stem {
+  stroke: #c19f62;
+  stroke-width: 0.7;
+}
+
+.am-invite-floral-blade {
+  fill: #263a33;
+  stroke: #c19f62;
+  stroke-width: 0.4;
+}
+
+.am-invite-floral-vein {
+  stroke: #c19f62;
+  stroke-width: 0.3;
+  opacity: 0.75;
+}
+
+.am-invite-floral-bud-tip {
+  fill: #263a33;
+  stroke: #c19f62;
+  stroke-width: 0.4;
+}
+
+.am-invite-floral-buds circle {
+  fill: #c19f62;
+}
+
+/* ---- Bottom-left corner branch only (am-invite-floral--left) — a
+   Gold and White palette: ivory leaves (gold-edged) and matte-gold
+   leaves along thin gold stems, closing in tiny gold berry clusters,
+   distinct from the plain single-tone blade used by the right-side
+   sprig (.am-invite-floral-blade above, left untouched). */
+.am-invite-floral-stem--offshoot {
+  stroke-width: 0.5;
+  opacity: 0.9;
+}
+
+.am-invite-floral-blade-cream {
+  fill: #f9f6f0;
+  stroke: #c19f62;
+  stroke-width: 0.45;
+}
+
+.am-invite-floral-blade-sage {
+  fill: #c19f62;
+  stroke: #aa7c11;
+  stroke-width: 0.25;
+  opacity: 0.95;
+}
+
+.am-invite-floral-berry {
+  fill: #c19f62;
+}
+
+/* ---- Step 2 — the invitation copy, laid out inside the same box as
+   the arch outline above (matching inset/width/height) so every line
+   sits within the frame rather than against a separately-defined box.
+   A vertical flex column, RTL, centered both axes; the 50px top
+   padding clears the crest emblem sitting at the arch's own peak. ---- */
+.am-invite-text {
+  position: absolute;
+  inset: 6%;
+  width: 88%;
+  height: 100%;
+  box-sizing: border-box;
+  z-index: 2;
+
+  /* Single source of scale for every line below (all sized in em off
+     this one value) — tracks the exact same clamp() curve as
+     .am-envelope-3d's own width (clamp(220px, 42vw, 420px), scaled by
+     a fixed ~0.0357 ratio) so the whole text block stays locked to the
+     envelope's actual rendered size at any viewport instead of each
+     line drifting on its own independent vw curve. This is what keeps
+     the layout reading identically (same proportions) on every
+     device, not just individually "responsive". */
+  font-size: clamp(8px, 1.6vw, 15px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.55em;
+  padding: 2.3em 6% 3.8em 6%;
+  direction: rtl;
+  overflow: hidden;
+
+  pointer-events: none;
+}
+
+/* ---- The names row — "علي منير رمزي" and "سمية غانم احمد" side by
+   side with "على الآنسة" between them, instead of stacked as separate
+   lines. A dedicated horizontal wrapper nested inside the outer
+   vertical .am-invite-text column, so only this section breaks from
+   the column flow. gap/flex-wrap use clamp()/wrap as a narrow-card
+   safety net (same overflow guard the rest of this panel already
+   relies on) — the row still reads as one line at the sizes this
+   panel actually renders at. */
+.am-invite-names-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4em;
+  direction: rtl;
+  width: 100%;
+}
+
+/* Thin gold vertical rule between each item in the names row — a plain
+   inline element sized off the row's own line-height (1em tall), so it
+   never affects the surrounding text's own font-size/margin/padding. */
+.am-invite-name-divider {
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  background: #c19f62;
+  opacity: 0.55;
+}
+
+/* Every line below is sized purely in em, off .am-invite-text's own
+   single font-size clamp() above — no independent vw curves — so
+   these ratios (and therefore the whole panel's proportions) stay
+   identical across every viewport/device. */
+.am-invite-line,
+.am-invite-name,
+.am-invite-divider {
+  margin: 0;
+  font-family: "Amiri", Georgia, serif;
+  line-height: 1.3;
+}
+
+.am-invite-line {
+  color: #263a33;
+  font-size: 0.58em;
+}
+
+.am-invite-line--small {
+  font-size: 0.5em;
+}
+
+.am-invite-name {
+  color: #c19f62;
+  font-size: 0.95em;
+  font-weight: 700;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+}
+
+/* Highlights the host's name inline within .am-invite-line — same
+   Matte Gold + embossed drop-shadow as .am-invite-name above, but
+   inherits its surrounding line's own font-size/weight rather than
+   .am-invite-name's, since it sits inside a sentence, not standing as
+   its own line. */
+.am-invite-host-name {
+  color: #c19f62;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+}
+
+.am-invite-divider {
+  color: #c19f62;
+  font-size: 0.5em;
+  letter-spacing: 0.5px;
+  opacity: 0.85;
+  margin: -0.15em 0;
+}
+
+/* Minimalist gold calendar glyph sitting directly above the date line —
+   a plain new sibling in the flex column, sized off the same em scale
+   as the surrounding copy, so it never touches the date text's own
+   properties. */
+.am-invite-calendar-icon {
+  flex-shrink: 0;
+  width: 1.1em;
+  height: 1.1em;
+  color: #c19f62;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.9;
+  margin-bottom: -0.1em;
+}
+
+/* ---- Date row — flanks the calendar/date group with a thin gold ring
+   glyph on each side (groom's ring on the right, bride's on the left,
+   per this section's RTL DOM order) so the pair reads as sitting under
+   the two names above. .am-invite-date-group keeps the calendar icon
+   and date line stacked exactly as before; only the horizontal ring
+   flanking is new. ---- */
+.am-invite-date-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1.6em;
+  width: 100%;
+}
+
+.am-invite-date-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55em;
+}
+
+.am-invite-ring-icon {
+  flex-shrink: 0;
+  width: 1.7em;
+  height: auto;
+}
+
+/* Bright metallic catch-light traced along the upper-left curve of
+   each band, giving the thick gradient-filled band its rounded,
+   polished volume instead of reading as a flat ring. */
+.am-invite-ring-shine {
+  fill: none;
+  stroke: #fff8e4;
+  stroke-width: 0.8;
+  stroke-linecap: round;
+  opacity: 0.7;
+}
+
+/* Tiny pave/diamond flecks along each band's outer top arc. */
+.am-invite-ring-pave {
+  fill: #fff6da;
+}
+
+/* ---- Corner filigree — 4 embossed winged-leaf flourish emblems
+   anchored just inside the inner gold hairline (the double-frame's
+   6px channel above), one SVG per corner (each is the same top-left
+   artwork, mirrored via transform for the other 3) so only one shape
+   needs to be authored. Same champagne gold gradient as the border/
+   flap trim (Part 3). z-index matches the front pocket borders
+   (.am-envelope-pocket, z-index: 3) per spec. ---- */
+.am-envelope-corner {
+  position: absolute;
+  z-index: 3;
+  width: 38px;
+  height: 38px;
+  pointer-events: none;
+  /* Crisp raised 3D emboss: a tight, warm-dark micro-shadow beneath the
+     vector strokes so the flourish reads as struck/pressed gold
+     rather than flat color. */
+  filter: drop-shadow(0 1.5px 2px rgba(45, 25, 5, 0.4));
+}
+
+.am-envelope-corner--tl {
+  top: 9px;
+  left: 9px;
+  transform: scale(1.1);
+}
+
+.am-envelope-corner--tr {
+  top: 9px;
+  right: 9px;
+  transform: scale(-1.1, 1.1);
+}
+
+.am-envelope-corner--bl {
+  bottom: 9px;
+  left: 9px;
+  transform: scale(1.1, -1.1);
+}
+
+.am-envelope-corner--br {
+  bottom: 9px;
+  right: 9px;
+  transform: scale(-1.1, -1.1);
+}
+
+/* ---- Layer 3 — the front pocket: a single solid panel (same sand
+   material as the envelope back below it — the same texture and gold
+   frame, per spec) that sits in front of the card and hides it while
+   the envelope is closed, instead of the old three-piece white
+   triangle-fold construction. z-index sits above the card (2) and
+   below the flap (5) so the card is tucked behind this layer while
+   the flap is closed. Covers the full envelope box so it fully hides
+   the card underneath, and reads as one seamless piece with the back
+   plate rather than a patchwork of distinct folds.
+
+   The card only rises 58% of its own height (see .am-envelope-card),
+   so once open it doesn't fully overlap the pocket's own footprint —
+   z-order alone would still leave the pocket exposed below/around the
+   card. So the pocket also fades out, timed to the exact same instant
+   the card flips in front of it (0s opacity change via the same
+   1.15s transition-delay used for the card's z-index swap — no new
+   timing introduced), so it reads as gone the moment the card has
+   passed it rather than lingering visibly over the revealed card. */
+.am-envelope-pocket {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  box-sizing: border-box;
+
+  border-radius: 4px;
+  /* Same sand material + shared parchment grain as
+     .am-envelope-back/.am-envelope-flap. */
+  background-image:
+    var(--am-paper-grain), linear-gradient(160deg, #eadab4 0%, #eadab4 100%);
+  background-size:
+    170px 170px,
+    100% 100%;
+  background-blend-mode: multiply, normal;
+  /* Same double gold inset frame as .am-envelope-back. */
+  border: 3.75px solid transparent;
+  border-image: linear-gradient(
+      135deg,
+      #fff9d6 0%,
+      #eac564 35%,
+      #ab7d1e 70%,
+      #f9ec9e 100%
+    )
+    1;
+  outline: 1.75px solid rgba(180, 130, 30, 0.85);
+  outline-offset: -11.75px;
+
+  filter: drop-shadow(0 2px 3px rgba(60, 45, 10, 0.18));
+
+  opacity: 1;
+  transition: opacity 0s linear 1.15s;
+}
+
+.am-envelope-3d.is-open .am-envelope-pocket {
+  opacity: 0;
+}
+
+/* ---- Layer 3 — the triangular top flap. Folds down to closed
+   (rotateX(0)) and unfolds up/back to open (rotateX(180deg)), hinged
+   at its own top edge. ---- */
+.am-envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 58%;
+  z-index: 5;
+
+  /* Deep parabolic-scoop flap — a single continuous two-arm cubic-
+     Bezier path mask starting exactly at the top-left outer corner
+     (0,0) and ending exactly at the top-right outer corner (100,0),
+     no inset ledge, flat segment, or diagonal shoulder at either end
+     — the curve itself is the only thing touching the corner, so
+     there's nothing left to "ghost" into a second line there. Apex
+     sits at local y=65 of this 0-100 box; the flap itself is 58% of
+     the envelope's height, so that apex lands at 0.65 * 58% = 37.7%
+     down the envelope. viewBox is a unitless 0-100 square with
+     preserveAspectRatio="none" so the curve scales with the flap's
+     actual box at any width/height. */
+  --am-flap-curve: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M 0,0 C 15,40 35,65 50,65 C 65,65 85,40 100,0 Z' fill='%23fff'/%3E%3C/svg%3E");
+  -webkit-mask-image: var(--am-flap-curve);
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-image: var(--am-flap-curve);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+
+  /* Same deep Imperial desert/dark-camel material as the base (above)
+     — still fully opaque, concealing the pockets and seams underneath
+     while closed, but no longer a distinct tone from the rest of the
+     envelope. Carries the same shared parchment-grain layer as
+     .am-envelope-back so the flap and pocket read as one continuous
+     stock, not a flap that's textured differently from the body. */
+  background-image:
+    var(--am-paper-grain), linear-gradient(160deg, #eadab4 0%, #eadab4 100%);
+  background-size:
+    170px 170px,
+    100% 100%;
+  background-blend-mode: multiply, normal;
+  border-top: 1px solid rgba(221, 179, 90, 0.55);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.4),
+    inset 0 -2px 6px rgba(90, 60, 25, 0.25),
+    inset 0 -1px 0 rgba(221, 179, 90, 0.35);
+  /* Single unified crease/separation shadow cast from the flap's own
+     clipped V silhouette (via drop-shadow, not box-shadow, so it hugs
+     the curved mask contour instead of the flap's rectangular box),
+     so it naturally follows the descending diagonal edges onto the
+     pocket below without bleeding as a rectangle. Warm tone
+     (rgba(50, 30, 5, ...)), not pure black, so it reads as soft
+     stationery-paper occlusion rather than a harsh graphic shadow. */
+  filter: drop-shadow(0 5px 8px rgba(50, 30, 5, 0.2));
+
+  transform-origin: top; /* = 50% 0% — top hinge, per spec */
+  transform: rotateX(0deg);
+  backface-visibility: hidden;
+  will-change: transform;
+
+  /* Sequence Part 2 (0.15s-0.75s): the flap flips open 180deg on its
+     top hinge, rendered as a real 3D hinge (not a flat squash) by the
+     `perspective` set on the parent .am-envelope-3d. Its z-index only
+     needs to drop behind the pocket once it has rotated roughly past
+     90deg — a 0s z-index transition with a delay landing at that
+     halfway point gives the same "swap partway through" effect as an
+     explicit angle check, without needing JS to watch the rotation.
+     The crease/separation shadow (this element's `filter`) swaps
+     instantly alongside the z-index rather than easing — animating
+     `filter` (a non-compositor property) at the same time as the 3D
+     `rotateX` below is what was making the flip read as heavy/janky,
+     especially on weaker mobile GPUs; a plain snap is invisible here
+     since it happens once the flap is already edge-on to the camera.
+     This transition's end (0.75s) is the exact start time of the
+     card's own rise below — Part 3 only begins once this rotation is
+     fully done. */
+  transition:
+    transform 0.6s cubic-bezier(0.25, 1, 0.5, 1) 0.15s,
+    filter 0s linear 0.45s,
+    z-index 0s linear 0.45s;
+}
+
+.am-envelope-3d.is-open .am-envelope-flap {
+  transform: rotateX(180deg);
+  z-index: 1; /* behind the envelope pocket, out of the way */
+  filter: drop-shadow(0 2px 8px rgba(45, 30, 10, 0.12));
+}
+
+/* A crisp 2.5px metallic gold stroke tracing only the flap's two
+   descending diagonal edges (left apex-bound + right apex-bound), not
+   the top edge — the top hinge line stays a plain, subtle 1px border
+   (below) with no heavy gold banding. The path is one continuous line
+   (M0,0 -> apex -> M100,0), so both diagonals meet cleanly at the
+   apex — right where the wax seal sits — with no disjointed corner.
+   Plain CSS borders can't trace a clip-path's diagonal cut, so the
+   trim is an SVG path stretched to the flap's own box via
+   preserveAspectRatio="none" — its coordinates mirror the clip-path
+   polygon above exactly. vector-effect="non-scaling-stroke" keeps the
+   line at a true 2.5px regardless of the flap's responsive size. */
+.am-envelope-flap-trim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Outer flap border — a debossed foil-stamp bevel: a bright rim
+   highlight on the lower edge (the wall of the press catching light on
+   its way back up to the paper surface), a tighter dark shadow on the
+   upper edge (the near wall, in its own shade), and a soft, wider
+   ambient shadow beneath the whole line so it genuinely reads as
+   struck slightly into the paper rather than printed flat on top of
+   it. Same three-layer treatment as .am-envelope-flap-monogram below,
+   just tuned for this stroke's own 2.5px weight. */
+.am-flap-trim-primary {
+  filter: drop-shadow(0 1px 1px rgba(255, 250, 230, 0.65))
+    drop-shadow(0 -1.2px 1.4px rgba(60, 35, 10, 0.55))
+    drop-shadow(0 2px 3px rgba(50, 28, 8, 0.25));
+}
+
+/* Inner flap inset — sharp 0.75px hairline, inset 8px inward from the
+   primary curve. Same debossed bevel as the primary line above, just
+   scaled down so it still reads as struck gold with real recessed
+   depth without going muddy on a stroke this thin. */
+.am-flap-trim-secondary {
+  filter: drop-shadow(0 0.6px 0.6px rgba(255, 250, 230, 0.55))
+    drop-shadow(0 -0.7px 0.8px rgba(60, 35, 10, 0.4))
+    drop-shadow(0 1px 1.5px rgba(50, 28, 8, 0.18));
+}
+
+/* Intertwined "SA" monogram + laurel crescent arch, centered on the
+   flap and anchored in its upper half — well clear of the apex/wax
+   seal below. Same champagne gold gradient as the border, corner
+   filigree, and flap trim (Parts 3-4). */
+.am-envelope-flap-monogram {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: clamp(64px, 19%, 82px);
+  aspect-ratio: 80 / 66;
+
+  z-index: 1;
+  pointer-events: none;
+
+  /* Same three-layer debossed bevel as the flap trim above (bright
+     lower rim, dark upper edge, soft ambient sink shadow beneath) —
+     slightly stronger offsets than the trim's own since the letterforms
+     are a bigger, denser shape than a hairline stroke and need more
+     contrast to read as genuinely struck into the paper rather than
+     flat printed color. Paired with the animated shimmer overlay (see
+     am-flap-monogram-shimmer in Envelope.js) for the "catches the
+     light" half of the foil-stamp look — this filter alone only gives
+     the static physical depth. */
+  filter: drop-shadow(0 1.2px 1px rgba(255, 250, 230, 0.7))
+    drop-shadow(0 -1.2px 1.2px rgba(70, 42, 10, 0.55))
+    drop-shadow(0 2px 2.5px rgba(60, 35, 10, 0.28));
+}
+
+/* ---- Layer 4 — the clickable gold seal, centered at the flap's own
+   apex. ---- */
+.am-envelope-seal {
+  /* Sits right at the curved flap's own visible apex. The flap's mask
+     path (M 4,0 C 15,28 35,62 50,62 C 65,62 85,28 96,0 Z, in a 0-100
+     box mapped 1:1 onto the flap's own element box) has its lowest
+     point — the shared endpoint of its two symmetric cubic-Bezier
+     arms — at local y=62, i.e. 62% down the flap's own height. The
+     flap itself is 58% of the envelope's height, so that apex sits at
+     0.62 * 58% ≈ 35.96% down the envelope — the seal's vertical
+     center is anchored exactly there so it overlaps both the flap and
+     the base body beneath it. --seal-size itself now lives on the
+     shared ancestor .am-envelope-3d (see above) so .am-envelope-hint
+     can size off it too. */
+
+  position: absolute;
+  top: 35.96%;
+  left: 50%;
+  z-index: 10;
+
+  width: var(--seal-size);
+  height: var(--seal-size);
+  transform: translate(-50%, -50%);
+
+  border: none;
+  /* A faint organic irregularity — not a perfect circle — so it reads
+     as stamped wax/metal rather than a vector button. */
+  border-radius: 50% 48% 51% 49% / 49% 51% 48% 50%;
+  padding: 0;
+
+  /* Outer raised ring: heavy specular bevel + rounded lip so the disk
+     reads as a domed, polished-metal medallion rather than a flat
+     circle. */
+  background: radial-gradient(
+    circle at 35% 30%,
+    #fff3c4 0%,
+    #d4af37 40%,
+    #996515 85%,
+    #68420b 100%
+  );
+  box-shadow:
+    0 10px 22px rgba(45, 25, 5, 0.4),
+    inset 0 2px 3px rgba(255, 255, 255, 0.8),
+    inset 0 -3px 5px rgba(60, 35, 5, 0.6);
+
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+
+  /* Phase 1 (0.0s-0.3s of the open sequence): the wax seal breaks —
+     fades out while scaling past its own size, as if cracking open —
+     driven purely by the `.is-open` class below toggled on
+     `.am-envelope-3d`, no delay so it's the first thing to move. */
+  transition:
+    transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+    opacity 0.3s ease;
+}
+
+/* Inner sunken core: a recessed plate set inside the raised ring,
+   giving the medallion its two-level bevel depth. */
+.am-envelope-seal::before {
+  content: "";
+  position: absolute;
+  inset: 18%;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at 40% 35%,
+    #f4d37a 0%,
+    #c89938 70%,
+    #9e6b18 100%
+  );
+  box-shadow:
+    inset 0 4px 8px rgba(70, 40, 5, 0.5),
+    inset 0 -2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.am-envelope-seal:disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+.am-envelope-3d.is-open .am-envelope-seal {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(1.15);
+  pointer-events: none;
+}
+
+.am-envelope-seal-mark {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #734a0e;
+  font-family: "Cinzel", "Playfair Display", Georgia, serif;
+  font-size: calc(var(--seal-size) * 0.34);
+  letter-spacing: -0.5px;
+  /* Deep debossed engraving: a light highlight on top (as if catching
+     the rim's glow), a dark shadow beneath (as if pressed into the
+     recessed core). */
+  text-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.7),
+    0 -1px 2px rgba(40, 20, 0, 0.8);
+}
+
+/* ---- Responsiveness — never overflows the viewport width on small
+   phones; the clamp() above already scales the whole composition down
+   continuously, this is just a hard floor/ceiling safety net. ---- */
+@media (max-width: 420px) {
+  .am-envelope-3d {
+    width: min(88vw, 320px);
+  }
+}
+
+/* Wax seal reads oversized against the rest of the composition on
+   phones — shrink it ~28% here. .am-envelope-seal-mark's font-size is
+   derived from --seal-size via calc() (see above), so overriding the
+   custom property alone scales the "AS" initials down with it. */
+@media (max-width: 768px) {
+  .am-envelope-3d {
+    --seal-size: clamp(33px, 8%, 36px);
+  }
+}

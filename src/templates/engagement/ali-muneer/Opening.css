@@ -1,0 +1,68 @@
+/* Amiri — an elegant, uncluttered Arabic serif, imported scoped to this
+   file only (the same per-file @import pattern boom/reveal/Reveal.css
+   already uses), since nothing else in the project needs it. */
+@import url("https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap");
+
+#ali-muneer-opening {
+  position: fixed;
+  inset: 0;
+  z-index: 10; /* above Background (z-index: 9) and the canvas */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  pointer-events: none;
+}
+
+.ali-muneer-opening-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(20px, 3.4vh, 34px);
+}
+
+.ali-muneer-opening-text {
+  margin: 0;
+  max-width: min(90vw, 700px);
+
+  font-family: "Amiri", serif;
+  font-weight: 700;
+  direction: rtl;
+  unicode-bidi: isolate;
+  text-align: center;
+  font-size: clamp(20px, 4vw, 34px);
+  line-height: 1.8;
+
+  background: linear-gradient(180deg, #d8bd88 0%, #c8a96b 45%, #a9854f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  opacity: 0;
+}
+
+/* A single thin, symmetrical divider below the Bismillah — a line, a
+   small centered diamond, a line. No ornament above the text. */
+.ali-muneer-opening-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.6vw, 16px);
+  opacity: 0;
+}
+
+.ali-muneer-opening-divider-line {
+  width: clamp(30px, 5.5vw, 60px);
+  height: 1px;
+  background: linear-gradient(to right, transparent, #c8a96b, transparent);
+}
+
+.ali-muneer-opening-divider-mark {
+  width: 6px;
+  height: 6px;
+  border: 1px solid #c8a96b;
+  transform: rotate(45deg);
+  flex: none;
+}

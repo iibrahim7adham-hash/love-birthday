@@ -1,0 +1,98 @@
+/* Fixed to the viewport, same treatment as PageFrame.css's own
+   .ali-muneer-page-frame — stays put through scroll, Opening/Envelope/
+   Hero/every section beneath it, reading as the frame's own ambience.
+   z-index sits just under the frame's own linework (999) so the
+   corner filigree/border still reads crisply on top, but above every
+   section's own content tier (max 50, the envelope) so the sparkles
+   stay visible once the page scrolls past Hero. */
+.ali-muneer-sparkle-field {
+  position: fixed;
+  inset: 0;
+  z-index: 998;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ali-muneer-sparkle,
+.ali-muneer-sparkle-dust {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  will-change: opacity, transform;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-duration: var(--am-sparkle-duration, 6s);
+  animation-delay: var(--am-sparkle-delay, 0s);
+}
+
+.ali-muneer-sparkle {
+  width: clamp(2px, 0.5vw, 3.5px);
+  height: clamp(2px, 0.5vw, 3.5px);
+  background: radial-gradient(circle, rgba(255, 245, 192, 0.95), rgba(200, 169, 107, 0) 72%);
+  animation-name: am-sparkle-twinkle;
+}
+
+.ali-muneer-sparkle-dust {
+  width: clamp(1.5px, 0.4vw, 2.5px);
+  height: clamp(1.5px, 0.4vw, 2.5px);
+  background: radial-gradient(circle, rgba(200, 169, 107, 0.85), rgba(200, 169, 107, 0) 75%);
+  animation-name: am-sparkle-drift;
+  animation-direction: alternate;
+}
+
+/* In-place twinkle — opacity pulse with a very small rise, no
+   horizontal movement, so it reads as a point of light catching the
+   frame rather than something floating past it. */
+@keyframes am-sparkle-twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateY(0) scale(0.7);
+  }
+  50% {
+    opacity: var(--am-sparkle-peak, 0.6);
+    transform: translateY(-5px) scale(1);
+  }
+}
+
+/* Slow drifting dust mote — a longer, gentler rise with a slight
+   horizontal wander, fading in and back out rather than pulsing, so
+   the two particle types read as distinct (twinkle vs. floating dust)
+   rather than the same animation at a different size. */
+@keyframes am-sparkle-drift {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.8);
+  }
+  50% {
+    opacity: var(--am-sparkle-peak, 0.25);
+    transform: translate(3px, -10px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-3px, -18px) scale(0.8);
+  }
+}
+
+@media (max-width: 600px) {
+  .ali-muneer-sparkle {
+    width: clamp(1.6px, 1vw, 2.6px);
+    height: clamp(1.6px, 1vw, 2.6px);
+  }
+
+  .ali-muneer-sparkle-dust {
+    width: clamp(1.2px, 0.8vw, 2px);
+    height: clamp(1.2px, 0.8vw, 2px);
+  }
+}
+
+/* Respect a visitor's own motion preference — the twinkle/drift is
+   decorative only, never load-bearing for any content, so it's safe
+   to just hold each particle at a soft resting opacity instead. */
+@media (prefers-reduced-motion: reduce) {
+  .ali-muneer-sparkle,
+  .ali-muneer-sparkle-dust {
+    animation: none;
+    opacity: 0.25;
+  }
+}

@@ -3,7 +3,7 @@
 // values only; the actual engagement invitation design comes later.
 // ===========================
 
-export const ALI_MUNEER_BACKGROUND_COLOR = "#F8F5EE";
+export const ALI_MUNEER_BACKGROUND_COLOR = "#FFF9E7";
 
 export const ALI_MUNEER_CAMERA_Z = 10;
 
@@ -34,7 +34,7 @@ export const OPENING_MARBLE_OPACITY = 0.85;
 export const OPENING_LEAF_OPACITY = 0.5;
 
 export const OPENING_MARBLE_FILL_FROM = "#e9dcc0";
-export const OPENING_MARBLE_FILL_TO = "#f8f5ee";
+export const OPENING_MARBLE_FILL_TO = "#fff9e7";
 export const OPENING_MARBLE_VEIN_COLOR = "#c8a96b";
 export const OPENING_LEAF_COLOR = "#8a7d5e";
 
@@ -52,12 +52,26 @@ export const OPENING_HOLD_DURATION = 2.2;
 export const OPENING_EXIT_DURATION = 1.2;
 
 // ===========================
+// Sparkle Field — a persistent, purely-CSS-animated scatter of gold
+// sparkles/dust motes fixed to the viewport alongside the frame (see
+// SparkleField.js/PageFrame.js), weighted into the four corners so it
+// reads as part of the frame's own ambience. Kept subtle and mostly
+// static timing-wise; only the duration/delay/peak-opacity per particle
+// are randomized within these ranges for an organic, non-uniform
+// twinkle, same "randomBetween" convention as OPENING_SPARKLE_* above.
+// ===========================
+export const SPARKLE_FIELD_TWINKLE_DURATION_RANGE = [4, 8];
+export const SPARKLE_FIELD_TWINKLE_OPACITY_RANGE = [0.35, 0.7];
+export const SPARKLE_FIELD_DUST_DURATION_RANGE = [11, 19];
+export const SPARKLE_FIELD_DUST_OPACITY_RANGE = [0.12, 0.3];
+
+// ===========================
 // Hero — Scene 3. The main HTML UI overlay, taking over once the
 // envelope (Scene 2) has fully finished its dismiss transition. Built
 // in parts; these are Part 1's own values (monogram, top ornament,
 // subtitle) only — later parts add their own constants alongside these.
 // ===========================
-export const HERO_MONOGRAM_TEXT = "SA";
+export const HERO_MONOGRAM_TEXT = "AS";
 export const HERO_SUBTITLE_TEXT = "دعوة عقد قران";
 
 // Champagne gold — same family as OPENING_TEXT_COLOR/the envelope's own
@@ -121,7 +135,7 @@ export const EVENT_DETAILS_LOCATION_MAP_URL =
 // ===========================
 export const COUNTDOWN_SECTION_ID = "ali-muneer-countdown";
 
-export const COUNTDOWN_TITLE = "العد التنازلي لقاء الفرح";
+export const COUNTDOWN_TITLE = "العد التنازلي للموعد";
 
 // ISO string (local time, no zone suffix) so `new Date(...)` parses it
 // as midnight in the visitor's own local time rather than UTC.
@@ -176,10 +190,11 @@ export const RSVP_NAME_LABEL = "الاسم الكامل";
 export const RSVP_NAME_PLACEHOLDER = "اكتب اسمك الكامل";
 
 export const RSVP_ATTENDEES_LABEL = "عدد الحضور";
-// "+5" kept as its own last option rather than an open-ended number
-// input — a large party is rare enough that a rough upper band is
-// plenty, and it keeps the field a clean single-tap select on mobile.
-export const RSVP_ATTENDEES_OPTIONS = ["1", "2", "3", "4", "5", "+5"];
+// A +/- stepper (see .am-rsvp-counter in RSVP.js/.css) rather than a
+// dropdown — starts at the minimum, capped at a generous but sane
+// upper bound rather than left open-ended.
+export const RSVP_ATTENDEES_MIN = 1;
+export const RSVP_ATTENDEES_MAX = 10;
 
 export const RSVP_STATUS_LABEL = "حالة الحضور";
 // Three options rather than a plain attending/regret binary — a

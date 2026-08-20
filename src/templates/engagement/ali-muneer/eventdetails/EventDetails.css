@@ -1,0 +1,375 @@
+/* Plain document-flow section, the next sibling of #ali-muneer-hero
+   (see hero/Hero.css) once its own container switched from `fixed` to
+   normal flow. Sits above the WebGL canvas (z-index: auto) and the
+   persistent Background layer (z-index: 9, see ../Background.css) —
+   same z-index tier as Hero (21) since it's the next content section,
+   not a separate overlay. A solid ivory panel (the exact same tone the
+   scene's own WebGL background is set to, see ALI_MUNEER_BACKGROUND_COLOR
+   in ../Constants.js) so it reads as one seamless continuation of the
+   Hero screen rather than a visibly different panel dropped on top. */
+#ali-muneer-event-details {
+  position: relative;
+  z-index: 21;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+
+  background: #fff9e7;
+  /* Generous top padding gives Hero and this section a clean, settled
+     breathing gap without ever opening an actual gap in the document
+     flow (which would expose raw body background between them) — the
+     two panels stay perfectly flush, just with more room inside this
+     one before its own content starts. */
+  padding: clamp(72px, 13vh, 128px) clamp(20px, 5vw, 48px) clamp(64px, 12vh, 112px);
+}
+
+.am-event-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 920px;
+}
+
+/* ---- Shared stagger mechanics — every animated piece (header
+   ornament/title/divider, then each of the 4 grid cards) starts
+   invisible/translated down and only animates once
+   #ali-muneer-event-details.is-inview is toggled by the
+   IntersectionObserver in EventDetails.js. Opacity + transform only
+   (no layout-affecting properties), same convention as
+   .ali-muneer-hero-anim in hero/Hero.css, just scroll-triggered instead
+   of playing immediately on mount. A slower, gentler duration/easing
+   than the Hero's own entrance since this is a calmer "settle in as you
+   scroll" moment, not the first-impression reveal. ---- */
+.am-event-anim {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, opacity;
+}
+
+#ali-muneer-event-details.is-inview .am-event-anim {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.am-event-anim-1 {
+  transition-delay: 0ms;
+}
+
+.am-event-anim-2 {
+  transition-delay: 140ms;
+}
+
+.am-event-anim-3 {
+  transition-delay: 280ms;
+}
+
+.am-event-anim-4 {
+  transition-delay: 420ms;
+}
+
+.am-event-anim-5 {
+  transition-delay: 540ms;
+}
+
+.am-event-anim-6 {
+  transition-delay: 660ms;
+}
+
+.am-event-anim-7 {
+  transition-delay: 780ms;
+}
+
+/* ---- Section header — tiny ornament, title, divider, all centered. ---- */
+.am-event-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.am-event-ornament {
+  width: clamp(20px, 3.4vw, 26px);
+  height: auto;
+  margin-bottom: clamp(10px, 1.8vh, 16px);
+  filter: drop-shadow(0 1px 1.5px rgba(45, 25, 5, 0.25));
+}
+
+.am-event-title {
+  margin: 0;
+  font-family: "Cinzel", "Amiri", Georgia, serif;
+  font-weight: 600;
+  direction: rtl;
+  unicode-bidi: isolate;
+  font-size: clamp(24px, 4.2vw, 34px);
+  letter-spacing: 0.5px;
+  color: #a9854f;
+  text-shadow: 0 1px 2px rgba(80, 55, 15, 0.15);
+}
+
+.am-event-divider {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 1.4vw, 12px);
+  margin-top: clamp(14px, 2.4vh, 20px);
+}
+
+.am-event-divider-line {
+  width: clamp(46px, 8vw, 72px);
+  height: 1px;
+  background: linear-gradient(to right, transparent, #c8a96b, transparent);
+  opacity: 0.8;
+}
+
+.am-event-divider-dot {
+  color: #c19f62;
+  font-size: clamp(10px, 1.6vw, 13px);
+  line-height: 1;
+}
+
+/* ---- Details grid — 2 columns on desktop, stacked on mobile. Each
+   card now reads as a small piece of premium stationery resting on the
+   page's own cream (see .am-event-card below) rather than a bare
+   editorial frame. ---- */
+.am-event-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(16px, 2.6vw, 28px);
+  width: 100%;
+  margin-top: clamp(40px, 6vh, 56px);
+}
+
+@media (max-width: 640px) {
+  .am-event-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Soft parchment texture: a warm cream base, a gentle off-center
+   highlight (radial-gradient) reading as a sheen catching the paper,
+   and a fine noise grain (the inline SVG feTurbulence data URI,
+   multiply-blended so it stays faint) for genuine paper fiber rather
+   than a flat gradient. Rounded corners + a soft "resting on the page"
+   shadow give the embossed premium-stationery feel; the gold hairline
+   border is the card's own outer line of the double-line frame — see
+   ::before below for the inner one. */
+.am-event-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: clamp(30px, 4.2vh, 42px) clamp(20px, 3.2vw, 30px);
+
+  border: 1px solid rgba(200, 169, 107, 0.55);
+  border-radius: 14px;
+  background-color: #fffaf0;
+  background-image:
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.55), transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.62 0 0 0 0 0.52 0 0 0 0 0.32 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat, repeat;
+  background-blend-mode: normal, multiply;
+  box-shadow:
+    0 10px 22px rgba(80, 55, 15, 0.09),
+    0 1px 3px rgba(80, 55, 15, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+/* Inner hairline — the second line of the "refined double-line gold
+   border" the card frame reads as, set a few px in from the card's own
+   outer border above. */
+.am-event-card::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgba(200, 169, 107, 0.28);
+  border-radius: 9px;
+  pointer-events: none;
+}
+
+/* ---- Corner flourishes — one small motif (see CARD_CORNER_SVG in
+   EventDetails.js) mirrored via CSS transforms into all four corners,
+   same technique the frame/its own corners use at a much larger scale
+   (see .ali-muneer-page-frame-corner--tr/--bl/--br in ../PageFrame.css). */
+.am-event-card-corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  pointer-events: none;
+}
+
+.am-event-card-corner-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.am-event-card-corner--tl {
+  top: 2px;
+  left: 2px;
+}
+
+.am-event-card-corner--tr {
+  top: 2px;
+  right: 2px;
+  transform: scaleX(-1);
+}
+
+.am-event-card-corner--bl {
+  bottom: 2px;
+  left: 2px;
+  transform: scaleY(-1);
+}
+
+.am-event-card-corner--br {
+  bottom: 2px;
+  right: 2px;
+  transform: scale(-1, -1);
+}
+
+/* ---- Icon badge — a small delicate circular gold medallion the icon
+   sits inside, directly above the title, rather than a bare line-art
+   glyph floating in the card's own padding. A faint inner ring (::after)
+   echoes the frame's own double-line treatment at this much smaller
+   scale. */
+.am-event-card-badge {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: clamp(42px, 6vw, 54px);
+  height: clamp(42px, 6vw, 54px);
+  margin-bottom: clamp(12px, 2vh, 18px);
+
+  border-radius: 50%;
+  border: 1px solid rgba(200, 169, 107, 0.6);
+  background: radial-gradient(circle at 35% 30%, #fffdf6, #f4e8ce 75%);
+  box-shadow:
+    0 1px 3px rgba(80, 55, 15, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.am-event-card-badge::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  border: 0.5px solid rgba(200, 169, 107, 0.35);
+}
+
+.am-event-card-icon {
+  position: relative;
+  width: clamp(18px, 2.6vw, 22px);
+  height: clamp(18px, 2.6vw, 22px);
+  color: #a9854f;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.am-event-card-label {
+  margin: 0;
+  font-family: "Amiri", Georgia, serif;
+  font-weight: 400;
+  direction: rtl;
+  unicode-bidi: isolate;
+  font-size: clamp(13px, 1.8vw, 15px);
+  letter-spacing: 0.3px;
+  color: #263a33;
+  opacity: 0.7;
+}
+
+.am-event-card-value {
+  margin: clamp(6px, 1vh, 10px) 0 0;
+  font-family: "Amiri", Georgia, serif;
+  font-weight: 700;
+  direction: rtl;
+  unicode-bidi: isolate;
+  font-size: clamp(17px, 2.4vw, 20px);
+  letter-spacing: 0.3px;
+  color: #263a33;
+
+  /* The venue address (see .am-event-card-value--venue below) is long
+     enough to wrap across several lines on a narrow phone — this keeps
+     that wrap contained to the card's own width instead of overflowing
+     it, without affecting the shorter one-line values (date/ceremony/
+     time) that never need it. */
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Placeholder-ready slots (time only, now that the venue is confirmed
+   — see EVENT_DETAILS_LOCATION_VALUE in ../Constants.js) read as
+   visibly "to be announced" rather than finished copy — a softer
+   weight/opacity and the deep gold tone (matching HERO_GOLD_DARK)
+   instead of full-strength charcoal, so the card still looks
+   intentional rather than broken/empty. */
+.am-event-card-value--placeholder {
+  font-weight: 400;
+  font-style: italic;
+  color: #a9854f;
+  opacity: 0.85;
+}
+
+/* The confirmed event time range ("من الساعة 5:30 إلى الـ 9:00 مساءً")
+   — a touch tighter letter-spacing than the shorter one-line values so
+   the two clock times stay crisp and legible at a glance, with a loose
+   enough line-height to wrap cleanly on narrow phones if it ever needs
+   two lines. Same deep-charcoal/champagne-gold identity as the rest of
+   the card: full-weight charcoal text, with the gold already carried
+   by the card's own clock icon above it, not a separate color split
+   mid-sentence. */
+.am-event-card-value--time {
+  font-size: clamp(15.5px, 2.1vw, 18px);
+  line-height: 1.6;
+  letter-spacing: 0.15px;
+}
+
+/* The confirmed venue name/address — a touch smaller and looser
+   line-height than the shorter one-line values above, purely because
+   it's long enough to wrap onto 2-3 lines on mobile; same weight/color
+   as every other finished (non-placeholder) card value otherwise, so
+   it still reads as equally "official" copy, not a lesser slot. */
+.am-event-card-value--venue {
+  font-size: clamp(15px, 2.1vw, 18px);
+  line-height: 1.6;
+}
+
+/* The card's own link to the couple's actual Google Maps location
+   (EVENT_DETAILS_LOCATION_MAP_URL in ../Constants.js), opened in a new
+   tab — see the `<a>` markup in EventDetails.js. */
+.am-event-location-link {
+  margin-top: clamp(14px, 2vh, 18px);
+  padding: 0 0 2px;
+
+  border: none;
+  border-bottom: 1px solid rgba(200, 169, 107, 0.6);
+  background: none;
+
+  color: #a9854f;
+  font-family: "Amiri", Georgia, serif;
+  font-weight: 700;
+  direction: rtl;
+  unicode-bidi: isolate;
+  font-size: clamp(13px, 1.8vw, 15px);
+  letter-spacing: 0.3px;
+  text-decoration: none;
+
+  cursor: pointer;
+}
+
+.am-event-location-link:hover,
+.am-event-location-link:focus-visible {
+  color: #263a33;
+  border-bottom-color: rgba(38, 58, 51, 0.5);
+}

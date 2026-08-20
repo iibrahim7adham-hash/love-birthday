@@ -1,0 +1,328 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Amiri:wght@400;700&display=swap");
+
+/* Full-viewport-tall DOM overlay sitting above the WebGL canvas, the
+   persistent Background layer (z-index: 9) and the (by now invisible,
+   dismissed) envelope (z-index: 20) — see #am-envelope in
+   envelope/Envelope.css. Sits in normal document flow (not `fixed`) so
+   the Event Details section (see ../eventdetails/EventDetails.css) can
+   follow it as an ordinary next sibling, reachable by scrolling, rather
+   than being trapped behind a permanently pinned Hero — everything
+   inside this element (content/animations) is completely unchanged by
+   that switch, only the container's own positioning is. Fully
+   clickable once later parts add interactive elements; nothing in
+   Part 1 needs pointer events, so the container itself stays
+   click-through. */
+#ali-muneer-hero {
+  position: relative;
+  width: 100%;
+  /* Same ivory as the WebGL scene's own clear color (see
+     ALI_MUNEER_BACKGROUND_COLOR in ../Constants.js) and every section
+     below it (Event Details/Venue & Map). Hero itself used to rely
+     entirely on the canvas/Background layers showing through from
+     behind, which broke whenever Hero's real rendered height (content
+     can push it past its own `min-height: 100dvh`) outgrew those
+     layers' viewport-sized footprint — the gap exposed the page's raw
+     black background. An explicit background here makes Hero's own
+     panel opaque and self-sufficient, so nothing ever shows through
+     but the intended ivory, regardless of how those other layers are
+     sized. */
+  background: #fff9e7;
+  /* `dvh` (falls back to the `vh` above it on browsers that don't
+     support it) tracks the mobile browser's actual visible viewport as
+     its address bar shows/hides, instead of `vh`'s own "as if chrome
+     were hidden" height — using plain `inset: 0` here would pin this
+     element's bottom edge past the real visible area on some mobile
+     browsers, clipping content behind the address bar. `min-height`
+     (not `height`) is what lets this still read as one full first
+     screen while allowing normal document flow beneath it. */
+  min-height: 100vh;
+  min-height: 100dvh;
+  z-index: 21;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Centers the Monogram-through-date block as one cohesive group
+     within the full-screen container, instead of the flex default
+     (flex-start) pinning it to the top and leaving whatever's left over
+     as a single dead gap below it. */
+  justify-content: center;
+
+  pointer-events: none;
+}
+
+.ali-muneer-hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: min(90vw, 640px);
+  padding-top: clamp(36px, 9vh, 80px);
+  /* `max()` keeps a comfortable floor on notch-less devices while still
+     clearing the home-indicator/gesture-bar safe area on ones that
+     have it, so content is never flush against (or hidden behind) it. */
+  padding-bottom: max(32px, env(safe-area-inset-bottom, 0px));
+}
+
+/* ---- PART 4 — the staggered entrance. A shared fade-up keyframe
+   (opacity + transform only, so nothing here ever affects layout/
+   causes a reflow) applied to every Part 1-3 element, each carrying
+   one of five step classes for its own `animation-delay`. `both` fill
+   mode is what holds each element at its "from" state (invisible,
+   translated down 20px) for the full delay instead of flashing in at
+   full opacity before its turn, and keeps it at the "to" state once
+   the animation finishes rather than snapping back to the element's
+   own static (non-animated) styles. */
+.ali-muneer-hero-anim {
+  animation: am-hero-fade-up 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes am-hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ali-muneer-hero-anim-1 {
+  animation-delay: 0ms;
+}
+
+.ali-muneer-hero-anim-2 {
+  animation-delay: 150ms;
+}
+
+.ali-muneer-hero-anim-3 {
+  animation-delay: 300ms;
+}
+
+.ali-muneer-hero-anim-4 {
+  animation-delay: 450ms;
+}
+
+.ali-muneer-hero-anim-5 {
+  animation-delay: 600ms;
+}
+
+/* ---- Monogram — a royal calligraphic cipher (italic Playfair Display,
+   the same script the envelope's own flap monogram/wax seal use, see
+   .am-envelope-flap-monogram in ../envelope/Envelope.js) inside a
+   delicate double-ring gold circle, crowned by the template's own
+   8-spike rosette (same construction as ORNAMENT_SVG in
+   ../eventdetails/EventDetails.js) and finished with a pair of small
+   flourish swirls flanking a diamond beneath the letters — the whole
+   piece an SVG in its own right rather than plain gradient-clipped
+   text, so it reads as an Islamic-geometric/floral crest rather than a
+   Western serif wordmark. ---- */
+.ali-muneer-hero-monogram {
+  display: flex;
+  justify-content: center;
+}
+
+.ali-muneer-hero-monogram-svg {
+  width: clamp(150px, 24vw, 240px);
+  height: auto;
+  filter: drop-shadow(0 2px 4px rgba(80, 55, 15, 0.25));
+}
+
+/* ---- Subtitle — deep warm charcoal, plain (no flanking marks). ---- */
+.ali-muneer-hero-subtitle {
+  margin: clamp(14px, 2.4vh, 22px) 0 0;
+
+  color: #263a33;
+  font-family: "Amiri", Georgia, serif;
+  font-weight: 700;
+  direction: rtl;
+  unicode-bidi: isolate;
+  text-align: center;
+  font-size: clamp(16px, 2.6vw, 22px);
+  letter-spacing: 0.5px;
+}
+
+/* ---- Crest — the sole ornament, sitting below the subtitle: a small
+   gold rosette with thin swirling vines trailing to either side.
+   Exactly .am-invite-crest's own artwork (see
+   ../envelope/Envelope.js/.css), reused verbatim at hero scale. ---- */
+.ali-muneer-hero-crest {
+  width: clamp(150px, 24vw, 210px);
+  height: auto;
+  margin-top: clamp(16px, 2.6vh, 24px);
+  filter: drop-shadow(0 1px 1.5px rgba(45, 25, 5, 0.25));
+}
+
+/* ---- PART 2 — the groom/bride names, stacked with a small "&" row
+   between them, below the crest. Same champagne-gold gradient text as
+   the monogram, one full name per line. `white-space: nowrap` +
+   viewport-scaled font-size (rather than a tall fixed floor) is what
+   keeps each name on its own single line even on the narrowest phones,
+   instead of shrinking illegibly or wrapping mid-name. ---- */
+.ali-muneer-hero-name {
+  margin: 0;
+
+  font-family: "Amiri", Georgia, serif;
+  font-weight: 700;
+  direction: rtl;
+  unicode-bidi: isolate;
+  text-align: center;
+  white-space: nowrap;
+  font-size: clamp(19px, 5.4vw, 34px);
+  line-height: 1.4;
+
+  background: linear-gradient(180deg, #d8bd88 0%, #c8a96b 45%, #a9854f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 1px 2px rgba(80, 55, 15, 0.2));
+}
+
+.ali-muneer-hero-name:first-of-type {
+  margin-top: clamp(30px, 5vh, 46px);
+}
+
+/* Small "&" flanked by two inward-pointing chevrons — sits between the
+   two names, not its own separate divider. */
+.ali-muneer-hero-amp-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 1vw, 10px);
+  margin: clamp(4px, 1vh, 10px) 0;
+}
+
+.ali-muneer-hero-amp {
+  color: #c8a96b;
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-size: clamp(14px, 2.2vw, 18px);
+  line-height: 1;
+}
+
+.ali-muneer-hero-amp-arrow {
+  color: #c8a96b;
+  font-size: clamp(10px, 1.6vw, 13px);
+  line-height: 1;
+  opacity: 0.7;
+}
+
+/* ---- Small star divider beneath the names — a compact 8-spike gold
+   star (the same petal-radial construction as the crest above, scaled
+   down and without its trailing vines) flanked by two short hairlines. ---- */
+.ali-muneer-hero-names-divider {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 1.4vw, 12px);
+  margin-top: clamp(26px, 4.4vh, 38px);
+}
+
+.ali-muneer-hero-names-divider-line {
+  width: clamp(46px, 8vw, 72px);
+  height: 1px;
+  background: linear-gradient(to right, transparent, #c8a96b, transparent);
+  opacity: 0.8;
+}
+
+.ali-muneer-hero-names-divider-star {
+  width: clamp(18px, 3vw, 24px);
+  height: auto;
+  flex: none;
+}
+
+/* ---- PART 3 — body text, date, and the CTA button, below the names
+   divider. ---- */
+.ali-muneer-hero-body {
+  margin: clamp(30px, 5vh, 44px) 0 0;
+
+  color: #263a33;
+  font-family: "Amiri", Georgia, serif;
+  font-weight: 400;
+  direction: rtl;
+  unicode-bidi: isolate;
+  text-align: center;
+  font-size: clamp(15px, 2.4vw, 19px);
+  line-height: 1.7;
+  max-width: 34ch;
+}
+
+.ali-muneer-hero-date {
+  margin: clamp(18px, 3vh, 26px) 0 0;
+
+  color: #a9854f;
+  font-family: "Amiri", Georgia, serif;
+  font-weight: 700;
+  direction: rtl;
+  unicode-bidi: isolate;
+  text-align: center;
+  font-size: clamp(16px, 2.6vw, 21px);
+  letter-spacing: 0.5px;
+}
+
+/* ---- Mobile polish — everything above already scales continuously
+   via clamp(), but on a short phone screen the sum of every element's
+   own comfortable-on-desktop spacing could add up to more scroll than
+   this single-screen layout should ever need — so the two largest type
+   sizes (the monogram and the full names) still come down a step here.
+   The spacing itself, though, stays generous (just a shade tighter than
+   desktop, not slashed to a bare minimum) so the block reads as filling
+   the first screen harmoniously rather than looking sparse, specifically
+   under ~600px, without touching the desktop rules above at all. ---- */
+@media (max-width: 600px) {
+  /* No forced full-screen `min-height` here (kept for desktop above) —
+     letting the section size itself to its own now-more-generously-
+     spaced content, with balanced safe-area-aware padding standing in
+     for the vh sizing, is what keeps a short/wide mobile viewport from
+     ever opening a dead gap below the last element. */
+  #ali-muneer-hero {
+    min-height: 0;
+    padding-top: max(16px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(28px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .ali-muneer-hero-content {
+    padding-top: clamp(24px, 7vh, 40px);
+    padding-bottom: clamp(16px, 3vh, 24px);
+  }
+
+  .ali-muneer-hero-monogram-svg {
+    width: clamp(120px, 34vw, 168px);
+  }
+
+  .ali-muneer-hero-subtitle {
+    margin-top: clamp(10px, 1.8vh, 16px);
+  }
+
+  .ali-muneer-hero-crest {
+    width: clamp(120px, 44vw, 160px);
+    margin-top: clamp(10px, 1.8vh, 16px);
+  }
+
+  .ali-muneer-hero-name {
+    font-size: clamp(17px, 6vw, 24px);
+  }
+
+  .ali-muneer-hero-name:first-of-type {
+    margin-top: clamp(20px, 3.6vh, 30px);
+  }
+
+  .ali-muneer-hero-amp-row {
+    margin: clamp(3px, 0.8vh, 7px) 0;
+  }
+
+  .ali-muneer-hero-names-divider {
+    margin-top: clamp(18px, 3.2vh, 26px);
+  }
+
+  .ali-muneer-hero-body {
+    margin-top: clamp(20px, 3.6vh, 28px);
+  }
+
+  .ali-muneer-hero-date {
+    margin-top: clamp(14px, 2.4vh, 18px);
+  }
+}

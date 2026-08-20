@@ -1,0 +1,137 @@
+/* A clean, non-decorative Arabic face for the title (Cairo — replacing
+   the previous heavy/calligraphic Aref Ruqaa per the redesign brief),
+   and an elegant italic serif for the "I love you" line underneath.
+   Scoped to this one file rather than a shared index.html <link> —
+   nothing outside Boom's own reveal references either family, so it
+   has no effect on Standard/Love/Luxury either way, but keeping the
+   import local keeps the dependency visible next to the one place
+   that actually needs it. */
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&family=Playfair+Display:ital,wght@1,500&display=swap");
+
+#boom-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 10; /* above the canvas (z-index: auto — see src/style.css) */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  pointer-events: none;
+  text-align: center;
+}
+
+/* A soft dark wash behind the text, faded in separately/later (see
+   Reveal.js) — reads as the background/hearts settling back and
+   giving the text focus, without this file (or anything else) ever
+   touching HeartBurst's own particles. */
+#boom-reveal-scrim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(20, 6, 12, 0.55), rgba(20, 6, 12, 0) 70%);
+  opacity: 0;
+}
+
+/* The whole composition (small heart + outlined box) faded/moved in
+   and out as one unit (see Reveal.js's own show()) — kept perfectly
+   centered in the viewport with generous surrounding space, no large
+   decoration of its own. */
+.boom-reveal-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 1.6vh, 18px);
+
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+/* The small outlined heart centered above the box — subtle glow only,
+   no fill, no large decoration. */
+.boom-reveal-heart-top {
+  width: clamp(16px, 2.4vw, 22px);
+  height: clamp(16px, 2.4vw, 22px);
+  color: inherit;
+  filter: drop-shadow(0 0 6px var(--boom-reveal-glow, rgba(255, 214, 230, 0.55)));
+}
+.boom-reveal-heart-top svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* The thin, elegant outline box — subtle rounded border with a soft
+   pink glow, not a heavy panel. Background stays almost fully
+   transparent (a faint dark wash only, for text contrast against the
+   settled hearts behind it) so the box itself never reads as a solid
+   card. */
+.boom-reveal-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(12px, 2vh, 20px);
+  max-width: min(90vw, 560px);
+  box-sizing: border-box;
+
+  padding: clamp(22px, 3.4vh, 34px) clamp(30px, 6vw, 64px);
+  border: 1px solid rgba(255, 200, 214, 0.45);
+  border-radius: clamp(20px, 3vw, 32px);
+  background: rgba(30, 8, 18, 0.14);
+  box-shadow:
+    0 0 18px rgba(255, 170, 195, 0.18),
+    0 0 40px rgba(255, 150, 185, 0.1),
+    inset 0 0 24px rgba(255, 190, 210, 0.05);
+}
+
+/* The Arabic sentence — the main focus. Clean Cairo face, soft white
+   with only a very subtle glow (kept tight/low-opacity, unlike a
+   neon-style glow), not the decorative script the previous version
+   used. */
+.boom-reveal-title {
+  margin: 0;
+  font-family: "Cairo", sans-serif;
+  font-weight: 600;
+  direction: rtl;
+  unicode-bidi: isolate;
+  font-size: clamp(20px, 3.6vw, 32px);
+  line-height: 1.5;
+  text-shadow:
+    0 0 2px rgba(50, 10, 24, 0.3),
+    0 0 10px var(--boom-reveal-glow, rgba(255, 214, 230, 0.4));
+}
+
+/* Thin divider with a tiny heart centered in it. */
+.boom-reveal-divider {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 1.6vw, 16px);
+  width: 100%;
+}
+.boom-reveal-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255, 200, 214, 0.5), transparent);
+}
+.boom-reveal-divider-heart {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  color: inherit;
+  filter: drop-shadow(0 0 4px var(--boom-reveal-glow, rgba(255, 214, 230, 0.5)));
+}
+.boom-reveal-divider-heart svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* "I love you" — small, elegant italic serif underneath. */
+.boom-reveal-subtitle {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(14px, 2vw, 19px);
+  letter-spacing: 0.03em;
+  text-shadow: 0 0 10px var(--boom-reveal-glow, rgba(255, 214, 230, 0.35));
+}

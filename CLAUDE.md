@@ -28,3 +28,22 @@
 
 ## ملاحظة
 اسم "memora.digit" مبدئي وقابل للتغيير لاحقاً.
+
+## AI Coding Guardrails
+
+- `src/templates/birthday/{boom,love,luxury,standard}/` are 4 **independent**
+  templates plus shared `src/engine/`. Don't inspect a template other than the
+  one the task is about unless comparing or porting behavior is explicitly
+  required.
+- Local files are the ground truth for exact code, editing, current runtime
+  behavior, and line-level work — always read/edit them directly for that.
+- For architecture, conventions, rationale, and historical design decisions,
+  query NotebookLM MCP (`query_notebook`) first — see
+  `docs/MEMORA_PROJECT_KNOWLEDGE.md`. Keep queries concise; use
+  `get_source_content` only when the synthesized answer isn't enough.
+- For recent changes/history, use `git log`/`git diff` — not a re-read, not
+  NotebookLM.
+- Never read `node_modules/`, `package-lock.json`, build output, or binary
+  assets (`.png`/`.jpg`/`.glb`) as text.
+- Don't change application code, package files, or MCP configuration unless
+  the task explicitly asks for it.

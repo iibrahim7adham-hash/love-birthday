@@ -1,0 +1,52 @@
+/* Same "Dancing Script" family boom/giftbox/FinalMessage.css uses for its
+   own romantic-script line, imported locally here per that file's own
+   reasoning: nothing outside this element needs the dependency, and the
+   browser reuses the already-cached font if it's the same page. */
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap");
+
+/* Horizontally centered on the canvas — the camera is fixed front-on and
+   HeartFormation's own contour is centered at world (0,0,0), so screen
+   center IS the heart's own horizontal center. Vertically nudged a few
+   percent ABOVE that same 50% mark on purpose: a heart's bounding-box
+   center sits lower than its visual/optical center (the wide top lobes
+   carry more perceived weight than the tapering bottom point), so
+   dead-center reads as slightly too low — this settles the text where
+   the eye actually expects the heart's middle to be. */
+#hyatei-heart-message {
+  position: fixed;
+  top: 44%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  pointer-events: none;
+
+  font-family: "Dancing Script", cursive;
+  font-weight: 700;
+  font-size: clamp(28px, 5.5vw, 60px);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: #ff6fa8;
+
+  text-shadow:
+    0 0 3px rgba(60, 4, 28, 0.45),
+    0 0 16px rgba(255, 91, 161, 0.85),
+    0 0 40px rgba(255, 59, 129, 0.55),
+    0 0 72px rgba(255, 155, 197, 0.35);
+
+  opacity: 0;
+  transition: opacity var(--hyatei-heart-message-duration, 2s) ease;
+}
+
+/* The same slow, subtle breathe as the particle heart itself (see
+   HEART_BREATHE_AMP/HEART_BREATHE_SPEED in Constants.js) — a few
+   percent scale difference, so the text feels like part of the same
+   living heart rather than a static label pasted over it. */
+@keyframes hyatei-heart-message-breathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.03); }
+}
+
+#hyatei-heart-message.is-visible {
+  opacity: 1;
+  animation: hyatei-heart-message-breathe 9.8s ease-in-out infinite;
+}

@@ -1,4 +1,5 @@
 import "./RSVP.css";
+import { sectionSeamHTML } from "../SectionSeam";
 import {
   RSVP_SECTION_ID,
   RSVP_TITLE,
@@ -6,7 +7,8 @@ import {
   RSVP_NAME_LABEL,
   RSVP_NAME_PLACEHOLDER,
   RSVP_ATTENDEES_LABEL,
-  RSVP_ATTENDEES_OPTIONS,
+  RSVP_ATTENDEES_MIN,
+  RSVP_ATTENDEES_MAX,
   RSVP_STATUS_OPTIONS,
   RSVP_SUBMIT_TEXT,
   RSVP_SUBMIT_PENDING_TEXT,
@@ -53,9 +55,13 @@ const CHECK_ICON = `
   </svg>
 `;
 
-const ATTENDEES_OPTIONS_HTML = RSVP_ATTENDEES_OPTIONS.map(
-  (n) => `<option value="${n}">${n}</option>`,
-).join("");
+const MINUS_ICON = `
+  <svg viewBox="0 0 20 20" aria-hidden="true"><line x1="4" y1="10" x2="16" y2="10" /></svg>
+`;
+
+const PLUS_ICON = `
+  <svg viewBox="0 0 20 20" aria-hidden="true"><line x1="10" y1="4" x2="10" y2="16" /><line x1="4" y1="10" x2="16" y2="10" /></svg>
+`;
 
 // A vertical stack of three full-width cards rather than a two-way
 // segmented pill — three lines of real Arabic phrasing (not one-word
@@ -85,6 +91,7 @@ export default class RSVP {
     this.element = document.createElement("section");
     this.element.id = RSVP_SECTION_ID;
     this.element.innerHTML = `
+      ${sectionSeamHTML()}
       <div class="am-rsvp-inner">
         <div class="am-rsvp-header">
           ${ORNAMENT_SVG.replace('class="am-rsvp-ornament"', 'class="am-rsvp-ornament am-rsvp-anim am-rsvp-anim-1"')}
@@ -115,9 +122,12 @@ export default class RSVP {
 
           <div class="am-rsvp-field">
             <label class="am-rsvp-label" for="am-rsvp-attendees" dir="rtl" lang="ar">${RSVP_ATTENDEES_LABEL}</label>
-            <select class="am-rsvp-select" id="am-rsvp-attendees" name="attendees" dir="rtl" lang="ar">
-              ${ATTENDEES_OPTIONS_HTML}
-            </select>
+            <div class="am-rsvp-counter" role="group" aria-label="${RSVP_ATTENDEES_LABEL}">
+              <button class="am-rsvp-counter-btn am-rsvp-counter-btn--minus" type="button" aria-label="تقليل عدد الحضور">${MINUS_ICON}</button>
+              <span class="am-rsvp-counter-value" id="am-rsvp-attendees" aria-live="polite">${RSVP_ATTENDEES_MIN}</span>
+              <button class="am-rsvp-counter-btn am-rsvp-counter-btn--plus" type="button" aria-label="زيادة عدد الحضور">${PLUS_ICON}</button>
+            </div>
+            <input type="hidden" name="attendees" value="${RSVP_ATTENDEES_MIN}" />
           </div>
 
           <div class="am-rsvp-field">
@@ -146,10 +156,39 @@ export default class RSVP {
     this._submit = this.element.querySelector(".am-rsvp-submit");
     this._form.addEventListener("submit", this._handleSubmit);
 
+    this._attendeesCount = RSVP_ATTENDEES_MIN;
+    this._attendeesValueEl = this.element.querySelector(".am-rsvp-counter-value");
+    this._attendeesInput = this.element.querySelector('input[name="attendees"]');
+    this._minusBtn = this.element.querySelector(".am-rsvp-counter-btn--minus");
+    this._plusBtn = this.element.querySelector(".am-rsvp-counter-btn--plus");
+    this._minusBtn.addEventListener("click", this._handleAttendeesMinus);
+    this._plusBtn.addEventListener("click", this._handleAttendeesPlus);
+    this._updateAttendeesUI();
+
     this._observer = new IntersectionObserver(this._handleIntersect.bind(this), {
       threshold: 0.15,
     });
     this._observer.observe(this.element);
+  }
+
+  // Clamped between RSVP_ATTENDEES_MIN/MAX (see ../Constants.js) —
+  // the minus/plus buttons disable themselves right at each bound
+  // instead of relying on the guest to notice the number just stopped
+  // moving.
+  _handleAttendeesMinus = () => this._stepAttendees(-1);
+  _handleAttendeesPlus = () => this._stepAttendees(1);
+
+  _stepAttendees(delta) {
+    const next = this._attendeesCount + delta;
+    this._attendeesCount = Math.min(RSVP_ATTENDEES_MAX, Math.max(RSVP_ATTENDEES_MIN, next));
+    this._updateAttendeesUI();
+  }
+
+  _updateAttendeesUI() {
+    this._attendeesValueEl.textContent = String(this._attendeesCount);
+    this._attendeesInput.value = String(this._attendeesCount);
+    this._minusBtn.disabled = this._attendeesCount <= RSVP_ATTENDEES_MIN;
+    this._plusBtn.disabled = this._attendeesCount >= RSVP_ATTENDEES_MAX;
   }
 
   _handleSubmit = async (event) => {
@@ -198,6 +237,8 @@ export default class RSVP {
   destroy() {
     if (this._observer) this._observer.disconnect();
     if (this._form) this._form.removeEventListener("submit", this._handleSubmit);
+    if (this._minusBtn) this._minusBtn.removeEventListener("click", this._handleAttendeesMinus);
+    if (this._plusBtn) this._plusBtn.removeEventListener("click", this._handleAttendeesPlus);
     this.element.remove();
   }
 }

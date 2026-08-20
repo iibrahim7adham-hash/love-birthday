@@ -1,0 +1,274 @@
+/* Positioned well below the box's own on-screen center (which sits at
+   the viewport's own visual middle, next to the 3D scene's origin) so
+   it never overlaps the box itself — not click-wired yet, see
+   GiftBox.js's own _buildButton(). */
+#boom-giftbox-button {
+  position: fixed;
+  left: 50%;
+  top: 76%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+
+  padding: 0.7em 1.7em;
+  border: none;
+  border-radius: 999px;
+  background: #c1123f;
+  color: #fff6ef;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(16px, 2.6vw, 22px);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.3s ease;
+  box-shadow: 0 6px 18px rgba(32, 10, 18, 0.35);
+}
+
+#boom-giftbox-button.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#boom-giftbox-button:hover {
+  transform: translate(-50%, -50%) scale(1.04);
+}
+
+/* ---- Pull-down curtain handle (replaces the box's own scale/opacity
+   entrance — see GiftBox.js's own _buildPullHandle()/_onPull*()). A
+   thin cord hanging from the top edge with a small pill handle at its
+   end; both start hidden and fade in together with the box itself at
+   GIFTBOX_START_AT, then fade/retract back out once the reveal
+   completes and the "افتح" button takes over. */
+#boom-giftbox-pull {
+  position: fixed;
+  left: 50%;
+  top: 0;
+  z-index: 11; /* above the canvas and the "افتح" button alike */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+#boom-giftbox-pull.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.boom-pull-cord {
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(180deg, rgba(255, 246, 239, 0.15), rgba(255, 200, 214, 0.75));
+  box-shadow: 0 0 6px rgba(255, 170, 195, 0.35);
+}
+
+.boom-pull-handle {
+  margin-top: -1px;
+  border: 1px solid rgba(255, 200, 214, 0.55);
+  border-radius: 999px;
+  padding: 0.45em 1.3em;
+  background: rgba(30, 8, 18, 0.55);
+  backdrop-filter: blur(2px);
+  color: #fff6ef;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(13px, 2vw, 16px);
+  letter-spacing: 0.02em;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  box-shadow: 0 0 12px rgba(255, 170, 195, 0.3);
+}
+
+.boom-pull-handle:active {
+  cursor: grabbing;
+}
+
+/* Part 14 — the closing "وهسه رضيتي؟؟" question screen, revealed once
+   the box itself has fully faded away (see GiftBox.js's own
+   _beginClose()). Full-viewport flex overlay so the frame/buttons stay
+   centered without ever needing a permanent transform on this element —
+   see GiftBox.js's own entrance gsap.fromTo() comment for why that
+   matters for the "لا" button's own position: fixed behavior below. */
+#boom-giftbox-question {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 3vh, 30px);
+  padding: 24px 16px;
+
+  opacity: 0;
+  pointer-events: none;
+}
+
+#boom-giftbox-question.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.boom-question-frame {
+  position: relative;
+  max-width: min(600px, 90vw);
+  padding: clamp(26px, 4.5vw, 38px) clamp(34px, 7.5vw, 64px);
+  border: 1.5px solid #ff9dc4;
+  border-radius: clamp(36px, 8vw, 60px);
+  background: linear-gradient(180deg, rgba(60, 16, 42, 0.7), rgba(32, 7, 22, 0.8));
+  box-shadow:
+    0 0 8px rgba(255, 141, 190, 0.75),
+    0 0 20px rgba(255, 141, 190, 0.5),
+    0 0 44px rgba(255, 141, 190, 0.25);
+}
+
+/* A single small glowing diamond tucked inside each corner — quiet and
+   clean rather than a busy scroll/bracket shape. */
+.boom-question-dot {
+  position: absolute;
+  width: clamp(5px, 1vw, 7px);
+  height: clamp(5px, 1vw, 7px);
+  background: #ff9dc4;
+  border-radius: 1px;
+  transform: rotate(45deg);
+  box-shadow: 0 0 6px rgba(255, 141, 190, 0.85);
+}
+
+.boom-question-dot--tl { top: 18px; left: 22px; }
+.boom-question-dot--tr { top: 18px; right: 22px; }
+.boom-question-dot--bl { bottom: 18px; left: 22px; }
+.boom-question-dot--br { bottom: 18px; right: 22px; }
+
+.boom-question-ornament {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ffb0d1;
+  text-shadow: 0 0 12px rgba(255, 141, 190, 0.75);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Straddles the frame's own top border (top: 0 + translateY(-50%)) so
+   the heart visually fuses into the neon line, instead of floating in a
+   gap above it. */
+.boom-question-ornament--top {
+  top: 0;
+  font-size: clamp(22px, 3.6vw, 30px);
+}
+
+/* Straddles the bottom border the same way the top ornament does. */
+.boom-question-ornament--bottom {
+  bottom: 0;
+  top: auto;
+  transform: translate(-50%, 50%);
+  font-size: clamp(11px, 1.7vw, 14px);
+  letter-spacing: 0.15em;
+}
+
+.boom-question-text {
+  margin: 0;
+  color: #ffd6e6;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(22px, 4.4vw, 36px);
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+  text-shadow:
+    0 0 14px rgba(255, 176, 209, 0.6),
+    0 0 28px rgba(255, 141, 190, 0.32);
+}
+
+/* A soft pink halo behind the emoji so it reads as part of the same
+   glowing palette as the rest of the frame, instead of sitting flat. */
+.boom-question-emoji {
+  display: inline-block;
+  font-size: 1.05em;
+  filter: drop-shadow(0 0 6px rgba(255, 176, 209, 0.75)) drop-shadow(0 0 14px rgba(255, 141, 190, 0.45));
+}
+
+.boom-question-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 3.5vw, 30px);
+  flex-wrap: wrap;
+}
+
+.boom-question-btn {
+  position: relative;
+  border: none;
+  border-radius: 999px;
+  padding: 0.75em 2.1em;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(16px, 2.6vw, 21px);
+  font-weight: 600;
+  color: #6b1638;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, left 0.4s ease, top 0.4s ease, opacity 0.3s ease;
+}
+
+/* Very small spark ticks at the pill's own outer top/bottom corners —
+   subtle accents, not full-length dashes. */
+.boom-question-btn::before,
+.boom-question-btn::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 1.5px;
+  border-radius: 1px;
+  background: rgba(255, 214, 230, 0.75);
+  filter: drop-shadow(0 0 3px rgba(255, 176, 209, 0.6));
+  pointer-events: none;
+}
+
+.boom-question-btn::before {
+  top: 2px;
+  right: -9px;
+  transform: rotate(-40deg);
+}
+
+.boom-question-btn::after {
+  bottom: 2px;
+  left: -9px;
+  transform: rotate(-40deg);
+}
+
+.boom-question-btn:active {
+  transform: scale(0.96);
+}
+
+.boom-question-btn:disabled {
+  cursor: default;
+  opacity: 0.75;
+  transform: none !important;
+}
+
+.boom-question-btn--yes {
+  background: linear-gradient(180deg, #ffc7dd, #ff8fbd);
+  box-shadow: 0 0 16px rgba(255, 143, 189, 0.55), 0 6px 16px rgba(60, 10, 30, 0.35);
+}
+
+.boom-question-btn--yes:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.boom-question-btn--no {
+  background: linear-gradient(180deg, #fff8f5, #fbe4ea);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3), 0 6px 16px rgba(60, 10, 30, 0.3);
+}
+
+.boom-question-hint {
+  margin: 0;
+  color: rgba(255, 214, 230, 0.75);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(12px, 2vw, 15px);
+  text-align: center;
+}

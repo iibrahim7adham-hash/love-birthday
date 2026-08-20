@@ -1,0 +1,44 @@
+/* Sits centered on a section's own top edge (its nearest positioned
+   ancestor — every section already sets `position: relative`, see
+   #ali-muneer-event-details etc.), straddling the boundary with the
+   section above it. z-index 22 keeps it above both sections' own panel
+   tier (21) so it paints on top of the seam rather than being tucked
+   under either one. Purely decorative, so no pointer events. */
+.am-section-seam {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 22;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2vw, 18px);
+
+  pointer-events: none;
+}
+
+.am-section-seam-line {
+  width: clamp(56px, 11vw, 130px);
+  height: 1px;
+  background: linear-gradient(to right, transparent, #c8a96b, transparent);
+  opacity: 0.7;
+}
+
+.am-section-seam-motif {
+  width: clamp(28px, 4.6vw, 38px);
+  height: auto;
+  flex: none;
+  filter: drop-shadow(0 1px 1.5px rgba(45, 25, 5, 0.2));
+}
+
+@media (max-width: 600px) {
+  .am-section-seam-line {
+    width: clamp(34px, 14vw, 60px);
+  }
+
+  .am-section-seam-motif {
+    width: clamp(24px, 8vw, 30px);
+  }
+}

@@ -1,0 +1,145 @@
+#ali-muneer-background {
+  position: fixed;
+  inset: 0;
+  z-index: 9; /* above the canvas (z-index: auto — see src/style.css), below Opening/Envelope content */
+  overflow: hidden;
+
+  pointer-events: none;
+}
+
+/* Soft, blurred, low-opacity leaf silhouettes hanging in from the
+   upper-left, like natural shadows rather than illustrated foliage. */
+.ali-muneer-bg-leaves {
+  position: absolute;
+  top: -8%;
+  left: -8%;
+  width: 46vw;
+  height: 44vh;
+  opacity: 0;
+  filter: blur(3px);
+}
+
+.ali-muneer-bg-leaves svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Flowing champagne-marble veining in each corner — a soft translucent
+   fill (fading to fully transparent toward the center, see the
+   gradient in Background.js) with a handful of thin gold "crackle"
+   lines winding through it, the same way natural marble veining reads. */
+.ali-muneer-bg-marble {
+  position: absolute;
+  opacity: 0;
+}
+
+.ali-muneer-bg-marble svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.ali-muneer-bg-marble--bl {
+  bottom: -16%;
+  left: -14%;
+  width: 56vw;
+  height: 52vh;
+}
+
+.ali-muneer-bg-marble--br {
+  bottom: -18%;
+  right: -14%;
+  width: 52vw;
+  height: 50vh;
+  transform: scaleX(-1);
+}
+
+/* Top corners — the exact same shapes/veins as the bottom ones, just
+   mirrored vertically (and, for the right side, horizontally too) via
+   CSS so no new path data is needed; they flow inward from the
+   top-left/top-right the same way the bottom pair flows in from below. */
+.ali-muneer-bg-marble--tl {
+  top: -16%;
+  left: -14%;
+  width: 56vw;
+  height: 52vh;
+  transform: scaleY(-1);
+}
+
+.ali-muneer-bg-marble--tr {
+  top: -18%;
+  right: -14%;
+  width: 52vw;
+  height: 50vh;
+  transform: scale(-1, -1);
+}
+
+.ali-muneer-bg-marble-fill {
+  filter: blur(10px);
+}
+
+.ali-muneer-bg-marble-vein {
+  fill: none;
+  stroke: #c8a96b;
+  vector-effect: non-scaling-stroke;
+}
+
+/* A few tiny gold sparkles resting along the marble — deliberately
+   sparse, never a scatter of stars. */
+.ali-muneer-bg-sparkle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200, 169, 107, 0.95), rgba(200, 169, 107, 0) 70%);
+  opacity: 0;
+}
+
+/* ---- Mobile — on a narrow phone the corner leaves/marble veins are a
+   much bigger fraction of the screen than on desktop (they're sized in
+   vw/vh, same as everywhere else, but the Hero content's own text sits
+   much closer to every edge at this width). Shrinking each corner and
+   pushing its anchor further outside the viewport keeps them reading
+   as a soft corner accent instead of crowding in on the centered
+   copy — same artwork, same opacity, just smaller and further out. ---- */
+@media (max-width: 600px) {
+  .ali-muneer-bg-leaves {
+    top: -10%;
+    left: -16%;
+    width: 34vw;
+    height: 30vh;
+  }
+
+  .ali-muneer-bg-marble--tl,
+  .ali-muneer-bg-marble--bl {
+    left: -22%;
+    width: 42vw;
+    height: 38vh;
+  }
+
+  .ali-muneer-bg-marble--tr,
+  .ali-muneer-bg-marble--br {
+    right: -22%;
+    width: 40vw;
+    height: 36vh;
+  }
+
+  .ali-muneer-bg-marble--tl {
+    top: -22%;
+  }
+
+  .ali-muneer-bg-marble--bl {
+    bottom: -22%;
+  }
+
+  .ali-muneer-bg-marble--tr {
+    top: -24%;
+  }
+
+  .ali-muneer-bg-marble--br {
+    bottom: -24%;
+  }
+}

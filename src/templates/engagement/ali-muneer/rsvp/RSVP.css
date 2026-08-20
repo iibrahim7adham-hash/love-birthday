@@ -10,7 +10,7 @@
   display: flex;
   justify-content: center;
 
-  background: #f8f5ee;
+  background: #fff9e7;
   padding: clamp(64px, 11vh, 112px) clamp(20px, 5vw, 48px) clamp(88px, 14vh, 144px);
 }
 
@@ -162,14 +162,33 @@
   text-align: right;
 }
 
+/* Same "premium stationery" parchment treatment as .am-event-card in
+   ../eventdetails/EventDetails.css: a warm cream base, a gentle
+   off-center sheen, and a fine noise-grain data URI (multiply-blended
+   so it stays faint) instead of a flat fill. The double-line gold
+   border is the `border` (outer line) plus an inset `outline` (inner
+   hairline) — `outline` rather than `::before` specifically because
+   `<input>` is a replaced element and never renders generated content,
+   so this is the one pairing that draws identically on both the name
+   input and the (plain-`<div>`) attendee counter below. */
 .am-rsvp-input,
-.am-rsvp-select {
+.am-rsvp-counter {
   width: 100%;
   padding: clamp(12px, 1.8vh, 15px) clamp(16px, 2.6vw, 20px);
 
   border: 1px solid rgba(200, 169, 107, 0.55);
-  border-radius: 2px;
-  background: rgba(255, 253, 246, 0.55);
+  border-radius: 10px;
+  outline: 1px solid rgba(200, 169, 107, 0.28);
+  outline-offset: -4px;
+  background-color: #fffaf0;
+  background-image:
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.55), transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.62 0 0 0 0 0.52 0 0 0 0 0.32 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat, repeat;
+  background-blend-mode: normal, multiply;
+  box-shadow:
+    0 4px 10px rgba(80, 55, 15, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
 
   color: #263a33;
   font-family: "Amiri", Georgia, serif;
@@ -180,21 +199,8 @@
 
   transition:
     border-color 0.3s ease,
-    background 0.3s ease;
-}
-
-.am-rsvp-select {
-  cursor: pointer;
-  appearance: none;
-  /* A small champagne-gold chevron standing in for the native select
-     arrow, keeping it on-brand instead of the browser's default
-     widget — positioned on the left since the field itself reads
-     right-to-left. */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%23a9854f' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: left clamp(12px, 2vw, 16px) center;
-  background-size: 16px;
-  padding-left: clamp(36px, 6vw, 44px);
+    outline-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .am-rsvp-input::placeholder {
@@ -202,11 +208,103 @@
   opacity: 0.4;
 }
 
-.am-rsvp-input:focus,
-.am-rsvp-select:focus {
-  outline: none;
+/* Soft focus/hover glow in metallic gold — a brighter double border
+   plus a diffuse halo (box-shadow blur, not a hard ring) so it reads
+   as the field itself catching light rather than a generic browser
+   focus outline. */
+.am-rsvp-input:hover,
+.am-rsvp-counter:hover {
   border-color: #c8a96b;
-  background: rgba(255, 253, 246, 0.85);
+  outline-color: rgba(200, 169, 107, 0.45);
+}
+
+.am-rsvp-input:focus {
+  outline-color: #d8bd88;
+  border-color: #d8bd88;
+  box-shadow:
+    0 4px 10px rgba(80, 55, 15, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 0 0 3px rgba(200, 169, 107, 0.18),
+    0 0 16px rgba(216, 189, 136, 0.45);
+}
+
+/* ---- Attendee counter — a delicate +/- stepper on the same parchment
+   panel as the name input above (see .am-rsvp-counter in the shared
+   rule), replacing the old native <select>. The count itself lives in
+   a hidden <input name="attendees"> kept in sync by RSVP.js (see
+   _updateAttendeesUI there) — .am-rsvp-counter-value is purely
+   visual/aria-live, not the field FormData actually reads. */
+.am-rsvp-counter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(12px, 2.4vw, 20px);
+}
+
+.am-rsvp-counter-value {
+  flex: 1;
+  text-align: center;
+
+  font-family: "Cinzel", "Amiri", Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(18px, 2.6vw, 22px);
+  font-variant-numeric: tabular-nums;
+  color: #a9854f;
+}
+
+/* Small circular gold badge, same construction as .am-event-card-badge
+   in ../eventdetails/EventDetails.css — a delicate medallion rather
+   than a flat square button. */
+.am-rsvp-counter-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: clamp(34px, 5vw, 40px);
+  height: clamp(34px, 5vw, 40px);
+
+  border: none;
+  border-radius: 50%;
+  outline: 1px solid rgba(200, 169, 107, 0.6);
+  outline-offset: -1px;
+  background: radial-gradient(circle at 35% 30%, #fffdf6, #f4e8ce 75%);
+  box-shadow:
+    0 1px 3px rgba(80, 55, 15, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+  cursor: pointer;
+  transition:
+    outline-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.15s ease;
+}
+
+.am-rsvp-counter-btn svg {
+  width: 44%;
+  height: 44%;
+  stroke: #a9854f;
+  stroke-width: 2;
+  stroke-linecap: round;
+  fill: none;
+}
+
+.am-rsvp-counter-btn:hover:not(:disabled),
+.am-rsvp-counter-btn:focus-visible:not(:disabled) {
+  outline-color: #d8bd88;
+  box-shadow:
+    0 1px 3px rgba(80, 55, 15, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 0 12px rgba(216, 189, 136, 0.55);
+}
+
+.am-rsvp-counter-btn:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.am-rsvp-counter-btn:disabled {
+  cursor: default;
+  opacity: 0.35;
 }
 
 /* ---- Attendance status — a vertical stack of three full-width cards,

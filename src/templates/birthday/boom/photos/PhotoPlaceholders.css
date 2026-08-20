@@ -1,0 +1,57 @@
+/* Part 8.2 — the focused-photo viewer's own scrim + close button (see
+   PhotoPlaceholders.js's own _focusCard()/_closeCard()). The photo card
+   itself stays a real Three.js object flying to a pose in front of the
+   camera; this DOM layer only darkens the scene behind it and offers a
+   way back. Independent of letter/Letter.css's own matching overlay —
+   deliberately not shared, so Letter.js needs no changes here. */
+#boom-photo-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+
+  background: rgba(20, 6, 12, 0.15);
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+#boom-photo-overlay.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Part 8.4 — the افتحي seal's own sequential reveal reuses this same
+   scrim purely for the dimming (see PhotoPlaceholders.js's own
+   revealSequential()), with no manual close available — the seal
+   regains control on its own once the display duration ends. */
+#boom-photo-overlay.is-auto {
+  pointer-events: none;
+}
+
+#boom-photo-overlay.is-auto #boom-photo-close {
+  display: none;
+}
+
+#boom-photo-close {
+  position: absolute;
+  top: 5%;
+  right: 6%;
+
+  width: 2.4em;
+  height: 2.4em;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 246, 239, 0.92);
+  color: #6d1a2c;
+  font-size: clamp(20px, 3vw, 26px);
+  line-height: 1;
+  cursor: pointer;
+
+  box-shadow: 0 4px 14px rgba(32, 10, 18, 0.35);
+  transition: transform 0.2s ease;
+}
+
+#boom-photo-close:hover {
+  transform: scale(1.08);
+}

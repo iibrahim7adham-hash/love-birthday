@@ -1,0 +1,47 @@
+/* Part 21 — the final "I love you" message. Same "Dancing Script" family
+   Reveal.css already uses for its own romantic-script title, imported
+   locally here too rather than shared, per that file's own reasoning:
+   nothing outside this element needs the dependency, and the browser
+   simply reuses the already-cached font if it's the same page. */
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap");
+
+/* Perfectly centered, no box/panel/background of its own — just the
+   text sitting directly over the heart pile (see FinalHeartFall.css's
+   own z-index: 15 for that canvas/pool; this sits one above it so the
+   message always reads on top of the hearts, never behind them). */
+#boom-final-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 16;
+  pointer-events: none;
+
+  font-family: "Dancing Script", cursive;
+  font-weight: 700;
+  /* Still modest — a small, elegant line, not a headline — just a
+     touch larger than before so it holds its own against a screen
+     that's now fully covered in hearts. */
+  font-size: clamp(30px, 5vw, 56px);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: #fff5f1;
+
+  /* A tight dark contour first (pure legibility/contrast against the
+     light-colored hearts directly behind the letterforms), then two
+     wider warm layers for the actual glow — soft blur-only falloff at
+     moderate opacity, not one bright/saturated layer, is what keeps
+     this reading as a gentle glow rather than tipping into neon. */
+  text-shadow:
+    0 0 3px rgba(50, 10, 24, 0.4),
+    0 0 16px rgba(255, 214, 222, 0.85),
+    0 0 40px rgba(255, 186, 205, 0.6),
+    0 0 72px rgba(255, 170, 195, 0.35);
+
+  opacity: 0;
+  transition: opacity var(--boom-final-message-duration, 2.4s) ease;
+}
+
+#boom-final-message.is-visible {
+  opacity: 1;
+}
