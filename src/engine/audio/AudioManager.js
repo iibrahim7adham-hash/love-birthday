@@ -55,6 +55,20 @@ export default class AudioManager {
     this._setupUnlock();
   }
 
+  // Public passthrough so a template can call resume() synchronously
+  // from inside its own trusted gesture handler (e.g. a seal/button
+  // click), rather than relying solely on the generic window-level
+  // listeners in _setupUnlock — iOS Safari only reliably unlocks an
+  // AudioContext when resume() is invoked as one of the very first
+  // things a real user-gesture handler does, not a few ticks later
+  // from a bubbled/delegated listener. Safe to call redundantly (a
+  // running context just resolves immediately), and still funnels
+  // through the same _attemptUnlock used by the generic listeners so
+  // _unlockPromise resolves and those listeners tear down normally.
+  resume() {
+    return this._attemptUnlock ? this._attemptUnlock() : this.context.resume();
+  }
+
   // ---- playback ----------------------------------------------------
 
   // Starts `url` on a bus and returns the AudioPlayer once it's actually
@@ -272,25 +286,53 @@ export default class AudioManager {
   // gesture on window, resumes, and self-removes. _startPlayer awaits
   // this before ever calling play() on a source, so callers never have
   // to think about it; they just call play() and it starts as soon as
-  // both loading and unlock allow.
+  // both loading and unlock allow. A template can also call the public
+  // resume() above directly from inside its own gesture handler for
+  // stricter iOS compliance — both paths fund through _attemptUnlock so
+  // there's exactly one place that resolves _unlockPromise and tears
+  // down these listeners.
   _setupUnlock() {
     if (this.context.state !== "suspended") {
       this._unlockPromise = Promise.resolve();
       this._removeUnlockListeners = () => {};
+      this._attemptUnlock = () => this._unlockPromise;
       return;
     }
 
-    const events = ["pointerdown", "keydown", "touchstart"];
+    // "click" is listed alongside the raw pointer/touch/key events
+    // because on some mobile browsers a resume() triggered by a bare
+    // touchstart/pointerdown never actually settles (the promise just
+    // hangs indefinitely) — only a full click carries enough "user
+    // activation" for resume() to reliably resolve there. Listeners
+    // stay attached until resume() actually resolves, not just until
+    // the first gesture fires, so a stalled attempt from an early
+    // touchstart doesn't strip the fallback listeners (including
+    // click) before they get a chance to unlock it properly.
+    const events = ["pointerdown", "keydown", "touchstart", "click"];
     let resolveUnlock;
+    let unlocking = false;
 
     this._unlockPromise = new Promise((resolve) => {
       resolveUnlock = resolve;
     });
 
-    const unlock = () => {
-      this.context.resume().then(resolveUnlock);
-      this._removeUnlockListeners();
+    // Idempotent — a second call while the first resume() is still in
+    // flight (e.g. the public resume() firing synchronously inside a
+    // seal-tap handler, immediately followed by this same tap's click
+    // bubbling up to the window listener below) just returns the same
+    // in-flight promise instead of issuing a redundant resume() call.
+    this._attemptUnlock = () => {
+      if (!unlocking) {
+        unlocking = true;
+        this.context.resume().then(() => {
+          this._removeUnlockListeners();
+          resolveUnlock();
+        });
+      }
+      return this._unlockPromise;
     };
+
+    const unlock = () => this._attemptUnlock();
 
     this._removeUnlockListeners = () => {
       events.forEach((event) => window.removeEventListener(event, unlock));

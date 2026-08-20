@@ -46,8 +46,8 @@ export default class AliMuneerScene {
 
   create() {
     // The template's entire audio surface — currently just the
-    // envelope's own "cardOpen" cue (see envelope/Envelope.js's
-    // _becomeOpen and audio/AliMuneerAudioCues.js). Constructed once,
+    // envelope's own "card:open" cue (see envelope/Envelope.js's
+    // _handleOpen and audio/AliMuneerAudioCues.js). Constructed once,
     // up front, alongside every other template's own <Name>Audio (see
     // love/LoveScene.js) so it's already subscribed before the
     // envelope can fire that event.
@@ -164,15 +164,7 @@ export default class AliMuneerScene {
 
   _beginEnvelope() {
     this.opening = null;
-    // Fires the moment the Basmala has fully faded out and Scene 2
-    // begins — no user gesture has necessarily happened yet at this
-    // point, but that's fine: AudioManager's own autoplay-unlock (see
-    // its _setupUnlock) makes play() wait silently for the visitor's
-    // first tap/click/keypress anywhere on the page before actually
-    // starting the track, rather than erroring or requiring a
-    // dedicated gesture right here.
-    this.audio.trigger("opening:complete");
-    this.envelope = new Envelope(() => this._beginHero());
+    this.envelope = new Envelope(() => this._beginHero(), this.audio);
   }
 
   // Scene 3 — only constructed once the envelope's own dismiss

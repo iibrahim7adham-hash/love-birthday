@@ -38,8 +38,14 @@ export default class Envelope {
   // and fade out" transition (_dismiss()) has fully finished, so the
   // parent scene knows this envelope is done and gone. Not called for
   // any other state change.
-  constructor(onDismissed) {
+  // audio — the shared AudioManager (see AliMuneerScene's own
+  // this.audio). Optional so this class still works standalone/in
+  // tests without one; when present, _handleOpen() calls its resume()
+  // synchronously as the very first thing it does (see there) so the
+  // background music unlocks reliably on iOS Safari.
+  constructor(onDismissed, audio) {
     this.state = STATE.INACTIVE;
+    this.audio = audio || null;
     // Set true once the Step 4 closing animation (_becomeClosed) has
     // completed a full open→close cycle — after that the envelope
     // becomes a locked, static display piece: no further opens, and
@@ -508,6 +514,21 @@ export default class Envelope {
   // the sequence, so its transitionend marks the whole thing complete.
   _handleOpen() {
     if (this.isLocked || this.state !== STATE.CLOSED) return;
+
+    // Music starts here, as the very first thing this handler does —
+    // this call is itself inside the trusted seal-tap/click gesture,
+    // which is what iOS Safari actually requires for resume() to
+    // reliably unlock (a generic window-level listener a few ticks
+    // later isn't good enough there). AudioManager.resume() is
+    // idempotent/safe to call even if already unlocked. "card:open"
+    // then fires the bgm PLAY cue (see AliMuneerAudioCues.js) so
+    // playback starts synchronously alongside the card's own opening
+    // animation below rather than waiting on it.
+    if (this.audio) {
+      this.audio.resume();
+      this.audio.trigger("card:open");
+    }
+
     this.state = STATE.OPENING;
 
     this.seal.disabled = true;
