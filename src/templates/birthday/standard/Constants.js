@@ -15,8 +15,8 @@
 // these exact words. Short on purpose: this screen's job is to create
 // curiosity, not explain itself.
 export const START_MARK = "✦"; // a small four-point sparkle — a distant light, not a heart
-export const START_HEADING = "A Little Surprise For You";
-export const START_SUBTITLE = "Something made just for this moment.";
+export const START_HEADING = "سويتلج هدية ممزه";
+export const START_SUBTITLE = "جاهزة ؟";
 export const START_LABEL = "Start";
 
 // Deep navy/near-black — the dark cinematic base every stage sits on.
