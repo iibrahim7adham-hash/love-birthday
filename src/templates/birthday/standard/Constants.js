@@ -15,7 +15,7 @@
 // these exact words. Short on purpose: this screen's job is to create
 // curiosity, not explain itself.
 export const START_MARK = "✦"; // a small four-point sparkle — a distant light, not a heart
-export const START_HEADING = "سويتلج هدية ممزه";
+export const START_HEADING = "سويتلج هدية مميزة";
 export const START_SUBTITLE = "جاهزة ؟";
 export const START_LABEL = "Start";
 
