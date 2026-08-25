@@ -8,35 +8,44 @@
 // — never visible during the normal cake/candle state.
 // ===========================
 
-import { STANDARD_ACCENT_PINK, STANDARD_ACCENT_PINK_SOFT, STANDARD_IVORY, STANDARD_GOLD, STANDARD_LAVENDER } from "./StandardPalette";
+import {
+  STANDARD_ACCENT_PINK,
+  STANDARD_ACCENT_PINK_SOFT,
+  STANDARD_GOLD,
+  STANDARD_IVORY,
+  STANDARD_LAVENDER,
+} from "./StandardPalette";
 
 export const FLOATING_TEXT_PHRASES = [
   "I LOVE YOU 💕",
-  "You are my happiness 💗",
+  "احبج 💗",
   "Forever yours ❤️",
-  "You mean the world to me 💕",
+  "كل عام وانتي بخير 💕",
   "My Heart ❤️",
   "Love of my life 💗",
   "Happy Birthday 🎂",
   "You are special 💕",
-  "You are amazing ✨",
+  "كل عام وانتي بخير 💕",
   "With you, everything is beautiful 💗",
   "Be happy always 💕",
   "You make everything better ❤️",
   "Forever and always 💗",
   "You are my favorite person ❤️",
   "My beautiful girl 💕",
-  "بحبك ❤️",
+  "احبج ❤️",
   "أنتِ كل حياتي 💗",
-  "أنتِ أجمل عطية ❤️",
   "عمري أنتِ 💕",
-  "قلبي أنتِ ❤️",
-  "أحبك أكثر كل يوم 💗",
-  "أنتِ نور حياتي ✨",
-  "وجودك أجمل شيء ❤️",
+  "روحي أنتِ ❤️",
+  "وجودج أجمل شيء بحياتي ❤️",
 ];
 
-export const FLOATING_TEXT_COLORS = [STANDARD_ACCENT_PINK, STANDARD_ACCENT_PINK_SOFT, STANDARD_IVORY, STANDARD_GOLD, STANDARD_LAVENDER];
+export const FLOATING_TEXT_COLORS = [
+  STANDARD_ACCENT_PINK,
+  STANDARD_ACCENT_PINK_SOFT,
+  STANDARD_IVORY,
+  STANDARD_GOLD,
+  STANDARD_LAVENDER,
+];
 
 // Placement is now a loose, randomized RING around the cake rather than
 // screen-edge zones — an angle (any direction) plus an independently
