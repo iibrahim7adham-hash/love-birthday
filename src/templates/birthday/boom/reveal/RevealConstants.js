@@ -14,7 +14,7 @@
 // heart is its own token (REVEAL_TITLE_HEART) rather than baked into
 // the sentence string, so Reveal.js can wrap it in its own span and
 // render it smaller/inline instead of as a full-size emoji glyph.
-export const REVEAL_TITLE = "حبيت أراضيج بطريقة مختلفة";
+export const REVEAL_TITLE = "🤍 حبيت أراضيج بشي مميز مثلج 🤍";
 export const REVEAL_SUBTITLE = "I love you";
 
 export const REVEAL_TEXT_COLOR = "#fff6ef";

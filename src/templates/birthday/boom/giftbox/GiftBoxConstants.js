@@ -165,7 +165,7 @@ export const GIFTBOX_PULL_CANCEL_EASE = "power2.out";
 export const GIFTBOX_PULL_HANDLE_RETRACT_DURATION = 0.45;
 
 // ---- The "open" button's own copy.
-export const GIFTBOX_BUTTON_LABEL = "افتح 🎁";
+export const GIFTBOX_BUTTON_LABEL = "افتحي 🎁";
 
 // ---- Opening interaction — a small upward lift, then a smooth
 // backward rotation around the lid's own rear hinge (see
@@ -226,7 +226,8 @@ export const GIFTBOX_CAMERA_LOOKAT_Y = 0.15;
 // width/height so hearts right at the rim fade too, not just ones
 // dead-center inside.
 export const GIFTBOX_INTERIOR_FADE_HALF_WIDTH = GIFTBOX_WIDTH / 2 + 0.3;
-export const GIFTBOX_INTERIOR_FADE_HALF_HEIGHT = (GIFTBOX_BODY_HEIGHT + GIFTBOX_LID_HEIGHT) / 2 + 0.3;
+export const GIFTBOX_INTERIOR_FADE_HALF_HEIGHT =
+  (GIFTBOX_BODY_HEIGHT + GIFTBOX_LID_HEIGHT) / 2 + 0.3;
 
 // ===========================
 // Part 9 — the final closing sequence, triggered once the افتحي
@@ -252,8 +253,8 @@ export const GIFTBOX_CLOSE_CAMERA_DELAY = 0.2;
 export const GIFTBOX_QUESTION_TEXT = "وهسه رضيتي؟؟";
 export const GIFTBOX_QUESTION_EMOJI = "🩷";
 export const GIFTBOX_QUESTION_YES_LABEL = "اي رضيت";
-export const GIFTBOX_QUESTION_NO_LABEL = "لا";
-export const GIFTBOX_QUESTION_HINT_TEXT = "(حاولي تختاري الصح)";
+export const GIFTBOX_QUESTION_NO_LABEL = "لاااا";
+export const GIFTBOX_QUESTION_HINT_TEXT = "(حاولي تختارين الصح)";
 export const GIFTBOX_FINAL_FADE_DELAY = 0.4;
 export const GIFTBOX_FINAL_FADE_DURATION = 1.1;
 export const GIFTBOX_QUESTION_ENTRANCE_DURATION = 0.7;

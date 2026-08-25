@@ -132,14 +132,70 @@ export const LETTER_HOVER_LERP = 0.15;
 // GiftBoxConstants' own GIFTBOX_INTERIOR_FADE_HALF_WIDTH/HEIGHT) and
 // clear of the envelope's own bounds.
 export const LETTER_DECOR_ITEMS = [
-  { type: "heart", x: -0.74, z: -0.4, scale: 0.15, rotation: 0.3, color: "#e8607a" },
-  { type: "heart", x: 0.7, z: 0.48, scale: 0.12, rotation: -0.4, color: "#f2879c" },
-  { type: "heart", x: -0.18, z: 0.66, scale: 0.1, rotation: 0.5, color: "#f5a0b3" },
-  { type: "polaroid", x: 0.64, z: -0.5, scale: 0.32, rotation: 0.22, tint: "#f6d9b8" },
-  { type: "polaroid", x: -0.6, z: 0.44, scale: 0.3, rotation: -0.18, tint: "#e8c7d8" },
-  { type: "note", x: 0.66, z: 0.16, scale: 0.28, rotation: -0.08, tint: "#fffdf6" },
-  { type: "flower", x: -0.32, z: -0.62, scale: 0.22, rotation: 0.1, color: "#f4a7c0" },
-  { type: "tape", x: 0.7, z: -0.4, scale: 0.22, rotation: 0.75, color: "#e9d9c5" },
+  {
+    type: "heart",
+    x: -0.74,
+    z: -0.4,
+    scale: 0.15,
+    rotation: 0.3,
+    color: "#e8607a",
+  },
+  {
+    type: "heart",
+    x: 0.7,
+    z: 0.48,
+    scale: 0.12,
+    rotation: -0.4,
+    color: "#f2879c",
+  },
+  {
+    type: "heart",
+    x: -0.18,
+    z: 0.66,
+    scale: 0.1,
+    rotation: 0.5,
+    color: "#f5a0b3",
+  },
+  {
+    type: "polaroid",
+    x: 0.64,
+    z: -0.5,
+    scale: 0.32,
+    rotation: 0.22,
+    tint: "#f6d9b8",
+  },
+  {
+    type: "polaroid",
+    x: -0.6,
+    z: 0.44,
+    scale: 0.3,
+    rotation: -0.18,
+    tint: "#e8c7d8",
+  },
+  {
+    type: "note",
+    x: 0.66,
+    z: 0.16,
+    scale: 0.28,
+    rotation: -0.08,
+    tint: "#fffdf6",
+  },
+  {
+    type: "flower",
+    x: -0.32,
+    z: -0.62,
+    scale: 0.22,
+    rotation: 0.1,
+    color: "#f4a7c0",
+  },
+  {
+    type: "tape",
+    x: 0.7,
+    z: -0.4,
+    scale: 0.22,
+    rotation: 0.75,
+    color: "#e9d9c5",
+  },
 ];
 
 // ===========================
@@ -243,12 +299,15 @@ export const LETTER_DISPLAY_HOLD_DURATION = 4;
 // line, in dark rose/burgundy rather than plain black. Fades in with a
 // slight upward drift only once the card has fully settled facing camera.
 export const MESSAGE_HEADING_TEXT = "My Dearest,";
-export const MESSAGE_BODY_TEXT = "اني اسف 😔 لان زعلتج مني 💔 حبيت اراضيج 🥺 بطريقه مختلفه ✨";
+export const MESSAGE_BODY_TEXT =
+  "اني اعتذر  منج لان زعلتج هوايه وحبيت اسويلج هل شي البسيط افرحج بي 🤍🤍";
 export const MESSAGE_SIGNATURE_TEXT = "With all my love.";
 export const MESSAGE_TEXT_COLOR = "#7a1f3d";
-export const MESSAGE_HEADING_FONT = "italic 46px Georgia, 'Times New Roman', serif";
+export const MESSAGE_HEADING_FONT =
+  "italic 46px Georgia, 'Times New Roman', serif";
 export const MESSAGE_BODY_FONT = "28px Georgia, 'Times New Roman', serif";
-export const MESSAGE_SIGNATURE_FONT = "italic 30px Georgia, 'Times New Roman', serif";
+export const MESSAGE_SIGNATURE_FONT =
+  "italic 30px Georgia, 'Times New Roman', serif";
 export const MESSAGE_TEXT_FADE_DELAY = 0.35;
 export const MESSAGE_TEXT_FADE_DURATION = 0.8;
 export const MESSAGE_TEXT_RISE_DISTANCE = 0.05;
