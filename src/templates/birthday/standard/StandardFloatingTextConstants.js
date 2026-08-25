@@ -23,7 +23,7 @@ export const FLOATING_TEXT_PHRASES = [
   "كل عام وانتي بخير 💕",
   "My Heart ❤️",
   "Love of my life 💗",
-  "Happy Birthday 🎂",
+  "Happy Birthday 💕",
   "You are special 💕",
   "كل عام وانتي بخير 💕",
   "With you, everything is beautiful 💗",
