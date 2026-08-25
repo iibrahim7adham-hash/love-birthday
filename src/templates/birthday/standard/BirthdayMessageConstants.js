@@ -10,7 +10,7 @@
 // pieces (not one hardcoded string) so BirthdayMessage.js can reveal the
 // sparkles and each word as their own independently-timed beats — see
 // its own comment on why.
-export const BIRTHDAY_MESSAGE_SPARKLE = "✨";
+export const BIRTHDAY_MESSAGE_SPARKLE = "🤍";
 export const BIRTHDAY_MESSAGE_WORD_1 = "Happy";
 export const BIRTHDAY_MESSAGE_WORD_2 = "Birthday";
 
@@ -21,7 +21,12 @@ export const BIRTHDAY_MESSAGE_WORD_2 = "Birthday";
 // borrows the cake's warm language early rather than switching abruptly
 // right at the cut — the same warm tones are meant to visually carry
 // through into CakeReveal's own opening light.
-export const BIRTHDAY_MESSAGE_PARTICLE_COLORS = ["#fff3e2", "#ffd9a0", "#ffd9a0", "#f3c6c6"];
+export const BIRTHDAY_MESSAGE_PARTICLE_COLORS = [
+  "#fff3e2",
+  "#ffd9a0",
+  "#ffd9a0",
+  "#f3c6c6",
+];
 
 // ---- Particles — small, sparse points of light drifting in toward the
 // center, never a burst/explosion. Count is halved below
