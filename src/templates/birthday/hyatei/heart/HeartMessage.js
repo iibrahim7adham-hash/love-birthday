@@ -1,6 +1,6 @@
 import "./HeartMessage.css";
 
-const MESSAGE_TEXT = "I Love You Sara";
+const MESSAGE_TEXT = "I Love You ";
 const FADE_DURATION = 2;
 
 // A single static DOM element sitting in the empty middle of the
@@ -13,7 +13,10 @@ export default class HeartMessage {
   constructor() {
     this.element = document.createElement("div");
     this.element.id = "hyatei-heart-message";
-    this.element.style.setProperty("--hyatei-heart-message-duration", `${FADE_DURATION}s`);
+    this.element.style.setProperty(
+      "--hyatei-heart-message-duration",
+      `${FADE_DURATION}s`,
+    );
     this.element.textContent = MESSAGE_TEXT;
     this.element.setAttribute("aria-hidden", "true");
     document.body.appendChild(this.element);
