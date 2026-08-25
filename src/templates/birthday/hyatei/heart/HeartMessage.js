@@ -1,6 +1,6 @@
 import "./HeartMessage.css";
 
-const MESSAGE_TEXT = "I Love You ";
+const MESSAGE_TEXT = "I Love You 💕"; // a single static phrase, no animation of its own — see HeartMessage.js's own comment on why
 const FADE_DURATION = 2;
 
 // A single static DOM element sitting in the empty middle of the
