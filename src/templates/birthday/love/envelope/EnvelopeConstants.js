@@ -10,9 +10,11 @@ import {
 // mechanics; this is just the numbers.
 // ===========================
 
-// The requested "let the scene breathe" pause once the stickers have
-// settled into their orbit, before the envelope appears at all.
-export const ENVELOPE_PAUSE_AFTER_STICKERS = 3.5;
+// The "let the scene breathe" pause once the stickers have settled into
+// their orbit, before the envelope appears at all — trimmed (was 3.5s)
+// as part of speeding up the envelope's own appear/disappear timing;
+// still a real beat, not an instant cut.
+export const ENVELOPE_PAUSE_AFTER_STICKERS = 1.4;
 
 // Derived, not an independent number: an estimate of when the LAST
 // sticker (assuming the common default count) has finished its own
@@ -36,8 +38,11 @@ export const ENVELOPE_ENTRANCE_DELAY = STICKERS_SETTLED_DELAY + ENVELOPE_PAUSE_A
 // any viewport, no separate mobile handling needed.
 export const ENVELOPE_ENTRANCE_RISE_VH = 16;
 export const ENVELOPE_ENTRANCE_START_SCALE = 0.6;
-export const ENVELOPE_ENTRANCE_DURATION = 1.5;
-export const ENVELOPE_SETTLE_DURATION = 0.55;
+// Retimed (was 1.5s / 0.55s) so the envelope reads as clearly quicker
+// to arrive — same rise+fade+overshoot-settle motion, same ease, just
+// compressed.
+export const ENVELOPE_ENTRANCE_DURATION = 0.9;
+export const ENVELOPE_SETTLE_DURATION = 0.35;
 export const ENVELOPE_SETTLE_OVERSHOOT_PX = 6; // the tiny "has real weight" dip past rest
 
 // ---- Idle life, once settled — a hair of continuous sway, matching
@@ -82,18 +87,24 @@ export const LETTER_FOCUS_DELAY = 1.9;
 // has fully returned inside (see Envelope.js's _handleEnvelopeClose):
 // the body recovers from its receded open-state size, the flap swings
 // shut, the warm light fades, and the seal reforms.
-export const ENVELOPE_CLOSE_RESTORE_DURATION = 0.6; // body scale/opacity back to rest
-export const FLAP_CLOSE_DELAY = 0.15;
-export const FLAP_CLOSE_DURATION = 0.9;
-export const WARM_LIGHT_CLOSE_DURATION = 0.7;
-export const SEAL_REFORM_DURATION = 0.5;
+// Retimed (was 0.6s/0.15s/0.9s/0.7s/0.5s) as part of speeding up the
+// envelope's own disappearance — same close choreography (body
+// restores, flap swings shut, warm light fades, seal reforms), just
+// compressed.
+export const ENVELOPE_CLOSE_RESTORE_DURATION = 0.4; // body scale/opacity back to rest
+export const FLAP_CLOSE_DELAY = 0.1;
+export const FLAP_CLOSE_DURATION = 0.6;
+export const WARM_LIGHT_CLOSE_DURATION = 0.45;
+export const SEAL_REFORM_DURATION = 0.35;
 
 // ---- Exit — the envelope's own short cinematic goodbye once it's
 // fully closed again: a brief pause, a soft glow, then a gentle
 // downward drift + shrink + fade (never a snap-to-zero or a flight off
 // screen — see Envelope.js's _handleEnvelopeExit).
-export const ENVELOPE_EXIT_PAUSE = 0.45;
-export const ENVELOPE_EXIT_DURATION = 1.3;
+// Retimed (was 0.45s/1.3s) — same pause -> sparkle -> drift/shrink/fade
+// shape, just compressed.
+export const ENVELOPE_EXIT_PAUSE = 0.25;
+export const ENVELOPE_EXIT_DURATION = 0.85;
 export const ENVELOPE_EXIT_END_SCALE = 0.55;
 
 export const ENVELOPE_COLOR_DARK = "#2a0f18";

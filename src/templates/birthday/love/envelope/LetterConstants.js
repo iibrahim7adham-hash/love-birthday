@@ -15,7 +15,7 @@ export const LETTER_LINES = [
   "كل لحظة وياك صارت ذكرى أحتفظ بيها بقلبي،",
   "وكل سنة تمر أتمنى أشوفك أسعد وأجمل.",
   "عيد ميلاد سعيد،",
-  "وأتمنى تبقى دائمًا الشخص اللي يخلّي أيامي أحلى.",
+  "وأتمنى تبقى دائمًا الشخص اللي يملّي أيامي أحلى.",
 ];
 
 export const LETTER_SIGNATURE = "من كل قلبي ♥";
@@ -35,8 +35,12 @@ export const LETTER_EMERGE_DELAY = 1.15; // after the flap begins opening
 export const LETTER_EMERGE_RISE_PX = 70; // scaled down with the letter's own smaller footprint
 export const LETTER_EMERGE_START_SCALE = 0.7;
 export const LETTER_EMERGE_START_ROTATION_DEG = -5;
-export const LETTER_EMERGE_DURATION = 1.3;
-export const LETTER_SETTLE_DURATION = 0.6;
+// Retimed (was 1.3s/0.6s) — same rise+settle physical motion as the
+// envelope's own entrance, just faster; this is the letter object
+// arriving, not the text reveal itself (LETTER_TEXT_START_DELAY/
+// LETTER_WORD_STAGGER/LETTER_READING_DELAY below are untouched).
+export const LETTER_EMERGE_DURATION = 0.85;
+export const LETTER_SETTLE_DURATION = 0.4;
 
 // ---- Text reveal — words fade in one at a time, in reading order
 // across the whole message (not a per-line stagger, not a
@@ -84,8 +88,10 @@ export const LETTER_READING_DELAY = clamp(3 + LETTER_WORD_COUNT * 0.07, 5, 10);
 // getBoundingClientRect() in Letter.js, never a hard-coded position, so
 // this stays correct at any viewport size).
 export const LETTER_RETURN_LIFT_PX = 14;
-export const LETTER_RETURN_LIFT_DURATION = 0.5;
-export const LETTER_RETURN_DURATION = 1.2;
+// Retimed (was 0.5s/1.2s) — same lift-then-glide-into-the-envelope
+// motion, just faster, matching the envelope's own faster close/exit.
+export const LETTER_RETURN_LIFT_DURATION = 0.3;
+export const LETTER_RETURN_DURATION = 0.75;
 export const LETTER_RETURN_END_SCALE = 0.22;
 export const LETTER_RETURN_ROTATION_DEG = 6;
 
