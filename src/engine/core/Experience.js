@@ -18,7 +18,6 @@ import LuxuryScene from "../../templates/birthday/luxury/Scene";
 import StandardScene from "../../templates/birthday/standard";
 import BoomScene from "../../templates/birthday/boom";
 import HyateiScene from "../../templates/birthday/hyatei";
-import SamaScene from "../../templates/birthday/sama";
 import AliMuneerScene from "../../templates/engagement/ali-muneer";
 
 // Which template runs is chosen at build/dev time via `--mode` (see
@@ -33,7 +32,6 @@ const TEMPLATES = {
   standard: StandardScene,
   boom: BoomScene,
   hyatei: HyateiScene,
-  sama: SamaScene,
   "ali-muneer": AliMuneerScene,
 };
 
