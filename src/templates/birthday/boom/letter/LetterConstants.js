@@ -345,7 +345,10 @@ export const DECOR_STICKER_POP_DURATION = 0.45;
 // sized on any aspect ratio.
 export const PHOTO_FOCUS_DISTANCE = 1.3;
 export const PHOTO_FOCUS_SCALE = 2.6;
-export const PHOTO_FOCUS_DURATION = 0.7;
+// Same fly-to-camera system photos/PhotoPlaceholderConstants.js's own
+// PHOTO_FOCUS_DURATION uses for the main photo cards — cut the same way
+// (was 0.7s) so this decor polaroid opens just as close to instantly.
+export const PHOTO_FOCUS_DURATION = 0.2;
 export const PHOTO_CLOSE_DURATION = 0.55;
 
 // ===========================

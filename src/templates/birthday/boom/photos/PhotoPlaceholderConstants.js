@@ -67,7 +67,14 @@ export const PHOTO_ENTRANCE_STAGGER = 0.12;
 // ===========================
 export const PHOTO_FOCUS_DISTANCE = 1.3;
 export const PHOTO_FOCUS_SCALE = 2.4;
-export const PHOTO_FOCUS_DURATION = 0.6;
+// The one wait the user actually feels after tapping to open a photo —
+// cut hard (was 0.6s) so the card reads as near-instant, while still
+// keeping a real (if very brief) fly-to-camera motion rather than a
+// jump-cut. power3.out's own steep early acceleration means almost all
+// of the visible travel/scale-up still happens in the first ~2/3 of
+// this, so it doesn't read as choppier than the longer original, just
+// faster.
+export const PHOTO_FOCUS_DURATION = 0.18;
 export const PHOTO_FOCUS_EASE = "power3.out";
 export const PHOTO_CLOSE_DURATION = 0.45;
 export const PHOTO_CLOSE_EASE = "power2.inOut";
