@@ -74,9 +74,9 @@ export const PHOTO_FOCUS_SCALE = 2.4;
 // of the visible travel/scale-up still happens in the first ~2/3 of
 // this, so it doesn't read as choppier than the longer original, just
 // faster.
-export const PHOTO_FOCUS_DURATION = 0.18;
+export const PHOTO_FOCUS_DURATION = 0.15;
 export const PHOTO_FOCUS_EASE = "power3.out";
-export const PHOTO_CLOSE_DURATION = 0.45;
+export const PHOTO_CLOSE_DURATION = 0.35;
 export const PHOTO_CLOSE_EASE = "power2.inOut";
 
 // ---- Part 8.4 — a tiny roll around the camera's own view axis on the
@@ -90,7 +90,7 @@ export const PHOTO_FOCUS_TILT_Z = 0.05;
 // stays fully on screen before automatically flying back — the ONE
 // place this duration is defined, mirroring LetterConstants.js's own
 // LETTER_DISPLAY_HOLD_DURATION for the letter itself.
-export const PHOTO_AUTO_DISPLAY_DURATION = 1.8; // retimed from 3 (overall scene retiming pass)
+export const PHOTO_AUTO_DISPLAY_DURATION = 1.2; // retimed from 3 -> 1.8 -> 1.2 (successive retiming passes)
 
 // ===========================
 // Part 9 — final close. Each card retracts deeper into the box
