@@ -26,8 +26,8 @@ export const HEARTFALL_MAX_SIZE = 30;
 // Per-fall duration — each heart's own top-to-(near)bottom pass, before
 // it either lands on the pile or (early on, while the pile is still
 // short) reaches screen bottom.
-export const HEARTFALL_MIN_DURATION = 3.2;
-export const HEARTFALL_MAX_DURATION = 5.6;
+export const HEARTFALL_MIN_DURATION = 2.6;
+export const HEARTFALL_MAX_DURATION = 4.4;
 
 // Gentle side-to-side sway range (px) and small tilt range (deg) while
 // falling — same weave shape the old CSS keyframes used, just replayed
@@ -128,4 +128,4 @@ export const FINAL_MESSAGE_TEXT = "I love you";
 // Long and gentle rather than a snap-in — the pile has already stopped
 // moving by the time this starts, so nothing else on screen is
 // competing for attention.
-export const FINAL_MESSAGE_FADE_DURATION = 2.4;
+export const FINAL_MESSAGE_FADE_DURATION = 1.8;

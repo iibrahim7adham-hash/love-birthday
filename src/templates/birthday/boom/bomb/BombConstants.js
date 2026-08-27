@@ -98,34 +98,41 @@ export const BOMB_ROLL_ROTATIONS = 2;
 export const BOMB_ROLL_ROTATION_START = -(BOMB_ROLL_ROTATIONS * 2 * Math.PI);
 
 // ===========================
-// Timing — reproduces the reference's own approximate timestamps (see
-// the 16-frame extraction this was built from, ~1.4s-4.9s) as closely
-// as the animation allows. Kept as absolute-feeling offsets/durations
-// rather than one flat list so BombIntro.js's own cursor math reads the
-// same shape as the reference's own stage table.
+// Timing — originally reproduced the reference's own approximate
+// timestamps (a 16-frame extraction, ~1.4s-4.9s) as closely as possible.
+// Retimed (2026) to bring the whole Boom scene down from ~1:10 to
+// ~45-50s total (see giftbox/GiftBoxConstants.js and
+// letter/LetterConstants.js for the other retimed parts) — every stage
+// below is compressed proportionally from those original
+// reference-matched values (still noted in each comment) rather than
+// cut or reordered, so BombIntro.js's own cursor math still reads the
+// same shape, just tighter.
 // ===========================
-export const BOMB_ENTRY_DELAY = 1.5; // bomb begins entering
-export const BOMB_ROLL_DURATION = 0.9; // entering + rolling + slowing into place, ~1.5s -> ~2.4s
-export const BOMB_STOP_PAUSE = 0.15; // brief stillness before anything else happens, ~2.4s -> ~2.55s
+export const BOMB_ENTRY_DELAY = 1.0; // bomb begins entering (was 1.5)
+export const BOMB_ROLL_DURATION = 0.75; // entering + rolling + slowing into place (was 0.9)
+export const BOMB_STOP_PAUSE = 0.15; // brief stillness before anything else happens
 
-export const BOMB_CAP_APPEAR_DURATION = 0.3; // ~2.55s -> ~2.85s
-export const BOMB_FUSE_APPEAR_DURATION = 0.2; // ~2.85s -> ~3.05s
-export const BOMB_IGNITE_DURATION = 0.2; // spark pops in, ~3.05s -> ~3.25s
+export const BOMB_CAP_APPEAR_DURATION = 0.3;
+export const BOMB_FUSE_APPEAR_DURATION = 0.2;
+export const BOMB_IGNITE_DURATION = 0.2; // spark pops in
 
-// Anticipation begins at this absolute point in the sequence (matches
-// the reference's own "~4.0s" mark) regardless of small drift in the
-// stages above, so the face transition timing stays locked to the
-// reference even if earlier beats are retimed slightly later.
-export const BOMB_ANTICIPATION_AT = 4.0;
-export const BOMB_FACE_TRANSITION_DURATION = 0.8; // happy -> surprised, ~4.0s -> ~4.8s
+// Anticipation begins this long after the ignite pop-in finishes
+// (BOMB_ENTRY_DELAY + BOMB_ROLL_DURATION + BOMB_STOP_PAUSE +
+// BOMB_CAP_APPEAR_DURATION + BOMB_FUSE_APPEAR_DURATION +
+// BOMB_IGNITE_DURATION = 2.6s) — kept as an absolute cursor value (not
+// computed from the above) so BombIntro.js's own timeline reads the
+// same shape the reference-timed original did, just re-anchored to the
+// compressed stage durations above instead of the original ~4.0s mark.
+export const BOMB_ANTICIPATION_AT = 2.95;
+export const BOMB_FACE_TRANSITION_DURATION = 0.6; // happy -> surprised (was 0.8)
 
 // The burning point's own travel from the tip to the base (see
-// FuseBurn.js) is now what actually drives the handoff to the
-// explosion — sized so the overall ignite -> explosion span still
-// lands at the same ~5.0s total this project's own Part 1 was already
-// verified against (ignite finishes ~3.25s + this duration = ~5.0s),
-// rather than a disconnected fixed hold timer.
-export const BOMB_BURN_TRAVEL_DURATION = 1.75;
+// FuseBurn.js) is what actually drives the handoff to the explosion —
+// sized so ignite-finish (2.6s) + this duration lands the whole Part 1
+// at ~4.0s total (was ~5.0s), rather than a disconnected fixed hold
+// timer. Comfortably leaves BOMB_ANTICIPATION_AT + BOMB_FACE_TRANSITION_DURATION
+// (2.95 + 0.6 = 3.55s) finishing well before the 4.0s handoff.
+export const BOMB_BURN_TRAVEL_DURATION = 1.4;
 
 // ---- Fuse-tip flame — a continuous per-frame organic flicker (see
 // bomb/FuseFlame.js), not a single GSAP tween. Every amplitude here is

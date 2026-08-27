@@ -14,7 +14,11 @@
 // so this is simply "long enough after ignite for the text to have
 // been read" (reveal's own text is fully visible by ignite+1.1s; this
 // leaves it up a further ~3.4s), not synced to an actual fade event.
-export const GIFTBOX_START_AT = 4.5;
+// Retimed (2026, part of the overall ~1:10 -> ~45-50s pass) from the
+// original 4.5s — still comfortably after the reveal's own scrim finishes
+// darkening (REVEAL_SCRIM_START_AT + REVEAL_SCRIM_DURATION = 3.0s), just
+// without the extra 1.5s of otherwise-idle waiting on top of that.
+export const GIFTBOX_START_AT = 3.0;
 
 // ---- Palette — chocolate-brown gift box: body and lid are two
 // distinct (but related) browns, ribbon and bow share one darker brown.
@@ -169,11 +173,13 @@ export const GIFTBOX_BUTTON_LABEL = "افتحي 🎁";
 
 // ---- Opening interaction — a small upward lift, then a smooth
 // backward rotation around the lid's own rear hinge (see
-// GiftBoxGeometry.js's own lidHinge). The two durations sum to ~1.3s,
-// inside the brief's own "approximately 1.2–1.5 seconds" ask.
+// GiftBoxGeometry.js's own lidHinge). The two durations sum to ~1.2s —
+// trimmed to the FLOOR of the brief's own "approximately 1.2–1.5
+// seconds" ask (was ~1.3s) as part of the overall scene retiming, not
+// pushed below it.
 export const GIFTBOX_LIFT_HEIGHT = 0.18;
-export const GIFTBOX_LIFT_DURATION = 0.35;
-export const GIFTBOX_ROTATE_DURATION = 0.95;
+export const GIFTBOX_LIFT_DURATION = 0.32;
+export const GIFTBOX_ROTATE_DURATION = 0.88;
 // Negative: with the hinge at the lid's own rear-bottom edge and the
 // lid extending forward (+Z, toward camera) from there, a NEGATIVE
 // rotation.x swings that forward edge up and back over the hinge — the
@@ -206,7 +212,7 @@ export const GIFTBOX_GLOW_FADE_DURATION = 0.9;
 // downward-tilted ~40° elevated view straight into the open interior
 // — a deliberate rise-and-look-down move, not a simple push-in.
 export const GIFTBOX_CAMERA_MOVE_DELAY = 0.15;
-export const GIFTBOX_CAMERA_MOVE_DURATION = 1.8;
+export const GIFTBOX_CAMERA_MOVE_DURATION = 1.3; // retimed from 1.8 (overall scene retiming pass)
 export const GIFTBOX_CAMERA_MOVE_EASE = "power2.inOut";
 export const GIFTBOX_CAMERA_ELEVATED_Y = 4.5;
 export const GIFTBOX_CAMERA_ELEVATED_Z = 5.2;
@@ -238,10 +244,10 @@ export const GIFTBOX_INTERIOR_FADE_HALF_HEIGHT =
 // in reverse — same hinge/lift, no new geometry), and finally the camera
 // eases back to the scene's own original resting position.
 // ===========================
-export const GIFTBOX_CLOSE_RETRACT_DURATION = 0.8;
-export const GIFTBOX_CLOSE_PAUSE_DURATION = 0.35;
-export const GIFTBOX_CLOSE_GLOW_FADE_DURATION = 0.6;
-export const GIFTBOX_CLOSE_CAMERA_DELAY = 0.2;
+export const GIFTBOX_CLOSE_RETRACT_DURATION = 0.6;
+export const GIFTBOX_CLOSE_PAUSE_DURATION = 0.2;
+export const GIFTBOX_CLOSE_GLOW_FADE_DURATION = 0.5;
+export const GIFTBOX_CLOSE_CAMERA_DELAY = 0.15;
 
 // ===========================
 // Part 10 — final message. Once the box is fully closed and the camera
@@ -255,9 +261,9 @@ export const GIFTBOX_QUESTION_EMOJI = "🩷";
 export const GIFTBOX_QUESTION_YES_LABEL = "اي رضيت";
 export const GIFTBOX_QUESTION_NO_LABEL = "لاااا";
 export const GIFTBOX_QUESTION_HINT_TEXT = "(حاولي تختارين الصح)";
-export const GIFTBOX_FINAL_FADE_DELAY = 0.4;
-export const GIFTBOX_FINAL_FADE_DURATION = 1.1;
-export const GIFTBOX_QUESTION_ENTRANCE_DURATION = 0.7;
+export const GIFTBOX_FINAL_FADE_DELAY = 0.3;
+export const GIFTBOX_FINAL_FADE_DURATION = 0.85;
+export const GIFTBOX_QUESTION_ENTRANCE_DURATION = 0.55;
 
 // ===========================
 // Part 15 — dismissing the question UI once "اي رضيت" is pressed,

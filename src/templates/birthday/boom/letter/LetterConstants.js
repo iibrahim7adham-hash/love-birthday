@@ -11,7 +11,7 @@
 // GIFTBOX_CAMERA_MOVE_DELAY + GIFTBOX_CAMERA_MOVE_DURATION so the
 // envelope only appears once the camera has actually settled into its
 // elevated view, not the instant the tween finishes.
-export const LETTER_SHOW_DELAY = 0.3;
+export const LETTER_SHOW_DELAY = 0.25;
 
 // ---- Part 7 — the dedicated wax-seal DOM button sitting outside the
 // box (see Letter.js's own _buildSealButton()) that triggers the same
@@ -97,7 +97,7 @@ export const LETTER_SHADOW_OFFSET_Y = -0.01;
 // ---- Entrance — fades/scales in once show() is called, matching the
 // restrained "subtle arrival" GiftBoxConstants' own GIFTBOX_ENTRANCE_*
 // establishes for the box itself.
-export const LETTER_ENTRANCE_DURATION = 0.9;
+export const LETTER_ENTRANCE_DURATION = 0.75;
 export const LETTER_ENTRANCE_START_SCALE = 0.82;
 export const LETTER_ENTRANCE_EASE = "back.out(1.5)";
 
@@ -223,14 +223,14 @@ export const LETTER_CUE_PULSE_DURATION = 1.3;
 // toward the envelope's own world position rather than a hard cut, so
 // it reads as "gently focuses closer" per the brief.
 export const LETTER_CAMERA_FOCUS_AMOUNT = 0.16;
-export const LETTER_CAMERA_FOCUS_DURATION = 0.7;
+export const LETTER_CAMERA_FOCUS_DURATION = 0.55;
 export const LETTER_CAMERA_FOCUS_EASE = "power2.out";
 
 // ---- Wax seal's own reaction — a quick pop, then it fades away as the
 // flap lifts out from underneath it (no separate "crack" geometry).
 export const LETTER_SEAL_REACT_SCALE = 1.22;
 export const LETTER_SEAL_REACT_DURATION = 0.22;
-export const LETTER_SEAL_FADE_DURATION = 0.35;
+export const LETTER_SEAL_FADE_DURATION = 0.3;
 
 // ---- Flap opening — a real hinge rotation around the fold line (the
 // flap's own top edge, see LetterGeometry.js's own flapHinge), not a
@@ -238,7 +238,7 @@ export const LETTER_SEAL_FADE_DURATION = 0.35;
 // from the seal/camera, the same "hinge at the fold" reading a real
 // envelope has.
 export const LETTER_FLAP_OPEN_ANGLE = Math.PI * (152 / 180);
-export const LETTER_FLAP_OPEN_DURATION = 0.85;
+export const LETTER_FLAP_OPEN_DURATION = 0.7;
 export const LETTER_FLAP_OPEN_DELAY = 0.15;
 export const LETTER_FLAP_OPEN_EASE = "power2.inOut";
 
@@ -266,9 +266,9 @@ export const MESSAGE_CARD_CORNER_RADIUS = 0.045;
 // or the viewport's own aspect ratio.
 export const MESSAGE_CARD_START_Z = 0.01;
 export const MESSAGE_CARD_START_SCALE = 0.55;
-export const MESSAGE_CARD_RISE_DELAY = 0.55;
+export const MESSAGE_CARD_RISE_DELAY = 0.45;
 export const MESSAGE_CARD_LOCAL_RISE_Z = 0.16;
-export const MESSAGE_CARD_LOCAL_RISE_DURATION = 0.55;
+export const MESSAGE_CARD_LOCAL_RISE_DURATION = 0.45;
 export const MESSAGE_CARD_LOCAL_RISE_EASE = "power2.out";
 
 // Distance is chosen against the shared Camera's own held-constant
@@ -277,7 +277,7 @@ export const MESSAGE_CARD_LOCAL_RISE_EASE = "power2.out";
 // of the viewport on every aspect ratio, not just the desktop baseline.
 export const MESSAGE_CARD_FOCUS_DISTANCE = 1.4;
 export const MESSAGE_CARD_FOCUS_SCALE = 1.08;
-export const MESSAGE_CARD_FOCUS_DURATION = 1.1;
+export const MESSAGE_CARD_FOCUS_DURATION = 0.85;
 export const MESSAGE_CARD_FOCUS_EASE = "power3.inOut";
 
 export const MESSAGE_CARD_SETTLED_BOB_AMOUNT = 0.012;
@@ -290,7 +290,7 @@ export const MESSAGE_CARD_SETTLED_BOB_SPEED = 0.8;
 // matching opening-stage constants above/below for a symmetric reverse,
 // this is the only genuinely new one — how long the card stays fully
 // on-screen before that reverse begins.
-export const LETTER_DISPLAY_HOLD_DURATION = 4;
+export const LETTER_DISPLAY_HOLD_DURATION = 2.2; // retimed from 4 (overall scene retiming pass)
 
 // ---- Placeholder message copy, drawn as a canvas texture on its own
 // small plane (real 3D object in-scene, not an HTML overlay) — elegant
@@ -308,15 +308,15 @@ export const MESSAGE_HEADING_FONT =
 export const MESSAGE_BODY_FONT = "28px Georgia, 'Times New Roman', serif";
 export const MESSAGE_SIGNATURE_FONT =
   "italic 30px Georgia, 'Times New Roman', serif";
-export const MESSAGE_TEXT_FADE_DELAY = 0.35;
-export const MESSAGE_TEXT_FADE_DURATION = 0.8;
+export const MESSAGE_TEXT_FADE_DELAY = 0.3;
+export const MESSAGE_TEXT_FADE_DURATION = 0.6;
 export const MESSAGE_TEXT_RISE_DISTANCE = 0.05;
 
 // ---- Small corner ornaments framing the card itself (distinct from
 // LETTER_DECOR_ITEMS above, which frame the closed envelope on the box
 // floor) — kept sparse per the brief's own "elegant and sparse" ask.
 export const MESSAGE_DECOR_SCALE = 0.09;
-export const MESSAGE_DECOR_FADE_DELAY = 0.6;
+export const MESSAGE_DECOR_FADE_DELAY = 0.5;
 export const MESSAGE_DECOR_FADE_DURATION = 0.6;
 
 // ---- A very small burst of soft warm particles once the card is
@@ -328,7 +328,7 @@ export const MESSAGE_PARTICLE_SIZE = 0.09;
 export const MESSAGE_PARTICLE_SPREAD = 0.5;
 export const MESSAGE_PARTICLE_RISE = 0.5;
 export const MESSAGE_PARTICLE_DURATION = 1.8;
-export const MESSAGE_PARTICLE_SPAWN_DELAY = 1.2;
+export const MESSAGE_PARTICLE_SPAWN_DELAY = 1.0;
 
 // ===========================
 // Part 8 — the decorative keepsakes scattered around the envelope (see

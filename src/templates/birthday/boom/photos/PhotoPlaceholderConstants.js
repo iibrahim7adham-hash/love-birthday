@@ -45,7 +45,7 @@ export const PHOTO_SHADOW_SCALE = 1.3;
 // ---- Entrance — fades/scales in alongside the envelope's own show()
 // moment (see GiftBox.js's own _open() call site), a light stagger
 // across the three so they don't pop in as one rigid unit.
-export const PHOTO_ENTRANCE_DURATION = 0.8;
+export const PHOTO_ENTRANCE_DURATION = 0.65;
 export const PHOTO_ENTRANCE_START_SCALE = 0.85;
 export const PHOTO_ENTRANCE_EASE = "back.out(1.4)";
 export const PHOTO_ENTRANCE_STAGGER = 0.12;
@@ -67,9 +67,9 @@ export const PHOTO_ENTRANCE_STAGGER = 0.12;
 // ===========================
 export const PHOTO_FOCUS_DISTANCE = 1.3;
 export const PHOTO_FOCUS_SCALE = 2.4;
-export const PHOTO_FOCUS_DURATION = 0.75;
+export const PHOTO_FOCUS_DURATION = 0.6;
 export const PHOTO_FOCUS_EASE = "power3.out";
-export const PHOTO_CLOSE_DURATION = 0.55;
+export const PHOTO_CLOSE_DURATION = 0.45;
 export const PHOTO_CLOSE_EASE = "power2.inOut";
 
 // ---- Part 8.4 — a tiny roll around the camera's own view axis on the
@@ -83,7 +83,7 @@ export const PHOTO_FOCUS_TILT_Z = 0.05;
 // stays fully on screen before automatically flying back — the ONE
 // place this duration is defined, mirroring LetterConstants.js's own
 // LETTER_DISPLAY_HOLD_DURATION for the letter itself.
-export const PHOTO_AUTO_DISPLAY_DURATION = 3;
+export const PHOTO_AUTO_DISPLAY_DURATION = 1.8; // retimed from 3 (overall scene retiming pass)
 
 // ===========================
 // Part 9 — final close. Each card retracts deeper into the box
