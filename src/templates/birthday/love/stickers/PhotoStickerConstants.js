@@ -56,7 +56,10 @@ export const PHOTO_STICKER_GLOW_SCALE = 1.55; // relative to the sticker's own s
 // finishes) the first sticker begins its own entrance — tuned so the
 // two systems visibly overlap: messages are already falling by the time
 // the first photo appears, rather than one waiting for the other.
-export const PHOTO_STICKER_START_DELAY = 2.5;
+// Retimed from 2.5s to 1.5s (trimming the overall pre-envelope wait) —
+// the overlap still holds since messages are continuously falling well
+// past this point either way.
+export const PHOTO_STICKER_START_DELAY = 1.5;
 
 // Derived, not independent: anchored to LoveMessages' own start gate
 // (MESSAGE_START_DELAY) rather than a flat number measured from
@@ -65,8 +68,10 @@ export const PHOTO_STICKER_START_DELAY = 2.5;
 // automatically if MESSAGE_START_DELAY is ever retuned.
 export const PHOTO_STICKER_ENTRANCE_DELAY = MESSAGE_START_DELAY + PHOTO_STICKER_START_DELAY;
 
-export const PHOTO_STICKER_ENTRANCE_STAGGER = 0.18;
-export const PHOTO_STICKER_FADE_IN_DURATION = 1.1;
+// Retimed from 0.18s/1.1s — same staggered pop-in-one-by-one entrance,
+// just a bit quicker per sticker.
+export const PHOTO_STICKER_ENTRANCE_STAGGER = 0.14;
+export const PHOTO_STICKER_FADE_IN_DURATION = 0.85;
 
 // Depth-aware fading — the heart must stay the dominant focal point, so
 // a sticker passing behind it recedes rather than visually competing

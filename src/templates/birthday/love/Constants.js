@@ -157,11 +157,11 @@ export const MESSAGE_POOL_SIZE = 16;
 // t=6s after HeartFormation.begin() (verified by simulating the same
 // spring integrator LoveParticles.update() runs), and HeartAnimation's
 // own breathing is already at full amplitude by t=5s (its
-// BREATH_START_DELAY + BREATH_FADE_IN_DURATION). 8s lands ~2s after the
-// heart is visually settled and already breathing — "roughly 1-2
-// seconds after fully formed" — without touching either of those
-// systems' own timing.
-export const MESSAGE_START_DELAY = 8;
+// BREATH_START_DELAY + BREATH_FADE_IN_DURATION). Retimed from 8s to
+// 6.5s (part of trimming the overall pre-envelope wait) — still a real
+// ~0.5s buffer past full convergence, not cutting into the formation
+// itself.
+export const MESSAGE_START_DELAY = 6.5;
 
 export const MESSAGE_FONT_SIZE = 64;
 export const MESSAGE_HEIGHT = 0.55;
