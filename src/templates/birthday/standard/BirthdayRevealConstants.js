@@ -39,10 +39,10 @@ export const REVEAL_PARTICLE_MAX_SIZE = 4; // px
 export const REVEAL_PARTICLE_COLORS = ["#ffe4ec", "#fff8f5", "#f6b6cc"];
 
 // ---- Sequence timing — see BirthdayReveal.js's own playSequence().
-export const REVEAL_ENTER_DELAY = 0.7; // the brief's own "pause very briefly" once the camera has fully settled
-export const REVEAL_PARTICLE_GATHER_DURATION = 0.9;
-export const REVEAL_PARTICLE_GATHER_STAGGER = 0.3;
-export const REVEAL_TEXT_START_OFFSET = 0.55; // "Happy Birthday" starts condensing partway through the particle gather, not after it finishes
+export const REVEAL_ENTER_DELAY = 0.53; // the brief's own "pause very briefly" once the camera has fully settled
+export const REVEAL_PARTICLE_GATHER_DURATION = 0.68;
+export const REVEAL_PARTICLE_GATHER_STAGGER = 0.23;
+export const REVEAL_TEXT_START_OFFSET = 0.41; // "Happy Birthday" starts condensing partway through the particle gather, not after it finishes
 
 // Letters reveal via a single GSAP `stagger` tween across each line's
 // own array of per-letter spans — the closest practical approximation
@@ -51,13 +51,13 @@ export const REVEAL_TEXT_START_OFFSET = 0.55; // "Happy Birthday" starts condens
 // small glowing tracer sweeps across each line in sync (see
 // BirthdayReveal.js's own _sweepTracer()) so the letters read as being
 // magically written rather than just fading in.
-export const REVEAL_LETTER_DURATION = 0.4; // each letter's own fade/rise-in
-export const REVEAL_LETTER_STAGGER_MAIN = 0.05; // gap between one letter starting and the next, "Happy Birthday"
+export const REVEAL_LETTER_DURATION = 0.3; // each letter's own fade/rise-in
+export const REVEAL_LETTER_STAGGER_MAIN = 0.04; // gap between one letter starting and the next, "Happy Birthday"
 export const REVEAL_LETTER_RISE_PX = 10;
 
-export const REVEAL_SUB_DELAY_AFTER_MAIN = 0.4; // short pause between the two lines
-export const REVEAL_LETTER_DURATION_SUB = 0.28; // faster than the main line, per the brief
-export const REVEAL_LETTER_STAGGER_SUB = 0.032; // faster than the main line, per the brief
+export const REVEAL_SUB_DELAY_AFTER_MAIN = 0.3; // short pause between the two lines
+export const REVEAL_LETTER_DURATION_SUB = 0.21; // faster than the main line, per the brief
+export const REVEAL_LETTER_STAGGER_SUB = 0.024; // faster than the main line, per the brief
 
 // The tracer itself, plus one dimmer/delayed echo trailing just behind
 // it — two small reusable dots (repositioned per line via gsap.set, not
@@ -73,11 +73,11 @@ export const REVEAL_TRACER_ECHO_PEAK_OPACITY = 0.45;
 // restrained, one cycle only, never a repeating idle loop (this mirrors
 // BirthdayMessage.js's own single "breathe" but noticeably softer, per
 // the brief's own "the final pulse should be extremely subtle").
-export const REVEAL_PULSE_DELAY = 0.45;
+export const REVEAL_PULSE_DELAY = 0.34;
 export const REVEAL_PULSE_SCALE = 1.014;
-export const REVEAL_PULSE_DURATION = 1.3;
+export const REVEAL_PULSE_DURATION = 0.98;
 
 // The gather particles quietly fade away once the greeting has fully
 // formed — they were only ever meant to accompany the writing moment,
 // not linger as permanent decoration alongside the finished text.
-export const REVEAL_PARTICLE_FADE_DURATION = 1.1;
+export const REVEAL_PARTICLE_FADE_DURATION = 0.83;

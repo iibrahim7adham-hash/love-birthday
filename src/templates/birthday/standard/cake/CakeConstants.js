@@ -99,7 +99,7 @@ export const CAKE_GROUP_Y = 0;
 export const CAMERA_LOOK_TARGET_Y = 1.55;
 export const CAMERA_WIDE_POSITION = { x: 0, y: 3.4, z: 15.5 };
 export const CAMERA_HERO_POSITION = { x: 0, y: 2.35, z: 9.2 };
-export const CAMERA_DOLLY_DURATION = 5.5; // spans roughly the whole formation, not a separate discrete beat
+export const CAMERA_DOLLY_DURATION = 4.1; // spans roughly the whole formation, not a separate discrete beat
 export const CAMERA_DOLLY_EASE = "power1.inOut";
 
 // A hair of continuous life once settled — much smaller than Love's own
@@ -116,17 +116,17 @@ export const CAMERA_IDLE_SWAY_SPEED = 0.35;
 // rather than a second hand-tuned raw position, so it always preserves
 // the exact hero viewing angle — only the distance changes.
 export const CAMERA_PULLBACK_DISTANCE_SCALE = 1.75; // ~30% smaller apparent cake size vs. the hero framing
-export const CAMERA_PULLBACK_DURATION = 3.0;
+export const CAMERA_PULLBACK_DURATION = 2.25;
 
 // ---- Sequence timing — see CakeReveal.js's own master timeline. Kept
 // here rather than scattered magic numbers so the whole pacing can be
 // tuned in one place.
-export const REVEAL_BREATH_DELAY = 0.6; // dark silence after "1" disappears
-export const REVEAL_WARM_LIGHT_FADE_DURATION = 1.4; // subtle warmth arriving during the breath
+export const REVEAL_BREATH_DELAY = 0.45; // dark silence after "1" disappears
+export const REVEAL_WARM_LIGHT_FADE_DURATION = 1.05; // subtle warmth arriving during the breath
 
-export const CAKE_PART_ENTRANCE_DURATION = 0.7;
+export const CAKE_PART_ENTRANCE_DURATION = 0.53;
 export const CAKE_PART_ENTRANCE_START_SCALE = 0.15;
-export const CAKE_PART_STAGGER = 0.45; // gap between one part starting and the next
+export const CAKE_PART_STAGGER = 0.34; // gap between one part starting and the next
 
 // The five wide structural/frosting tiers (plate, lowerLayer, creamRing,
 // upperLayer, topFrosting) start their entrance already spanning most of
@@ -138,28 +138,28 @@ export const CAKE_PART_STAGGER = 0.45; // gap between one part starting and the 
 // tier below rather than a cake layer settling into place.
 export const CAKE_TIER_RADIUS_START_SCALE = 0.8;
 
-export const CANDLE_ENTRANCE_DURATION = 0.5;
-export const CANDLE_STAGGER = 0.09;
-export const CANDLES_TO_FLAMES_PAUSE = 0.5; // the brief's own "short pause" before ignition
+export const CANDLE_ENTRANCE_DURATION = 0.38;
+export const CANDLE_STAGGER = 0.07;
+export const CANDLES_TO_FLAMES_PAUSE = 0.38; // the brief's own "short pause" before ignition
 
-export const FLAME_IGNITE_DURATION = 0.45;
-export const FLAME_STAGGER = 0.06;
-export const CANDLELIGHT_FADE_DURATION = 0.8;
+export const FLAME_IGNITE_DURATION = 0.34;
+export const FLAME_STAGGER = 0.05;
+export const CANDLELIGHT_FADE_DURATION = 0.6;
 
 // How long CakeLighting's own dimForBlowOut() takes once the candles are
 // blown out — see StandardCandleBlowoutConstants.js's own comment on the
 // full "blow out -> dim -> pause -> fireworks" sequence this is one beat
 // of.
-export const CANDLE_BLOWOUT_DIM_DURATION = 1.2;
+export const CANDLE_BLOWOUT_DIM_DURATION = 0.9;
 
-export const CAKE_REVEAL_HOLD_DURATION = 2.2; // time to actually appreciate the finished cake before onComplete
+export const CAKE_REVEAL_HOLD_DURATION = 1.65; // time to actually appreciate the finished cake before onComplete
 
 // ---- Formation sparkles — see FormationSparkles.js. Deliberately
 // small counts; this is a soft materialize cue accompanying each part,
 // never a particle explosion.
 export const SPARKLE_BURST_COUNT = 7;
 export const SPARKLE_BURST_RADIUS = 0.4;
-export const SPARKLE_BURST_DURATION = 0.9;
+export const SPARKLE_BURST_DURATION = 0.68;
 export const SPARKLE_COLOR = "#ffd9a0";
 
 // ---- Atmosphere — see CakeAtmosphere.js. Purely environmental/ambient
@@ -399,4 +399,4 @@ export const ATMOSPHERE_BOKEH_DRIFT_SPEED_MAX = 0.05;
 // How long the whole atmosphere takes to fade in once triggered — see
 // CakeReveal.js's own call site (fired alongside "cake begins forming",
 // the same cursor CakeLighting's own fadeInRevealLight() already uses).
-export const ATMOSPHERE_FADE_IN_DURATION = 3.5;
+export const ATMOSPHERE_FADE_IN_DURATION = 2.63;

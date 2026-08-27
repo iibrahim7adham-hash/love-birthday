@@ -42,32 +42,32 @@ export const BIRTHDAY_MESSAGE_PARTICLE_MIN_SIZE = 3; // px
 export const BIRTHDAY_MESSAGE_PARTICLE_MAX_SIZE = 6; // px
 
 // ---- Sequence timing — see BirthdayMessage.js's own master timeline.
-export const MESSAGE_ENTER_DELAY = 0.6; // quiet pause right after "1" disappears
-export const MESSAGE_ATMOSPHERE_FADE_DURATION = 1.0;
+export const MESSAGE_ENTER_DELAY = 0.45; // quiet pause right after "1" disappears
+export const MESSAGE_ATMOSPHERE_FADE_DURATION = 0.75;
 
-export const PARTICLE_GATHER_DURATION = 1.1; // each particle's own converge tween
-export const PARTICLE_GATHER_STAGGER = 0.35; // spread across this window so they don't move in lockstep
+export const PARTICLE_GATHER_DURATION = 0.83; // each particle's own converge tween
+export const PARTICLE_GATHER_STAGGER = 0.26; // spread across this window so they don't move in lockstep
 
 // How long after particles begin drifting in that the first sparkle
 // starts to form — partway through the gather, not after it finishes,
 // so the phrase feels like it's condensing out of the still-arriving
 // particles rather than waiting for them.
-export const TEXT_REVEAL_START_OFFSET = 0.65;
+export const TEXT_REVEAL_START_OFFSET = 0.49;
 
-export const SPARKLE_REVEAL_DURATION = 0.45;
-export const WORD_REVEAL_DURATION = 0.45;
+export const SPARKLE_REVEAL_DURATION = 0.34;
+export const WORD_REVEAL_DURATION = 0.34;
 export const WORD_REVEAL_RISE_VH = 1.4;
-export const MESSAGE_BEAT_STAGGER = 0.24; // gap between one phrase piece starting and the next
+export const MESSAGE_BEAT_STAGGER = 0.18; // gap between one phrase piece starting and the next
 
 // A single soft breathe once the full phrase has settled — restrained,
 // one cycle only, never a repeating idle loop (this stage's whole life
 // is only a few seconds, so there's nothing to keep "alive" past this).
 export const MESSAGE_BREATHE_SCALE = 1.03;
-export const MESSAGE_BREATHE_DURATION = 1.0;
+export const MESSAGE_BREATHE_DURATION = 0.75;
 
-export const MESSAGE_HOLD_DURATION = 2.2;
+export const MESSAGE_HOLD_DURATION = 1.65;
 
-export const MESSAGE_EXIT_DURATION = 0.8; // phrase dissolves
+export const MESSAGE_EXIT_DURATION = 0.6; // phrase dissolves
 export const MESSAGE_EXIT_SCALE = 0.94;
-export const PARTICLE_DISPERSE_DURATION = 0.9;
+export const PARTICLE_DISPERSE_DURATION = 0.68;
 export const PARTICLE_DISPERSE_RADIUS_VW = 10; // extra outward drift on exit, on top of each particle's own gather radius

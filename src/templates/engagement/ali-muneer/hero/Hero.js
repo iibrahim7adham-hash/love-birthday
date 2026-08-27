@@ -149,6 +149,10 @@ export default class Hero {
         </div>
         <p class="ali-muneer-hero-body ali-muneer-hero-anim ali-muneer-hero-anim-4" dir="rtl" lang="ar">${HERO_BODY_TEXT}</p>
         <p class="ali-muneer-hero-date ali-muneer-hero-anim ali-muneer-hero-anim-4" dir="rtl" lang="ar">${HERO_DATE_TEXT}</p>
+        <p class="ali-muneer-hero-scroll-hint ali-muneer-hero-anim ali-muneer-hero-anim-5" aria-hidden="true">
+          اسحب للاسفل
+          <span class="ali-muneer-hero-scroll-hint-arrow">⌄</span>
+        </p>
       </div>
     `;
     document.body.appendChild(this.element);

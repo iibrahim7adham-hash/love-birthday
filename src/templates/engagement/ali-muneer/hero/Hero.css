@@ -263,6 +263,48 @@
   letter-spacing: 0.5px;
 }
 
+/* ---- Scroll-down hint — a subtle, italic nudge right after the date,
+   the last of Hero's own PART 3 content, so it reads as a closing
+   prompt for this screen rather than competing with it. Carries the
+   5th (final, previously-unused) .ali-muneer-hero-anim-N stagger step,
+   so it fades in right after the date once Hero mounts, via the exact
+   same shared entrance mechanics as every other Hero element above —
+   no separate timing logic needed. */
+.ali-muneer-hero-scroll-hint {
+  margin: clamp(28px, 4.6vh, 40px) 0 0;
+
+  color: rgba(169, 133, 79, 0.85); /* same hue as .ali-muneer-hero-date, softened */
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(12px, 1.8vw, 14px);
+  letter-spacing: 0.3px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.ali-muneer-hero-scroll-hint-arrow {
+  display: inline-block;
+  font-style: normal;
+  font-size: 1.3em;
+  line-height: 1;
+  text-shadow: 0 0 6px rgba(193, 159, 98, 0.5);
+  animation: am-hero-scroll-hint-bounce 1.8s ease-in-out infinite;
+}
+
+@keyframes am-hero-scroll-hint-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
 /* ---- Mobile polish — everything above already scales continuously
    via clamp(), but on a short phone screen the sum of every element's
    own comfortable-on-desktop spacing could add up to more scroll than

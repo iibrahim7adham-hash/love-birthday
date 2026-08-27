@@ -72,7 +72,7 @@ export const SPARKLE_FIELD_DUST_OPACITY_RANGE = [0.12, 0.3];
 // subtitle) only — later parts add their own constants alongside these.
 // ===========================
 export const HERO_MONOGRAM_TEXT = "AS";
-export const HERO_SUBTITLE_TEXT = "دعوة عقد قران";
+export const HERO_SUBTITLE_TEXT = "دعوة حفل عقد قران";
 
 // Champagne gold — same family as OPENING_TEXT_COLOR/the envelope's own
 // gold trim, reused here for visual continuity across the handoff.

@@ -13,6 +13,7 @@
     "dev:standard": "vite --mode standard",
     "dev:boom": "vite --mode boom",
     "dev:hyatei": "vite --mode hyatei",
+    "dev:sama": "vite --mode sama",
     "dev:ali-muneer": "vite --mode ali-muneer",
     "build": "vite build",
     "build:luxury": "vite build --mode luxury",
@@ -20,6 +21,7 @@
     "build:standard": "vite build --mode standard",
     "build:boom": "vite build --mode boom",
     "build:hyatei": "vite build --mode hyatei",
+    "build:sama": "vite build --mode sama",
     "build:ali-muneer": "vite build --mode ali-muneer",
     "preview": "vite preview",
     "preview:luxury": "vite preview --mode luxury",
@@ -27,6 +29,7 @@
     "preview:standard": "vite preview --mode standard",
     "preview:boom": "vite preview --mode boom",
     "preview:hyatei": "vite preview --mode hyatei",
+    "preview:sama": "vite preview --mode sama",
     "preview:ali-muneer": "vite preview --mode ali-muneer"
   },
   "devDependencies": {

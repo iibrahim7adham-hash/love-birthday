@@ -14,6 +14,7 @@ import AudioLoader from "./AudioLoader";
 import AudioPlayer from "./AudioPlayer";
 import AudioTimeline from "./AudioTimeline";
 import AudioSettings from "./AudioSettings";
+import { SILENT_UNLOCK_AUDIO_DATA_URI } from "./SilentUnlockAsset";
 
 let instance = null;
 
@@ -53,6 +54,10 @@ export default class AudioManager {
     );
 
     this._setupUnlock();
+
+    // Lazily created by _unlockPlaybackCategory() the first time resume()
+    // runs — see there.
+    this._silentUnlockAudio = null;
   }
 
   // Public passthrough so a template can call resume() synchronously
@@ -66,7 +71,39 @@ export default class AudioManager {
   // through the same _attemptUnlock used by the generic listeners so
   // _unlockPromise resolves and those listeners tear down normally.
   resume() {
+    this._unlockPlaybackCategory();
     return this._attemptUnlock ? this._attemptUnlock() : this.context.resume();
+  }
+
+  // A resumed/running AudioContext is not, by itself, enough to be heard
+  // on iOS: Safari still routes pure-Web-Audio-API output through the
+  // "ambient" AVAudioSession category, which the phone's hardware ring/
+  // silent switch mutes. iOS only promotes the page to the "playback"
+  // category (which ignores that switch) once some HTMLMediaElement has
+  // actually been played — there's no way to request that category
+  // directly from Web Audio itself. So this plays one real, looping,
+  // silent <audio> element (an inline data-URI clip — see
+  // SilentUnlockAsset.js — so there's no network request to fail) from
+  // inside the exact same trusted gesture resume() itself must be called
+  // from. It's kept looping and referenced on `this` for the rest of the
+  // page's life (not fire-and-forget) since letting it stop or get
+  // garbage-collected can drop the session category again. Safe to call
+  // on every resume(): the element is created once, and re-calling
+  // play() on an already-looping element is a harmless no-op.
+  _unlockPlaybackCategory() {
+    if (!this._silentUnlockAudio) {
+      const audio = new Audio(SILENT_UNLOCK_AUDIO_DATA_URI);
+      audio.loop = true;
+      audio.volume = 0.02;
+      audio.playsInline = true;
+      audio.preload = "auto";
+      this._silentUnlockAudio = audio;
+    }
+
+    // iOS requires this call itself to happen synchronously inside the
+    // gesture — the promise it returns settling later (or rejecting) is
+    // fine and deliberately ignored here.
+    this._silentUnlockAudio.play().catch(() => {});
   }
 
   // ---- playback ----------------------------------------------------
@@ -291,8 +328,25 @@ export default class AudioManager {
   // stricter iOS compliance — both paths fund through _attemptUnlock so
   // there's exactly one place that resolves _unlockPromise and tears
   // down these listeners.
+  //
+  // iOS Safari can report a WebKit-only fourth state, "interrupted" —
+  // outside the Web Audio spec's own suspended/running/closed set —
+  // for a context whose audio session hasn't actually been granted yet
+  // (observed on a cold, directly-opened Safari tab; never inside an
+  // already-foregrounded in-app browser). Calling resume() on an
+  // interrupted context is unspecified behavior there, and in practice
+  // its returned promise can simply hang forever without resolving or
+  // rejecting. So _unlockPromise's real source of truth is
+  // `this.context.state === "running"`, checked three ways below —
+  // synchronously on each attempt, via the context's own `statechange`
+  // event (the one reliable signal WebKit gives for an interruption
+  // clearing on its own), and as a resume().then() fast path when it
+  // does resolve — not resume()'s promise alone. Each unlock attempt is
+  // also safe to repeat (no one-shot latch): a running context resolves
+  // resume() immediately anyway, and an interrupted one may only clear
+  // after a fresh resume() call once the interruption actually ends.
   _setupUnlock() {
-    if (this.context.state !== "suspended") {
+    if (this.context.state === "running") {
       this._unlockPromise = Promise.resolve();
       this._removeUnlockListeners = () => {};
       this._attemptUnlock = () => this._unlockPromise;
@@ -304,31 +358,38 @@ export default class AudioManager {
     // touchstart/pointerdown never actually settles (the promise just
     // hangs indefinitely) — only a full click carries enough "user
     // activation" for resume() to reliably resolve there. Listeners
-    // stay attached until resume() actually resolves, not just until
-    // the first gesture fires, so a stalled attempt from an early
-    // touchstart doesn't strip the fallback listeners (including
+    // stay attached until the context actually reaches "running", not
+    // just until the first gesture fires, so a stalled attempt from an
+    // early touchstart doesn't strip the fallback listeners (including
     // click) before they get a chance to unlock it properly.
     const events = ["pointerdown", "keydown", "touchstart", "click"];
     let resolveUnlock;
-    let unlocking = false;
+    let resolved = false;
 
     this._unlockPromise = new Promise((resolve) => {
       resolveUnlock = resolve;
     });
 
-    // Idempotent — a second call while the first resume() is still in
-    // flight (e.g. the public resume() firing synchronously inside a
-    // seal-tap handler, immediately followed by this same tap's click
-    // bubbling up to the window listener below) just returns the same
-    // in-flight promise instead of issuing a redundant resume() call.
+    // The single source of truth for "unlocked" — called from every
+    // path below. Resolves _unlockPromise exactly once.
+    const settleIfRunning = () => {
+      if (resolved || this.context.state !== "running") return;
+      resolved = true;
+      this._removeUnlockListeners();
+      resolveUnlock();
+    };
+
+    // Attached once, for the life of this unlock cycle — the one
+    // reliable signal for an interrupted context clearing on its own.
+    this.context.addEventListener("statechange", settleIfRunning);
+
     this._attemptUnlock = () => {
-      if (!unlocking) {
-        unlocking = true;
-        this.context.resume().then(() => {
-          this._removeUnlockListeners();
-          resolveUnlock();
-        });
-      }
+      // Always safe to (re-)issue — a running context resolves this
+      // immediately, and this is also what nudges an interrupted one
+      // once the interruption has actually cleared. Its own promise is
+      // a fast path when it does resolve, never the only path.
+      this.context.resume().then(settleIfRunning, () => {});
+      settleIfRunning();
       return this._unlockPromise;
     };
 
@@ -336,6 +397,7 @@ export default class AudioManager {
 
     this._removeUnlockListeners = () => {
       events.forEach((event) => window.removeEventListener(event, unlock));
+      this.context.removeEventListener("statechange", settleIfRunning);
     };
 
     events.forEach((event) => window.addEventListener(event, unlock));
@@ -355,6 +417,12 @@ export default class AudioManager {
     Object.values(this.buses).forEach((bus) => bus.dispose());
 
     this.context.close().catch(() => {});
+
+    if (this._silentUnlockAudio) {
+      this._silentUnlockAudio.pause();
+      this._silentUnlockAudio.src = "";
+      this._silentUnlockAudio = null;
+    }
 
     instance = null;
   }

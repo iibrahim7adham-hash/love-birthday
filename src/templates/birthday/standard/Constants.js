@@ -86,30 +86,30 @@ export const COUNTDOWN_DIGITS = [3, 2, 1];
 // A short breath of near-empty darkness between the START screen fully
 // leaving and the countdown's own atmosphere beginning to appear — the
 // brief's own "very short breathing moment" between the two beats.
-export const COUNTDOWN_ENTER_DELAY = 0.3;
-export const COUNTDOWN_ATMOSPHERE_FADE_DURATION = 0.6;
+export const COUNTDOWN_ENTER_DELAY = 0.22;
+export const COUNTDOWN_ATMOSPHERE_FADE_DURATION = 0.45;
 
 // ---- Per-digit beat: entrance, hold, exit, then a short gap before
 // the next digit. Kept snappy enough to feel deliberate without ever
 // dragging — roughly ~1.3s of visual presence per number plus a 0.15s
 // gap, in the middle of the brief's own suggested 0.7-1.0s range once
 // the entrance/exit motion itself is counted.
-export const COUNTDOWN_NUMBER_ENTRANCE_DURATION = 0.45;
+export const COUNTDOWN_NUMBER_ENTRANCE_DURATION = 0.34;
 export const COUNTDOWN_NUMBER_ENTRANCE_START_SCALE = 0.72; // begins smaller, as if arriving from the atmosphere
-export const COUNTDOWN_NUMBER_HOLD_DURATION = 0.5;
-export const COUNTDOWN_NUMBER_EXIT_DURATION = 0.35;
+export const COUNTDOWN_NUMBER_HOLD_DURATION = 0.38;
+export const COUNTDOWN_NUMBER_EXIT_DURATION = 0.26;
 export const COUNTDOWN_NUMBER_EXIT_SCALE = 0.85; // contracts away rather than growing/flying off
-export const COUNTDOWN_NUMBER_GAP = 0.15;
+export const COUNTDOWN_NUMBER_GAP = 0.11;
 
 // The atmosphere's own brief pulse alongside each number's entrance —
 // restrained, and slightly stronger on the last digit per the brief's
 // own example ("1 -> slightly stronger anticipation").
 export const COUNTDOWN_ATMOSPHERE_PULSE_SCALE = 1.06;
 export const COUNTDOWN_ATMOSPHERE_FINAL_PULSE_SCALE = 1.12;
-export const COUNTDOWN_ATMOSPHERE_PULSE_DURATION = 0.4;
+export const COUNTDOWN_ATMOSPHERE_PULSE_DURATION = 0.3;
 
 // ---- Exit — the whole composition dissolves once "1" finishes,
 // handing off to the future Birthday Reveal (see StandardScene.js's
 // own _enterReadyState placeholder seam).
-export const COUNTDOWN_EXIT_DELAY = 0.25;
-export const COUNTDOWN_EXIT_DURATION = 0.6;
+export const COUNTDOWN_EXIT_DELAY = 0.19;
+export const COUNTDOWN_EXIT_DURATION = 0.45;
