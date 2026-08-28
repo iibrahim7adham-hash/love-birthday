@@ -157,11 +157,14 @@ export const MESSAGE_POOL_SIZE = 16;
 // t=6s after HeartFormation.begin() (verified by simulating the same
 // spring integrator LoveParticles.update() runs), and HeartAnimation's
 // own breathing is already at full amplitude by t=5s (its
-// BREATH_START_DELAY + BREATH_FADE_IN_DURATION). Retimed from 8s to
-// 6.5s (part of trimming the overall pre-envelope wait) — still a real
-// ~0.5s buffer past full convergence, not cutting into the formation
-// itself.
-export const MESSAGE_START_DELAY = 6.5;
+// BREATH_START_DELAY + BREATH_FADE_IN_DURATION). Retimed from 6.5s to
+// 4.5s as part of a broader pass to trim the overall scene length — the
+// heart is still ~90%+ converged by this point (most particles are
+// already essentially settled well before t=6s; only the last few
+// stragglers are still easing in), so the overlap reads as the rain
+// starting while the heart is finishing its final settle rather than
+// while it's still visibly scattered.
+export const MESSAGE_START_DELAY = 4.5;
 
 export const MESSAGE_FONT_SIZE = 64;
 export const MESSAGE_HEIGHT = 0.55;

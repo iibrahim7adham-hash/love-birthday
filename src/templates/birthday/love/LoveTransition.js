@@ -94,38 +94,38 @@ export default class LoveTransition {
       0.1,
     );
 
-    // 0.2-1.2s — UI dissolves rather than cutting.
+    // 0.2-0.8s — UI dissolves rather than cutting.
     tl.to(
       uiElement,
-      { opacity: 0, filter: "blur(10px)", duration: 1.0, ease: "power2.in" },
+      { opacity: 0, filter: "blur(10px)", duration: 0.6, ease: "power2.in" },
       0.2,
     );
     if (noButton) {
-      tl.to(noButton, { opacity: 0, filter: "blur(10px)", duration: 0.9, ease: "power2.in" }, 0.25);
+      tl.to(noButton, { opacity: 0, filter: "blur(10px)", duration: 0.55, ease: "power2.in" }, 0.25);
     }
 
-    // 0.0-2.0s — the world quietly fades to black. Slow to start,
+    // 0.0-1.0s — the world quietly fades to black. Slow to start,
     // accelerating into full darkness rather than a linear dim.
-    tl.to(this.overlay, { opacity: 1, duration: 2.0, ease: "power2.in" }, 0);
+    tl.to(this.overlay, { opacity: 1, duration: 1.0, ease: "power2.in" }, 0);
 
-    // 0.0-2.0s — camera eases toward the scene's center the whole time,
+    // 0.0-1.0s — camera eases toward the scene's center the whole time,
     // growing more noticeable as the screen darkens.
-    tl.to(this._cameraPushProgress, { value: 1, duration: 2.0, ease: "sine.inOut" }, 0);
+    tl.to(this._cameraPushProgress, { value: 1, duration: 1.0, ease: "sine.inOut" }, 0);
 
-    // ~2.0-2.1s — a short breath of near-total darkness before the cut.
+    // ~1.0-1.05s — a short breath of near-total darkness before the cut.
     tl.call(
       () => {
         this._pushingCamera = false;
         onComplete();
       },
       null,
-      2.1,
+      1.05,
     );
 
-    // 2.1-3.0s — gently reveal the new scene from darkness.
-    tl.to(this.overlay, { opacity: 0, duration: 0.9, ease: "power2.out" }, 2.1);
+    // 1.05-1.65s — gently reveal the new scene from darkness.
+    tl.to(this.overlay, { opacity: 0, duration: 0.6, ease: "power2.out" }, 1.05);
 
-    tl.call(() => this._finish(), null, 3.0);
+    tl.call(() => this._finish(), null, 1.7);
   }
 
   update() {

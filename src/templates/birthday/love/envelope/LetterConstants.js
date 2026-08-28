@@ -31,16 +31,17 @@ export const LETTER_TEXT_LANGUAGE = "ar";
 
 // ---- Emergence: rises out of the envelope's opening, a small rotation
 // correcting itself as it settles, then holds as the scene's focus.
-export const LETTER_EMERGE_DELAY = 1.15; // after the flap begins opening
+export const LETTER_EMERGE_DELAY = 0.5; // after the flap begins opening
 export const LETTER_EMERGE_RISE_PX = 70; // scaled down with the letter's own smaller footprint
 export const LETTER_EMERGE_START_SCALE = 0.7;
 export const LETTER_EMERGE_START_ROTATION_DEG = -5;
-// Retimed (was 1.3s/0.6s) — same rise+settle physical motion as the
-// envelope's own entrance, just faster; this is the letter object
-// arriving, not the text reveal itself (LETTER_TEXT_START_DELAY/
-// LETTER_WORD_STAGGER/LETTER_READING_DELAY below are untouched).
-export const LETTER_EMERGE_DURATION = 0.85;
-export const LETTER_SETTLE_DURATION = 0.4;
+// Retimed (was 1.3s/0.6s, then 0.85s/0.4s) — same rise+settle physical
+// motion as the envelope's own entrance, just faster; this is the
+// letter object arriving, not the text reveal itself
+// (LETTER_TEXT_START_DELAY/LETTER_WORD_STAGGER/LETTER_READING_DELAY
+// below are untouched by this).
+export const LETTER_EMERGE_DURATION = 0.5;
+export const LETTER_SETTLE_DURATION = 0.2;
 
 // ---- Text reveal — words fade in one at a time, in reading order
 // across the whole message (not a per-line stagger, not a
@@ -48,11 +49,7 @@ export const LETTER_SETTLE_DURATION = 0.4;
 // word count rather than flat numbers, so a longer/shorter swapped-in
 // message automatically gets a sensible pace instead of needing its
 // timing retuned by hand.
-export const LETTER_TEXT_START_DELAY = 0.5; // after the letter itself settles
-
-function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, value));
-}
+export const LETTER_TEXT_START_DELAY = 0.15; // after the letter itself settles
 
 const LETTER_WORD_COUNT = LETTER_LINES.join(" ")
   .trim()
@@ -76,11 +73,8 @@ export const LETTER_SIGNATURE_EXTRA_DELAY = 0.4; // gap after the last word befo
 // reading-speed estimate, because the viewer has already been reading
 // along as each word appeared during the reveal itself (see
 // LETTER_WORD_STAGGER above); this is just the extra settle-and-finish
-// pause after that, so it stays short even for a message with plenty
-// of words. Scales with the message's own word count (so a much longer
-// swapped-in message still gets proportionally more time) but is
-// floored at 5s for readability and never balloons past 10s.
-export const LETTER_READING_DELAY = clamp(3 + LETTER_WORD_COUNT * 0.07, 5, 10);
+// pause after that. Fixed at 6s (was scaled with word count, 5-10s).
+export const LETTER_READING_DELAY = 6;
 
 // ---- Return: the reverse of emergence — a small "picking it up" lift,
 // then a longer glide toward the envelope's own opening (the exact
@@ -88,10 +82,11 @@ export const LETTER_READING_DELAY = clamp(3 + LETTER_WORD_COUNT * 0.07, 5, 10);
 // getBoundingClientRect() in Letter.js, never a hard-coded position, so
 // this stays correct at any viewport size).
 export const LETTER_RETURN_LIFT_PX = 14;
-// Retimed (was 0.5s/1.2s) — same lift-then-glide-into-the-envelope
-// motion, just faster, matching the envelope's own faster close/exit.
-export const LETTER_RETURN_LIFT_DURATION = 0.3;
-export const LETTER_RETURN_DURATION = 0.75;
+// Retimed (was 0.5s/1.2s, then 0.3s/0.75s) — same
+// lift-then-glide-into-the-envelope motion, just faster, matching the
+// envelope's own faster close/exit.
+export const LETTER_RETURN_LIFT_DURATION = 0.2;
+export const LETTER_RETURN_DURATION = 0.5;
 export const LETTER_RETURN_END_SCALE = 0.22;
 export const LETTER_RETURN_ROTATION_DEG = 6;
 
