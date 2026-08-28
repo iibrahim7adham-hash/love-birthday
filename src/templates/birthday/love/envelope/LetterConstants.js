@@ -58,23 +58,25 @@ const LETTER_WORD_COUNT = LETTER_LINES.join(" ")
 
 // Longer letters use a slightly quicker per-word pace so the whole
 // reveal doesn't stretch past a comfortable ceiling; shorter ones can
-// afford a slower, more deliberate cadence. Stays within the ~100-180ms
-// band this was briefed against.
-export const LETTER_WORD_STAGGER = LETTER_WORD_COUNT <= 15 ? 0.17 : LETTER_WORD_COUNT <= 30 ? 0.13 : 0.1;
+// afford a slower, more deliberate cadence. Retimed (was 0.1 for >30
+// words) as part of trimming the total on-screen letter time down to
+// ~9s.
+export const LETTER_WORD_STAGGER = LETTER_WORD_COUNT <= 15 ? 0.17 : LETTER_WORD_COUNT <= 30 ? 0.13 : 0.08;
 export const LETTER_WORD_FADE_DURATION = 0.4;
 export const LETTER_WORD_RISE_PX = 6;
 
-export const LETTER_LINE_DURATION = 0.9; // the signature's own fade-in duration
+export const LETTER_LINE_DURATION = 0.6; // the signature's own fade-in duration
 export const LETTER_LINE_RISE_PX = 10; // the signature's own rise distance
-export const LETTER_SIGNATURE_EXTRA_DELAY = 0.4; // gap after the last word before the signature appears
+export const LETTER_SIGNATURE_EXTRA_DELAY = 0.3; // gap after the last word before the signature appears
 
 // How long the viewer gets to actually read the finished letter before
 // it starts returning to the envelope — deliberately NOT a full silent
 // reading-speed estimate, because the viewer has already been reading
 // along as each word appeared during the reveal itself (see
 // LETTER_WORD_STAGGER above); this is just the extra settle-and-finish
-// pause after that. Fixed at 6s (was scaled with word count, 5-10s).
-export const LETTER_READING_DELAY = 6;
+// pause after that. Fixed at 3.3s (was 6s, scaled 5-10s before that) —
+// part of trimming the total on-screen letter time from ~13s to ~9s.
+export const LETTER_READING_DELAY = 3.3;
 
 // ---- Return: the reverse of emergence — a small "picking it up" lift,
 // then a longer glide toward the envelope's own opening (the exact
@@ -82,11 +84,11 @@ export const LETTER_READING_DELAY = 6;
 // getBoundingClientRect() in Letter.js, never a hard-coded position, so
 // this stays correct at any viewport size).
 export const LETTER_RETURN_LIFT_PX = 14;
-// Retimed (was 0.5s/1.2s, then 0.3s/0.75s) — same
+// Retimed (was 0.5s/1.2s, then 0.3s/0.75s, then 0.2s/0.5s) — same
 // lift-then-glide-into-the-envelope motion, just faster, matching the
 // envelope's own faster close/exit.
-export const LETTER_RETURN_LIFT_DURATION = 0.2;
-export const LETTER_RETURN_DURATION = 0.5;
+export const LETTER_RETURN_LIFT_DURATION = 0.15;
+export const LETTER_RETURN_DURATION = 0.4;
 export const LETTER_RETURN_END_SCALE = 0.22;
 export const LETTER_RETURN_ROTATION_DEG = 6;
 
