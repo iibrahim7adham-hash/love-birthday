@@ -9,7 +9,18 @@ import { defineConfig } from "vite";
 // outDir so it wouldn't collide with the others' `dist/`; the reason
 // to reintroduce that would be a template that genuinely needs to
 // coexist with an already-built one rather than replace it.
-export default defineConfig(() => ({
+export default defineConfig(({ mode }) => ({
+  // test-menu and fashion are standalone static pages (not part of the
+  // Experience.js template system), so each needs its own project root to
+  // be served as its own dev server entry via `npm run dev:test-menu` /
+  // `npm run dev:fashion`. Every other mode leaves `root` undefined, which
+  // Vite defaults to the project root — unchanged from before.
+  root:
+    mode === "test-menu"
+      ? "src/templates/menus/test-menu"
+      : mode === "fashion"
+        ? "src/templates/websites/fashion"
+        : undefined,
   assetsInclude: ["**/*.glb"],
   css: {
     // This project has no PostCSS plugins (no Tailwind, no

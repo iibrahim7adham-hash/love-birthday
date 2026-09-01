@@ -15,6 +15,8 @@
     "dev:hyatei": "vite --mode hyatei",
     "dev:sama": "vite --mode sama",
     "dev:ali-muneer": "vite --mode ali-muneer",
+    "dev:test-menu": "vite --mode test-menu",
+    "dev:fashion": "vite --mode fashion",
     "build": "vite build",
     "build:luxury": "vite build --mode luxury",
     "build:love": "vite build --mode love",
@@ -23,6 +25,7 @@
     "build:hyatei": "vite build --mode hyatei",
     "build:sama": "vite build --mode sama",
     "build:ali-muneer": "vite build --mode ali-muneer",
+    "build:fashion": "vite build --mode fashion",
     "preview": "vite preview",
     "preview:luxury": "vite preview --mode luxury",
     "preview:love": "vite preview --mode love",
@@ -30,7 +33,8 @@
     "preview:boom": "vite preview --mode boom",
     "preview:hyatei": "vite preview --mode hyatei",
     "preview:sama": "vite preview --mode sama",
-    "preview:ali-muneer": "vite preview --mode ali-muneer"
+    "preview:ali-muneer": "vite preview --mode ali-muneer",
+    "preview:fashion": "vite preview --mode fashion"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
